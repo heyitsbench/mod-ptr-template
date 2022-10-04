@@ -10,4 +10,4 @@ INSERT INTO `mod_ptrtemplate_reputations` (`ID`, `RaceMask`, `ClassMask`, `Facti
 (1, 178, 1024, 530, 11100, NULL),
 (1, 178, 1024, 76, 11100, NULL),
 (1, 178, 1024, 81, 11150, NULL),
-(1, 178, 1024, 609, 2600, NULL),
+(1, 178, 1024, 609, 2600, NULL);
