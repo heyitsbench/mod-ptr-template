@@ -6,11 +6,11 @@
 ## BASE SQL
 
 DB_WORLD_CUSTOM_PATHS+=(
-	$PTR_TEMPLATE_ROOT"/data/sql/db-world/"
+	$PTR_TEMPLATE_PATH_ROOT"/data/sql/db-world/"
 )
 
 ## UPDATES
 
 DB_WORLD_UPDATES_PATHS+=(
-	$PTR_TEMPLATE_ROOT"/data/sql/blizzlike/"
+	$PTR_TEMPLATE_PATH_ROOT"/data/sql/blizzlike/"
 )
