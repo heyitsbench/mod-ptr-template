@@ -10,7 +10,7 @@ class createPTR : public WorldScript {
 public:
     createPTR() : WorldScript("createPTRScript") { }
 
-    void OnStartup() override
+    void OnBeforeWorldInitialized() override
     {
         uint32 oldMSTime = getMSTime();
         uint32 count = 0;
