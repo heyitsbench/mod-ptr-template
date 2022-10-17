@@ -171,7 +171,7 @@ public:
                     break;
                 if (!(classMaskEntry & player->getClassMask()))
                     break;
-                ItemPosCountVec dest; // I DON'T KNOW WHAT THE FUCK THIS IS
+                ItemPosCountVec dest; // This is an enigma
                 player->StoreNewItem(dest, itemEntry, true, 0);
             } while (check->NextRow());
         }
