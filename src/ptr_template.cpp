@@ -66,13 +66,16 @@ public:
         float YHordeEntry = (*check)[7].Get<float>();
         float ZHordeEntry = (*check)[8].Get<float>();
         float OHordeEntry = (*check)[9].Get<float>();
-        if (player->GetTeamId() == TEAM_HORDE)
+        if (enable == 1)
         {
-            player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
-        }
-        else
-        {
-            player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
+            if (player->GetTeamId() == TEAM_HORDE)
+            {
+                player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
+            }
+            else
+            {
+                player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
+            }
         }
     }
 
