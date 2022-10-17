@@ -164,10 +164,10 @@ public:
             {
                 uint16 raceMaskEntry = (*bagInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*bagInfo)[1].Get<uint16>();
-                uint32 bagEntry = (*bagInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*bagInfo)[3].Get<uint8>();
+                // uint32 bagEntry = (*bagInfo)[2].Get<uint32>();    THE WORKFLOW DOESN'T LIKE FUTUREPROOFING I'M GONNA CRY
+                // uint8 slotEntry = (*bagInfo)[3].Get<uint8>();
                 uint32 itemEntry = (*bagInfo)[4].Get<uint32>();
-                uint32 quantityEntry = (*bagInfo)[5].Get<uint32>();
+                // uint32 quantityEntry = (*bagInfo)[5].Get<uint32>();
                 if (!(raceMaskEntry & player->getRaceMask()))
                     break;
                 if (!(classMaskEntry & player->getClassMask()))
