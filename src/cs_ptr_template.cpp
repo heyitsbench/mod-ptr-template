@@ -47,6 +47,7 @@ public:
 
 	static bool applyTemplate(ChatHandler* handler)
 	{
+        handler->PSendSysMessage("I don't know what the heck you expect at this point lol");
 		return true;
 	}
 };
