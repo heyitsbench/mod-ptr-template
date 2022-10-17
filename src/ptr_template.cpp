@@ -27,8 +27,7 @@ public:
         }
         do
         {
-            Field* fields = result->Fetch();
-
+            result->Fetch();
             ++count;
         } while (result->NextRow());
         LOG_ERROR("module", ">> Loaded {} templates in {} ms.", count, GetMSTimeDiffToNow(oldMSTime));
