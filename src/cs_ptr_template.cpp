@@ -1,6 +1,7 @@
 #include "Chat.h"
 #include "ScriptMgr.h"
 #include "Player.h"
+#include "ptr_template_loader.h"
 
 using namespace Acore::ChatCommands;
 
@@ -45,9 +46,27 @@ public:
 		return true;
 	}
 
-	static bool applyTemplate(ChatHandler* handler)
+	static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
 	{
-        handler->PSendSysMessage("I don't know what the heck you expect at this point lol");
+        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
+        uint8 enable = (*check)[0].Get<uint8>();
+        if (enable == 1)
+        {
+            if (!player)
+            {
+                player = PlayerIdentifier::FromTargetOrSelf(handler);
+            }
+            Player* target = player->GetConnectedPlayer();
+            // createTemplate::AddTemplateLevel(target, index);
+            // createTemplate::AddTemplatePosition(target, index);
+            // createTemplate::AddTemplateReputation(target, index);
+            // createTemplate::AddTemplateHotbar(target, index); I CAN'T FIGURE THIS OUT GOD HELP ME
+            // createTemplate::AddTemplateWornGear(target, index);
+            // createTemplate::AddTemplateBagGear(target, index);
+            // createTemplate::AddTemplateSkills(target, index);
+            // createTemplate::AddTemplateSpells(target, index);
+            handler->PSendSysMessage("I don't know what the heck you expect at this point lol");
+        }
 		return true;
 	}
 };
