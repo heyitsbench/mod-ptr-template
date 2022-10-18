@@ -50,7 +50,7 @@ public:
                 ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
                 : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
             {
-                player->SetLevel(levelEntry);
+                player->GiveLevel(levelEntry);
             }
         }
     }
@@ -87,15 +87,26 @@ public:
         {
             do
             {
-                uint16 raceMaskEntry = (*repInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*repInfo)[1].Get<uint16>();
-                uint16 factionEntry = (*repInfo)[2].Get<uint16>();
-                int32 standingEntry = (*repInfo)[3].Get<int32>();
+                Field* fields = repInfo->Fetch();
+                uint16 raceMaskEntry = fields[0].Get<uint16>();
+                uint16 classMaskEntry = fields[1].Get<uint16>();
+                uint16 factionEntry = fields[2].Get<uint16>();
+                int32 standingEntry = fields[3].Get<int32>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                {
+                    continue;
+                }
+                else
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
-                player->SetReputation(factionEntry, standingEntry);
+                {
+                    continue;
+                }
+                else
+                {
+                    FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
+                    player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false);
+                    player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
+                }
             } while (repInfo->NextRow());
         }
     }
@@ -113,14 +124,14 @@ public:
                 uint32 actionEntry = (*barInfo)[3].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[4].Get<uint8>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                    continue;
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
+                    continue;
                 for (uint8 j = 0; j < 255; j++)
                 {
                     player->removeActionButton(j); // Remove any existing action buttons
                 }
-                player->addActionButton(buttonEntry, actionEntry, typeEntry);
+                player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
             } while (barInfo->NextRow());
         }
     }
@@ -135,14 +146,14 @@ public:
                 uint16 raceMaskEntry = (*gearInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*gearInfo)[1].Get<uint16>();
                 uint32 bagEntry = (*gearInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*gearInfo)[3].Get<uint8>();
-                uint32 itemEntry = (*gearInfo)[4].Get<uint32>();
+                uint8 slotEntry = (*gearInfo)[3].Get<uint8>(); //   00-18 = equipped gear
+                uint32 itemEntry = (*gearInfo)[4].Get<uint32>(); // 19-22 = container slots
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                    continue;
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
-                if (!(bagEntry == 7)) // Arbitrary bag ID that isn't actually a bag
-                    break;
+                    continue;
+                if (slotEntry > 22 || bagEntry != 0)
+                    continue;
                 player->EquipNewItem(slotEntry, itemEntry, true);
             } while (gearInfo->NextRow());
         }
@@ -158,15 +169,22 @@ public:
                 uint16 raceMaskEntry = (*bagInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*bagInfo)[1].Get<uint16>();
                 uint32 bagEntry = (*bagInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*bagInfo)[3].Get<uint8>();
+                uint8 slotEntry = (*bagInfo)[3].Get<uint8>(); // 23-38 = backpack slots
                 uint32 itemEntry = (*bagInfo)[4].Get<uint32>();
                 uint32 quantityEntry = (*bagInfo)[5].Get<uint32>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                    continue;
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
+                    continue;
+                if (itemEntry == 8) // Arbitrary non-existent itemID value
+                {
+                    player->SetMoney(quantityEntry);
+                    continue;
+                }
+                if (slotEntry < 23 && bagEntry == 0)
+                    continue;
                 ItemPosCountVec dest;
-                if (bagEntry == 0 && slotEntry == 0) // This won't get triggered for included templates, but if someone's lazy/testing, this works
+                if (bagEntry == 6) // This won't get triggered for included templates, but if someone's lazy/testing, this works
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
@@ -174,7 +192,7 @@ public:
                 }
                 else
                 {
-                    uint8 validCheck = player->CanStoreNewItem(bagEntry, slotEntry, dest, itemEntry, quantityEntry);
+                    uint8 validCheck = player->CanStoreNewItem(bagEntry, slotEntry, dest, itemEntry, quantityEntry); // TODO: Add support for more bag slots. Otherwise, all features basically done :partying_face:
                     if (validCheck == EQUIP_ERR_OK)
                         player->StoreNewItem(dest, itemEntry, true);
                 }
@@ -195,9 +213,9 @@ public:
                 uint16 valueEntry = (*skillInfo)[3].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[4].Get<uint16>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                    continue;
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
+                    continue;
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry);
 
             } while (skillInfo->NextRow());
@@ -216,9 +234,9 @@ public:
                 uint16 classMaskEntry = (*spellInfo)[1].Get<uint16>();
                 uint64 spellEntry = (*spellInfo)[2].Get<uint64>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                    break;
+                    continue;
                 if (!(classMaskEntry & player->getClassMask()))
-                    break;
+                    continue;
                 player->learnSpellHighRank(spellEntry);
             } while (spellInfo->NextRow());
         }
@@ -294,7 +312,7 @@ public:
 
     static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
     {
-        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords
         if(check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
@@ -308,12 +326,11 @@ public:
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
                 createTemplate::AddTemplateReputation(target, index);
-                createTemplate::AddTemplateHotbar(target, index);
+                createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);
                 createTemplate::AddTemplateBagGear(target, index);
-                createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateSpells(target, index);
-                handler->PSendSysMessage("I don't know what the heck you expect at this point lol");
+                createTemplate::AddTemplateHotbar(target, index);
             }
             return true;
         }
