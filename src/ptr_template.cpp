@@ -18,12 +18,12 @@ public:
         uint32 oldMSTime = getMSTime();
         uint32 count = 0;
 
-        LOG_INFO("sql.sql", "Loading index entries for the PTR template module...");
+        LOG_INFO("module", "Loading index entries for the PTR template module...");
         QueryResult result = WorldDatabase.Query("SELECT ID FROM mod_ptrtemplate_index;");
 
         if (!result)
         {
-            LOG_WARN("sql.sql", "No index entries are available for the PTR template module to use.");
+            LOG_WARN("module", "No index entries are available for the PTR template module to use.");
             return;
         }
         do
