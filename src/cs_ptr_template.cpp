@@ -52,11 +52,11 @@ public:
         uint8 enable = (*check)[0].Get<uint8>();
         if (enable == 1)
         {
-            if (!player)
-            {
-                player = PlayerIdentifier::FromTargetOrSelf(handler);
-            }
-            Player* target = player->GetConnectedPlayer();
+            // if (!player)
+            // {
+            //     player = PlayerIdentifier::FromTargetOrSelf(handler);
+            // }
+            // Player* target = player->GetConnectedPlayer();
             // createTemplate::AddTemplateLevel(target, index);
             // createTemplate::AddTemplatePosition(target, index);
             // createTemplate::AddTemplateReputation(target, index);
