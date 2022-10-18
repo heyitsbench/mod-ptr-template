@@ -64,7 +64,7 @@ public:
             float YAllianceEntry = (*posEntry)[2].Get<float>();
             float ZAllianceEntry = (*posEntry)[3].Get<float>();
             float OAllianceEntry = (*posEntry)[4].Get<float>();
-            uint16 mapHordeEntry = (*posEntry)[5].Get<uint16>();
+            int16 mapHordeEntry = (*posEntry)[5].Get<int16>();
             float XHordeEntry = (*posEntry)[6].Get<float>();
             float YHordeEntry = (*posEntry)[7].Get<float>();
             float ZHordeEntry = (*posEntry)[8].Get<float>();
