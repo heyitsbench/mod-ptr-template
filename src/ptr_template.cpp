@@ -5,6 +5,7 @@
 #include "ReputationMgr.h"
 #include "Object.h"
 #include "ptr_template_loader.h"
+#include <stdlib.h>
 
 using namespace Acore::ChatCommands;
 
@@ -46,7 +47,7 @@ public:
         if (check)
         {
             uint8 levelEntry = (*check)[0].Get<uint8>();
-            if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
+            if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // Player has to be the starting level to apply a template.
                 ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
                 : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
             {
@@ -64,19 +65,15 @@ public:
             float YAllianceEntry = (*posEntry)[2].Get<float>();
             float ZAllianceEntry = (*posEntry)[3].Get<float>();
             float OAllianceEntry = (*posEntry)[4].Get<float>();
-            int16 mapHordeEntry = (*posEntry)[5].Get<int16>();
+            int16 mapHordeEntry = (*posEntry)[5].Get<int16>(); // Has to be signed to allow for condition below.
             float XHordeEntry = (*posEntry)[6].Get<float>();
             float YHordeEntry = (*posEntry)[7].Get<float>();
             float ZHordeEntry = (*posEntry)[8].Get<float>();
             float OHordeEntry = (*posEntry)[9].Get<float>();
-            if (mapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE))
-            {
+            if (mapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde pos is the same.
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
-            }
             else
-            {
                 player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
-            }
         }
     }
 
@@ -93,20 +90,12 @@ public:
                 uint16 factionEntry = fields[2].Get<uint16>();
                 int32 standingEntry = fields[3].Get<int32>();
                 if (!(raceMaskEntry & player->getRaceMask()))
-                {
                     continue;
-                }
-                else
                 if (!(classMaskEntry & player->getClassMask()))
-                {
                     continue;
-                }
-                else
-                {
-                    FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
-                    player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false);
-                    player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
-                }
+                FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
+                player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
+                player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
             } while (repInfo->NextRow());
         }
     }
@@ -129,7 +118,7 @@ public:
                     continue;
                 for (uint8 j = 0; j < 255; j++)
                 {
-                    player->removeActionButton(j); // Remove any existing action buttons
+                    player->removeActionButton(j); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
                 }
                 player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
             } while (barInfo->NextRow());
@@ -152,11 +141,12 @@ public:
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                if (slotEntry > 22 || bagEntry != 0)
+                if (slotEntry > 22 || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
                 player->EquipNewItem(slotEntry, itemEntry, true);
             } while (gearInfo->NextRow());
         }
+        player->SaveToDB(false, false);
     }
 
     static void AddTemplateBagGear(Player* player, uint32 index)
@@ -166,33 +156,50 @@ public:
         {
             do
             {
-                uint16 raceMaskEntry = (*bagInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*bagInfo)[1].Get<uint16>();
-                uint32 bagEntry = (*bagInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*bagInfo)[3].Get<uint8>(); // 23-38 = backpack slots
-                uint32 itemEntry = (*bagInfo)[4].Get<uint32>();
-                uint32 quantityEntry = (*bagInfo)[5].Get<uint32>();
+                //                                                           0     1
+                QueryResult containerInfo = CharacterDatabase.Query("SELECT slot, item FROM character_inventory WHERE (bag = 0 AND guid={})", (player->GetGUID().GetCounter()));
+                Field* bagFields = bagInfo->Fetch();
+                Field* containerFields = containerInfo->Fetch();
+                uint16 raceMaskEntry = bagFields[0].Get<uint16>();
+                uint16 classMaskEntry = bagFields[1].Get<uint16>();
+                uint32 bagEntry = bagFields[2].Get<uint32>();
+                uint8 slotEntry = bagFields[3].Get<uint8>(); // 23-38 = backpack slots
+                uint32 itemEntry = bagFields[4].Get<uint32>();
+                uint32 quantityEntry = bagFields[5].Get<uint32>();
                 if (!(raceMaskEntry & player->getRaceMask()))
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                if (itemEntry == 8) // Arbitrary non-existent itemID value
+                if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
                 {
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if (slotEntry < 23 && bagEntry == 0)
+                if (slotEntry < 23 && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
                     continue;
                 ItemPosCountVec dest;
-                if (bagEntry == 6) // This won't get triggered for included templates, but if someone's lazy/testing, this works
+                if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
+                {
+                    do
+                    {
+                        if (!containerFields) // Apparently this can happen sometimes.
+                            continue;
+                        uint8 slotDBInfo = containerFields[0].Get<uint8>();
+                        uint32 itemDBInfo = containerFields[1].Get<uint32>();
+                        if (bagEntry != (slotDBInfo - 18)) // Check to see if equipped bag matches specified bag for module.
+                            continue;
+                        if (slotDBInfo < 19 || slotDBInfo > 22)
+                            continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
+                        uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
+                        if (validCheck == EQUIP_ERR_OK)
+                        {
+                            player->StoreNewItem(dest, itemEntry, true);
+                        }
+                    } while (containerInfo->NextRow());
+                }
+                else if (bagEntry >= 5) // Basically just used for currencies, random sorting, and gold.
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
-                    if (validCheck == EQUIP_ERR_OK)
-                        player->StoreNewItem(dest, itemEntry, true);
-                }
-                else
-                {
-                    uint8 validCheck = player->CanStoreNewItem(bagEntry, slotEntry, dest, itemEntry, quantityEntry); // TODO: Add support for more bag slots. Otherwise, all features basically done :partying_face:
                     if (validCheck == EQUIP_ERR_OK)
                         player->StoreNewItem(dest, itemEntry, true);
                 }
@@ -216,10 +223,9 @@ public:
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                player->SetSkill(skillEntry, 0, valueEntry, maxEntry);
-
+                player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step parameter is used for, being zeroed here.
             } while (skillInfo->NextRow());
-            player->UpdateSkillsForLevel();
+            player->UpdateSkillsForLevel(); // Might not be necessary anymore, leftover from use of old level function.
         }
     }
 
@@ -285,7 +291,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Set index %u enable flag(%s) to enabled.", index, comment);
+            handler->PSendSysMessage("Set index %u enable flag (%s) to enabled.", index, comment);
             return true;
         }
         else
@@ -301,7 +307,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Set index %u enable flag(%s) to disabled.", index, comment);
+            handler->PSendSysMessage("Set index %u enable flag (%s) to disabled.", index, comment);
             return true;
         }
         else
@@ -312,7 +318,7 @@ public:
 
     static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
     {
-        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords
+        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
         if(check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
@@ -328,8 +334,9 @@ public:
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);
-                createTemplate::AddTemplateBagGear(target, index);
-                createTemplate::AddTemplateSpells(target, index);
+                std::this_thread::sleep_for(40ms); //                 I absolutely despise this solution, but I have
+                createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
+                createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
                 createTemplate::AddTemplateHotbar(target, index);
             }
             return true;
