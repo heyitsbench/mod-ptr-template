@@ -46,7 +46,7 @@ public:
 		return true;
 	}
 
-	static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
+	static bool applyTemplate(ChatHandler* handler, uint32 index) // Unused: Optional<PlayerIdentifier> player, 
 	{
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
         uint8 enable = (*check)[0].Get<uint8>();
