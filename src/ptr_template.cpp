@@ -156,8 +156,8 @@ public:
         {
             do
             {
-                //                                                           0     1
-                QueryResult containerInfo = CharacterDatabase.Query("SELECT slot, item FROM character_inventory WHERE (bag = 0 AND guid={})", (player->GetGUID().GetCounter()));
+                //                                                           0
+                QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid={})", (player->GetGUID().GetCounter()));
                 Field* bagFields = bagInfo->Fetch();
                 Field* containerFields = containerInfo->Fetch();
                 uint16 raceMaskEntry = bagFields[0].Get<uint16>();
@@ -185,7 +185,6 @@ public:
                         if (!containerFields) // Apparently this can happen sometimes.
                             continue;
                         uint8 slotDBInfo = containerFields[0].Get<uint8>();
-                        uint32 itemDBInfo = containerFields[1].Get<uint32>();
                         if (bagEntry != (slotDBInfo - 18)) // Check to see if equipped bag matches specified bag for module.
                             continue;
                         if (slotDBInfo < 19 || slotDBInfo > 22)
