@@ -78,8 +78,8 @@ public:
     }
 
     static void AddTemplateHomebind(Player* player, uint32 index)
-    { //                                                         0              1            2         3            4              5          6       7                8      9        10        11
-        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneAlliance, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+    { //                                                         0              1            2           3           4           5           6          7          8        9       10       11
+        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
         if (homeEntry) {
             uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
             uint16 hZoneAllianceEntry = (*homeEntry)[1].Get<uint16>();
@@ -354,9 +354,7 @@ public:
             if (enable == 1)
             {
                 if (!player)
-                {
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
-                }
                 Player* target = player->GetConnectedPlayer();
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
