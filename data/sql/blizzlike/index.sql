@@ -1,4 +1,4 @@
-INSERT INTO `mod_ptrtemplate_index` (`ID`, `Keywords`, `Level`, `MapAlliance`, `XAlliance`, `YAlliance`, `ZAlliance`, `OAlliance`, `MapHorde`, `XHorde`, `YHorde`, `ZHorde`, `OHorde`, `Enable`, `Comment`) VALUES
-(1, NULL, 60, 0, -8865.092773, 671.792603, 97.903442, 2.160984, 1, 1633.800171, -4440.467773, 15.634011, 3.083429, 0, 'Season of Mastery AQ40 Level 60'),
-(2, NULL, 70, 0, -8414.122070, 1052.651367, 68.384247, 1.357533, 1, 1529.993286, -4412.640137, 12.976580, 6.278741, 0, 'Wrath Classic Level 70'),
-(3, NULL, 80, 571, 5852.440918, 692.975159, 642.039368, 0.856949, -1, 0, 0, 0, 0, 0, 'Wrath Classic Level 80');
+INSERT INTO `mod_ptrtemplate_index` (`ID`, `Keywords`, `Level`, `MapAlliance`, `XAlliance`, `YAlliance`, `ZAlliance`, `OAlliance`, `MapHorde`, `XHorde`, `YHorde`, `ZHorde`, `OHorde`, `HMapAlliance`, `HZoneAlliance`, `HXAlliance`, `HYAlliance`, `HZAlliance`, `HOAlliance`, `HMapHorde`, `HZoneHorde`, `HXHorde`, `HYHorde`, `HZHorde`, `HOHorde`, `Enable`, `Comment`) VALUES
+(1, NULL, 60, 0, -8865.09, 671.793, 97.9034, 2.16098, 1, 1633.8, -4440.47, 15.634, 3.08343, 0, 1537, -4918.88, -940.406, 501.564, 5.42347, 1, 1637, 1629.85, -4373.64, 31.5572, 3.69762, 0, 'Season of Mastery AQ40 Level 60'), -- Bind needs verification.
+(2, NULL, 70, 0, -8414.12, 1052.65, 68.3842, 1.35753, 1, 1529.99, -4412.64, 12.9766, 6.27874, 530, 3703, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 0, 0, 'Wrath Classic Level 70'),
+(3, NULL, 80, 571, 5852.44, 692.975, 642.039, 0.856949, -1, 0, 0, 0, 0, 571, 4395, 5804.15, 624.771, 647.767, 1.64, -1, 0, 0, 0, 0, 0, 0, 'Wrath Classic Level 80'); -- Bind needs verification.

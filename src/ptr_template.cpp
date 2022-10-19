@@ -77,6 +77,36 @@ public:
         }
     }
 
+    static void AddTemplateHomebind(Player* player, uint32 index)
+    { //                                                         0              1            2         3            4              5          6       7                8      9        10        11
+        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneAlliance, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (homeEntry) {
+            uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
+            uint16 hZoneAllianceEntry = (*homeEntry)[1].Get<uint16>();
+            float HXAllianceEntry = (*homeEntry)[2].Get<float>();
+            float HYAllianceEntry = (*homeEntry)[3].Get<float>();
+            float HZAllianceEntry = (*homeEntry)[4].Get<float>();
+            float HOAllianceEntry = (*homeEntry)[5].Get<float>();
+            int16 hMapHordeEntry = (*homeEntry)[6].Get<int16>(); // Has to be signed to allow for condition below.
+            uint16 hZoneHordeEntry = (*homeEntry)[7].Get<uint16>();
+            float HXHordeEntry = (*homeEntry)[8].Get<float>();
+            float HYHordeEntry = (*homeEntry)[9].Get<float>();
+            float HZHordeEntry = (*homeEntry)[10].Get<float>();
+            float HOHordeEntry = (*homeEntry)[11].Get<float>();
+            WorldLocation homebinding;
+            if (hMapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde binding is the same.
+            {
+                homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
+                player->SetHomebind(homebinding, hZoneAllianceEntry);
+            }
+            else
+            {
+                homebinding = WorldLocation(hMapHordeEntry, HXHordeEntry, HYHordeEntry, HZHordeEntry, HOHordeEntry);
+                player->SetHomebind(homebinding, hZoneHordeEntry);
+            }
+        }
+    }
+
     static void AddTemplateReputation(Player* player, uint32 index)
     { //                                                     0          1          2         3
         QueryResult repInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, FactionID, Standing FROM mod_ptrtemplate_reputations WHERE ID={}", index);
@@ -330,10 +360,11 @@ public:
                 Player* target = player->GetConnectedPlayer();
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
+                createTemplate::AddTemplateHomebind(target, index);
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);
-                std::this_thread::sleep_for(40ms); //                 I absolutely despise this solution, but I have
+                std::this_thread::sleep_for(40ms); //  < - - - - - - -I absolutely despise this solution, but I have
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
                 createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
                 createTemplate::AddTemplateHotbar(target, index);
