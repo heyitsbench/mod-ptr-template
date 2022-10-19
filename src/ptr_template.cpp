@@ -231,7 +231,6 @@ public:
                         continue; // Ignore any equipped pieces.
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
-                    LOG_ERROR("module", "error: {} item: {}", validCheck, itemEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
                         player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
