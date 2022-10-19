@@ -146,10 +146,7 @@ public:
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                for (uint8 j = 0; j < 255; j++)
-                {
-                    player->removeActionButton(j); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
-                }
+                player->removeActionButton(buttonEntry); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
                 player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
             } while (barInfo->NextRow());
         }
@@ -225,6 +222,21 @@ public:
                             player->StoreNewItem(dest, itemEntry, true);
                         }
                     } while (containerInfo->NextRow());
+                }
+                else if (bagEntry == 0) // If bag is backpack
+                {
+                    if (!containerFields) // Apparently this can happen sometimes.
+                        continue;
+                    if (slotEntry < 23)
+                        continue; // Ignore any equipped pieces.
+                    player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
+                    uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
+                    LOG_ERROR("module", "error: {} item: {}", validCheck, itemEntry);
+                    if (validCheck == EQUIP_ERR_OK)
+                    {
+                        player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
+                        player->StoreNewItem(dest, itemEntry, true);
+                    }
                 }
                 else if (bagEntry >= 5) // Basically just used for currencies, random sorting, and gold.
                 {
