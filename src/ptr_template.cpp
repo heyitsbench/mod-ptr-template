@@ -135,6 +135,10 @@ public:
         QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE ID={}", index);
         if (barInfo)
         {
+            for (uint8 j = 0; j < 255; j++)
+            {
+                player->removeActionButton(j);
+            }
             do
             {
                 uint16 raceMaskEntry = (*barInfo)[0].Get<uint16>();
@@ -146,7 +150,7 @@ public:
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                player->removeActionButton(buttonEntry); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
+                // player->removeActionButton(buttonEntry); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
                 player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
             } while (barInfo->NextRow());
         }
@@ -283,7 +287,7 @@ public:
                     continue;
                 if (!(classMaskEntry & player->getClassMask()))
                     continue;
-                player->learnSpellHighRank(spellEntry);
+                player->learnSpell(spellEntry);
             } while (spellInfo->NextRow());
         }
     }
