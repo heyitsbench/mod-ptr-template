@@ -349,6 +349,10 @@ public:
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
+            for (uint8 j = 19; j < 39; j++)
+            {
+                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
+            }
         }
     }
 };
