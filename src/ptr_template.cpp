@@ -41,18 +41,35 @@ class createTemplate : public PlayerScript {
 public:
     createTemplate() : PlayerScript("createTemplate") { }
 
+    static bool CheckTemplateQualifier(Player* player)
+    {
+        if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
+            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
+            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
+        {
+            return true;
+        }
+        else
+            return false;
+    }
+
+    static bool CheckTemplateRaceClass(Player* player, uint16 raceEntry, uint16 classEntry)
+    {
+        if (!(raceEntry & player->getRaceMask()))
+            return false;
+        if (!(classEntry & player->getClassMask()))
+            return false;
+        else
+            return true;
+    }
+
     static void AddTemplateLevel(Player* player, uint32 index)
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
         if (check)
         {
             uint8 levelEntry = (*check)[0].Get<uint8>();
-            //if(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT    I want this whole if to happen for the entire command. I put it here cause I'm dumb.
-            //    ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)                 I'm keeping it here because it does work as a function,
-            //    : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))        but it doesn't work how I want inside of one of the functions. To be re-implemented elsewhere basically.
-            //{
-                player->GiveLevel(levelEntry);
-            //}
+            player->GiveLevel(levelEntry);
         }
     }
 
@@ -119,9 +136,7 @@ public:
                 uint16 classMaskEntry = fields[1].Get<uint16>();
                 uint16 factionEntry = fields[2].Get<uint16>();
                 int32 standingEntry = fields[3].Get<int32>();
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
@@ -146,9 +161,7 @@ public:
                 uint8 buttonEntry = (*barInfo)[2].Get<uint8>();
                 uint32 actionEntry = (*barInfo)[3].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[4].Get<uint8>();
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 // player->removeActionButton(buttonEntry); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
                 player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
@@ -168,9 +181,7 @@ public:
                 uint32 bagEntry = (*gearInfo)[2].Get<uint32>();
                 uint8 slotEntry = (*gearInfo)[3].Get<uint8>(); //   00-18 = equipped gear
                 uint32 itemEntry = (*gearInfo)[4].Get<uint32>(); // 19-22 = container slots
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 if (slotEntry > 22 || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
@@ -197,9 +208,7 @@ public:
                 uint8 slotEntry = bagFields[3].Get<uint8>(); // 23-38 = backpack slots
                 uint32 itemEntry = bagFields[4].Get<uint32>();
                 uint32 quantityEntry = bagFields[5].Get<uint32>();
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
                 {
@@ -263,9 +272,7 @@ public:
                 uint16 skillEntry = (*skillInfo)[2].Get<uint16>();
                 uint16 valueEntry = (*skillInfo)[3].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[4].Get<uint16>();
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step parameter is used for, being zeroed here.
             } while (skillInfo->NextRow());
@@ -283,9 +290,7 @@ public:
                 uint16 raceMaskEntry = (*spellInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*spellInfo)[1].Get<uint16>();
                 uint64 spellEntry = (*spellInfo)[2].Get<uint64>();
-                if (!(raceMaskEntry & player->getRaceMask()))
-                    continue;
-                if (!(classMaskEntry & player->getClassMask()))
+                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 player->learnSpell(spellEntry);
             } while (spellInfo->NextRow());
@@ -426,6 +431,8 @@ public:
                 if (!player)
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 Player* target = player->GetConnectedPlayer();
+                if (!(createTemplate::CheckTemplateQualifier(target)))
+                    return false;
                 createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
