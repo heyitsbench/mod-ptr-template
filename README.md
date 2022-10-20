@@ -27,6 +27,6 @@ Though currently sparse, you are also able to edit the [mod_ptr_template.conf](h
 For information on creating your own template sets (and submitting them here for others to use), please refer to the [wiki](https://github.com/heyitsbench/mod-ptr-template/wiki).
 
 ## Credits
-- [acidmanifesto](https://github.com/acidmanifesto) for providing an example of storing SQL results into variables.
+- [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the skip-dk-starting area module as well as an example of storing SQL results into variables.
 - [AnchyDev](https://github.com/AnchyDev) for pointing out some much needed info regarding item storage.
 - [Nyeriah](https://github.com/Nyeriah) for identifying a couple points of confusion to me, resulting in issues.
