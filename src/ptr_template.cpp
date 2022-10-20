@@ -379,6 +379,7 @@ public:
             { "enable", enableTemplate, SEC_MODERATOR, Console::Yes },
             { "disable", disableTemplate, SEC_MODERATOR, Console::Yes },
             { "apply", applyTemplate, SEC_PLAYER, Console::No },
+            { "list", listTemplate, SEC_PLAYER, Console::No },
         };
 
         static ChatCommandTable commandTable =
@@ -389,7 +390,7 @@ public:
     }
 
     static bool enableTemplate(ChatHandler* handler, uint32 index)
-    {
+    { //                                                    0
         QueryResult result = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID={}", index);
         WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=1 WHERE ID={}", index);
         if (result)
@@ -400,12 +401,13 @@ public:
         }
         else
         {
+            handler->PSendSysMessage("This template has not been added.");
             return false;
         }
     }
 
     static bool disableTemplate(ChatHandler* handler, uint32 index)
-    {
+    { //                                                    0
         QueryResult result = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID={}", index);
         WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=0 WHERE ID={}", index);
         if (result)
@@ -416,12 +418,13 @@ public:
         }
         else
         {
+            handler->PSendSysMessage("This template has not been added.");
             return false;
         }
     }
 
     static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
-    {
+    { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
         if(check)
         {
@@ -432,7 +435,10 @@ public:
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 Player* target = player->GetConnectedPlayer();
                 if (!(createTemplate::CheckTemplateQualifier(target)))
-                    return false;
+                {
+                    handler->PSendSysMessage("You do not meet the requirements to apply this template.");
+                    return true;
+                }
                 createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
@@ -444,13 +450,40 @@ public:
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
                 createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
                 createTemplate::AddTemplateHotbar(target, index);
+                std::this_thread::sleep_for(50ms); //                 Still hate this, FYI
+                handler->PSendSysMessage("Please logout for the template to fully apply.");
+            }
+            else
+            {
+                handler->PSendSysMessage("This template is disabled.");
             }
             return true;
         }
         else
         {
-            return false;
+            handler->PSendSysMessage("This template has not been added.");
+            return true;
         }
+    }
+
+    static bool listTemplate(ChatHandler* handler)
+    { //                                                 0     1        2
+        QueryResult enable = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index");
+        if (enable)
+        {
+            do
+            {
+                uint8 indexEntry = (*enable)[0].Get<uint8>();
+                uint8 enableEntry = (*enable)[1].Get<uint8>();
+                std::string commentEntry = (*enable)[2].Get<std::string>();
+                handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry);
+            } while (enable->NextRow());
+        }
+        else
+        {
+            handler->PSendSysMessage("There are no added templates.");
+        }
+        return true;
     }
 };
 
