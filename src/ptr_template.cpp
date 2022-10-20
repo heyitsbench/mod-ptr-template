@@ -47,12 +47,12 @@ public:
         if (check)
         {
             uint8 levelEntry = (*check)[0].Get<uint8>();
-            if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // Player has to be the starting level to apply a template.
-                ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
-                : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
-            {
+            //if(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT    I want this whole if to happen for the entire command. I put it here cause I'm dumb.
+            //    ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)                 I'm keeping it here because it does work as a function,
+            //    : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))        but it doesn't work how I want inside of one of the functions. To be re-implemented elsewhere basically.
+            //{
                 player->GiveLevel(levelEntry);
-            }
+            //}
         }
     }
 
@@ -291,6 +291,61 @@ public:
             } while (spellInfo->NextRow());
         }
     }
+
+    static void AddTemplateDeathKnight(Player* player) // Pretty much all of this is copied from acidmanifesto's lovely work on the skip-dk-starting-area module.
+    {
+        if (player->getClass() == CLASS_DEATH_KNIGHT)
+        {
+            int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
+
+            int specialSurpriseQuestId = -1;
+            switch (player->getRace())
+            {
+            case RACE_TAUREN:
+                specialSurpriseQuestId = 12739;
+                break;
+            case RACE_HUMAN:
+                specialSurpriseQuestId = 12742;
+                break;
+            case RACE_NIGHTELF:
+                specialSurpriseQuestId = 12743;
+                break;
+            case RACE_DWARF:
+                specialSurpriseQuestId = 12744;
+                break;
+            case RACE_GNOME:
+                specialSurpriseQuestId = 12745;
+                break;
+            case RACE_DRAENEI:
+                specialSurpriseQuestId = 12746;
+                break;
+            case RACE_BLOODELF:
+                specialSurpriseQuestId = 12747;
+                break;
+            case RACE_ORC:
+                specialSurpriseQuestId = 12748;
+                break;
+            case RACE_TROLL:
+                specialSurpriseQuestId = 12749;
+                break;
+            case RACE_UNDEAD_PLAYER:
+                specialSurpriseQuestId = 12750;
+                break;
+            }
+
+            STARTER_QUESTS[22] = specialSurpriseQuestId;
+            STARTER_QUESTS[32] = player->GetTeamId() == TEAM_ALLIANCE ? 13188 : 13189;
+
+            for (int questId : STARTER_QUESTS)
+            {
+                if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
+                {
+                    player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
+                    player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
+                }
+            }
+        }
+    }
 };
 
 class announce : public PlayerScript {
@@ -371,13 +426,14 @@ public:
                 if (!player)
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 Player* target = player->GetConnectedPlayer();
+                createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplatePosition(target, index);
                 createTemplate::AddTemplateHomebind(target, index);
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);
-                std::this_thread::sleep_for(40ms); //  < - - - - - - -I absolutely despise this solution, but I have
+                std::this_thread::sleep_for(50ms); //  < - - - - - - -I absolutely despise this solution, but I have
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
                 createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
                 createTemplate::AddTemplateHotbar(target, index);
