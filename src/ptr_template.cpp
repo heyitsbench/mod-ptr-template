@@ -218,7 +218,7 @@ public:
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if ((slotEntry < 23 && slotEntry > 150) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                if ((slotEntry < 23 || slotEntry > 150) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
                     continue;
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
