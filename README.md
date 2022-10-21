@@ -14,7 +14,7 @@ Check issues page for current progress on blizzlike templates.
 
 For the most part, the [guide found here](https://www.azerothcore.org/wiki/add-a-module) can be referred to. However, the SQL portion needs a bit of attention.
 
-If you want to create your own template sets, feel free to only run the [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) file in your world DB and create the sets from the created tables.
+If you want to create your own template sets, feel free to only run the [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) and [command.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/command.sql) files in your world DB and create the sets from the created tables.
 
 If you want to use the template sets included with the module, you must then run the contents of the [blizzlike](https://github.com/heyitsbench/mod-ptr-template/tree/master/data/sql/blizzlike) directory on your world DB as well.
 
