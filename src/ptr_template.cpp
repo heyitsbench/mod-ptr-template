@@ -145,14 +145,14 @@ public:
         }
     }
 
-    static void AddTemplateHotbar(Player* player, uint32 index)
+    static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
     { //                                                     0          1        2       3      4
         QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE ID={}", index);
         if (barInfo)
         {
-            for (uint8 j = 0; j < 255; j++)
-            {
-                player->removeActionButton(j);
+            for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
+            { //                                  This doesn't work for spells added by AddTemplateSpells.
+                player->removeActionButton(j); // I don't know why and I've tried everything I can think of, but nothing's worked.
             }
             do
             {
@@ -163,9 +163,9 @@ public:
                 uint8 typeEntry = (*barInfo)[4].Get<uint8>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
-                // player->removeActionButton(buttonEntry); // Remove any existing action buttons (This doesn't work for anything added by this function, need to fix that)
-                player->addActionButton(buttonEntry, actionEntry, typeEntry); // Requires re-log
+                player->addActionButton(buttonEntry, actionEntry, typeEntry);
             } while (barInfo->NextRow());
+            player->SendActionButtons(2);
         }
     }
 
@@ -276,7 +276,7 @@ public:
                     continue;
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step parameter is used for, being zeroed here.
             } while (skillInfo->NextRow());
-            player->UpdateSkillsForLevel(); // Might not be necessary anymore, leftover from use of old level function.
+            player->SaveToDB(false, false);
         }
     }
 
