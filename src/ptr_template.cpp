@@ -43,8 +43,8 @@ public:
 
     static bool CheckTemplateQualifier(Player* player)
     {
-        if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
-            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
+        if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // TODO: Add config option to allow templates to be applied
+            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress.
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
         {
             return true;
@@ -151,8 +151,8 @@ public:
         if (barInfo)
         {
             for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
-            { //                                  This doesn't work for spells added by AddTemplateSpells.
-                player->removeActionButton(j); // I don't know why and I've tried everything I can think of, but nothing's worked.
+            { //                                                  This doesn't work for spells added by AddTemplateSpells.
+                player->removeActionButton(j); //                 I don't know why and I've tried everything I can think of, but nothing's worked.
             }
             do
             {
@@ -183,8 +183,11 @@ public:
                 uint32 itemEntry = (*gearInfo)[4].Get<uint32>(); // 19-22 = container slots
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
-                if (slotEntry > 22 || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
+                if ((slotEntry > 22 && slotEntry <= 150) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
+                if (slotEntry == 200) // Arbitrary hard-coded slotID.
+                    player->SetAmmo(itemEntry);
+                else
                 player->EquipNewItem(slotEntry, itemEntry, true);
             } while (gearInfo->NextRow());
         }
@@ -215,7 +218,7 @@ public:
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if (slotEntry < 23 && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                if ((slotEntry < 23 && slotEntry > 150) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
                     continue;
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
@@ -240,8 +243,8 @@ public:
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                         continue;
-                    if (slotEntry < 23)
-                        continue; // Ignore any equipped pieces.
+                    if (slotEntry < 23 || slotEntry > 150) // 150 btw is as high as valid slots in bag 0 allegedly go.
+                        continue; // Ignore any equipped items or invalid slot items.
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
@@ -349,8 +352,8 @@ public:
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
-            for (uint8 j = 19; j < 39; j++)
-            {
+            for (uint8 j = 19; j < 39; j++) // Removes any items the DK is carrying at the end of the process.
+            { //                               Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
             }
         }
