@@ -148,12 +148,12 @@ public:
     static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
     { //                                                     0          1        2       3      4
         QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE ID={}", index);
+        for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
+        { //                                                  This doesn't work for spells added by AddTemplateSpells.
+            player->removeActionButton(j); //                 I don't know why and I've tried everything I can think of, but nothing's worked.
+        }
         if (barInfo)
         {
-            for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
-            { //                                                  This doesn't work for spells added by AddTemplateSpells.
-                player->removeActionButton(j); //                 I don't know why and I've tried everything I can think of, but nothing's worked.
-            }
             do
             {
                 uint16 raceMaskEntry = (*barInfo)[0].Get<uint16>();
@@ -165,8 +165,8 @@ public:
                     continue;
                 player->addActionButton(buttonEntry, actionEntry, typeEntry);
             } while (barInfo->NextRow());
-            player->SendActionButtons(2);
         }
+        player->SendActionButtons(2);
     }
 
     static void AddTemplateWornGear(Player* player, uint32 index)
