@@ -552,7 +552,6 @@ public:
                 }
                 createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
-                createTemplate::AddTemplatePosition(target, index);
                 createTemplate::AddTemplateHomebind(target, index);
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
@@ -561,6 +560,7 @@ public:
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
                 createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
                 createTemplate::AddTemplateHotbar(target, index);
+                createTemplate::AddTemplatePosition(target, index);
                 std::this_thread::sleep_for(50ms); //                 Still hate this, FYI
                 handler->PSendSysMessage("Please logout for the template to fully apply.");
             }
