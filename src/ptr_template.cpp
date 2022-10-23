@@ -170,8 +170,8 @@ public:
     }
 
     static void AddTemplateWornGear(Player* player, uint32 index)
-    { //                                                      0          1        2      3       4
-        QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID FROM mod_ptrtemplate_inventory WHERE ID={}", index);
+    { //                                                      0          1        2      3       4        5         6         7         8         9         10        11
+        QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
         if (gearInfo)
         {
             do
@@ -181,6 +181,13 @@ public:
                 uint32 bagEntry = (*gearInfo)[2].Get<uint32>();
                 uint8 slotEntry = (*gearInfo)[3].Get<uint8>(); //   00-18 = equipped gear
                 uint32 itemEntry = (*gearInfo)[4].Get<uint32>(); // 19-22 = container slots
+                uint32 enchant0Entry = (*gearInfo)[5].Get<uint32>();
+                uint32 enchant1Entry = (*gearInfo)[6].Get<uint32>();
+                uint32 enchant2Entry = (*gearInfo)[7].Get<uint32>();
+                uint32 enchant3Entry = (*gearInfo)[8].Get<uint32>();
+                uint32 enchant4Entry = (*gearInfo)[9].Get<uint32>();
+                uint32 enchant5Entry = (*gearInfo)[10].Get<uint32>();
+                uint32 enchant6Entry = (*gearInfo)[11].Get<uint32>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 if ((slotEntry > 22 && slotEntry <= 150) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
@@ -189,14 +196,59 @@ public:
                     player->SetAmmo(itemEntry);
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true);
+                Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
+                if (enchant0Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant1Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant2Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant3Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant4Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant5Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else if (enchant6Entry != 0)
+                {
+                    player->ApplyEnchantment(item, false);
+                    item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
+                    player->ApplyEnchantment(item, true);
+                }
+                else
+                    continue;
             } while (gearInfo->NextRow());
         }
         player->SaveToDB(false, false);
     }
 
     static void AddTemplateBagGear(Player* player, uint32 index)
-    { //                                                     0          1        2      3       4        5
-        QueryResult bagInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Quantity FROM mod_ptrtemplate_inventory WHERE ID={}", index);
+    { //                                                     0          1        2      3       4        5         6         7         8         9         10        11,       12
+        QueryResult bagInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
         if (bagInfo)
         {
             do
@@ -211,6 +263,13 @@ public:
                 uint8 slotEntry = bagFields[3].Get<uint8>(); // 23-38 = backpack slots
                 uint32 itemEntry = bagFields[4].Get<uint32>();
                 uint32 quantityEntry = bagFields[5].Get<uint32>();
+                uint32 enchant0Entry = bagFields[6].Get<uint32>();
+                uint32 enchant1Entry = bagFields[7].Get<uint32>();
+                uint32 enchant2Entry = bagFields[8].Get<uint32>();
+                uint32 enchant3Entry = bagFields[9].Get<uint32>();
+                uint32 enchant4Entry = bagFields[10].Get<uint32>();
+                uint32 enchant5Entry = bagFields[11].Get<uint32>();
+                uint32 enchant6Entry = bagFields[12].Get<uint32>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
@@ -251,6 +310,51 @@ public:
                     {
                         player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                         player->StoreNewItem(dest, itemEntry, true);
+                        Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
+                        if (enchant0Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant1Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant2Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant3Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant4Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant5Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else if (enchant6Entry != 0)
+                        {
+                            player->ApplyEnchantment(item, false);
+                            item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
+                            player->ApplyEnchantment(item, true);
+                        }
+                        else
+                            continue;
                     }
                 }
                 else if (bagEntry >= 5) // Basically just used for currencies, random sorting, and gold.
