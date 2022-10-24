@@ -273,7 +273,7 @@ public:
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
                 if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
-                {
+                { //                   This should probably be a slotID and not an itemEntry, similar to ammo.
                     player->SetMoney(quantityEntry);
                     continue;
                 }
@@ -295,6 +295,51 @@ public:
                         if (validCheck == EQUIP_ERR_OK)
                         {
                             player->StoreNewItem(dest, itemEntry, true);
+                            Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
+                            if (enchant0Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant1Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant2Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant3Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant4Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant5Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else if (enchant6Entry != 0)
+                            {
+                                player->ApplyEnchantment(item, false);
+                                item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
+                                player->ApplyEnchantment(item, true);
+                            }
+                            else
+                                continue;
                         }
                     } while (containerInfo->NextRow());
                 }
