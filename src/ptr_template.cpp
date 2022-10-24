@@ -43,13 +43,17 @@ public:
 
     static bool CheckTemplateQualifier(Player* player, uint32 index)
     {
-        // QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE ID={}", index);   These will be used to figure out if a template has a race/class in mind.
-        // QueryResult barInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_action WHERE ID={}", index);        For example, the AQ40 blizzlike template doesn't apply to belfs, draenei, or DKs.
-        // QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE ID={}", index);    Currently commented until I can figure out the queries needed. :P
-        // QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE ID={}", index);
-        // QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE ID={}", index);
-        // if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
-        //     return false;
+        uint32 raceMask = player->getRaceMask();
+        uint32 classMask = player->getClassMask();
+        QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask); // These are used to figure out if a template has a race/class in mind.
+        QueryResult barInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask); //      For example, the AQ40 blizzlike template doesn't apply to belfs, draenei, or DKs.
+        QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
+        QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
+        QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
+        if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
+        {
+            return false;
+        }
         if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // TODO: Add config option to allow templates to be applied
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress.
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
