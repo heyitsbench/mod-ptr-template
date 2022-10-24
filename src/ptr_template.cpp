@@ -203,44 +203,42 @@ public:
                     item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant1Entry != 0)
+                if (enchant1Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant2Entry != 0)
+                if (enchant2Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant3Entry != 0)
+                if (enchant3Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant4Entry != 0)
+                if (enchant4Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant5Entry != 0)
+                if (enchant5Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else if (enchant6Entry != 0)
+                if (enchant6Entry != 0)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                else
-                    continue;
             } while (gearInfo->NextRow());
         }
         player->SaveToDB(false, false);
@@ -302,44 +300,42 @@ public:
                                 item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant1Entry != 0)
+                            if (enchant1Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant2Entry != 0)
+                            if (enchant2Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant3Entry != 0)
+                            if (enchant3Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant4Entry != 0)
+                            if (enchant4Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant5Entry != 0)
+                            if (enchant5Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else if (enchant6Entry != 0)
+                            if (enchant6Entry != 0)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            else
-                                continue;
                         }
                     } while (containerInfo->NextRow());
                 }
@@ -362,44 +358,42 @@ public:
                             item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant1Entry != 0)
+                        if (enchant1Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant2Entry != 0)
+                        if (enchant2Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant3Entry != 0)
+                        if (enchant3Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant4Entry != 0)
+                        if (enchant4Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant5Entry != 0)
+                        if (enchant5Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else if (enchant6Entry != 0)
+                        if (enchant6Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        else
-                            continue;
                     }
                 }
                 else if (bagEntry >= 5) // Basically just used for currencies, random sorting, and gold.
