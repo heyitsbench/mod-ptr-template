@@ -41,8 +41,15 @@ class createTemplate : public PlayerScript {
 public:
     createTemplate() : PlayerScript("createTemplate") { }
 
-    static bool CheckTemplateQualifier(Player* player)
+    static bool CheckTemplateQualifier(Player* player, uint32 index)
     {
+        // QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE ID={}", index);   These will be used to figure out if a template has a race/class in mind.
+        // QueryResult barInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_action WHERE ID={}", index);        For example, the AQ40 blizzlike template doesn't apply to belfs, draenei, or DKs.
+        // QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE ID={}", index);    Currently commented until I can figure out the queries needed. :P
+        // QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE ID={}", index);
+        // QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE ID={}", index);
+        // if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
+        //     return false;
         if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // TODO: Add config option to allow templates to be applied
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress.
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
@@ -151,7 +158,7 @@ public:
         for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
         { //                                                  This doesn't work for spells added by AddTemplateSpells.
             player->removeActionButton(j); //                 I don't know why and I've tried everything I can think of, but nothing's worked.
-        }
+        } //                                                  And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
         if (barInfo)
         {
             do
@@ -584,7 +591,7 @@ public:
                 if (!player)
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 Player* target = player->GetConnectedPlayer();
-                if (!(createTemplate::CheckTemplateQualifier(target)))
+                if (!(createTemplate::CheckTemplateQualifier(target, index)))
                 {
                     handler->PSendSysMessage("You do not meet the requirements to apply this template.");
                     return true;
