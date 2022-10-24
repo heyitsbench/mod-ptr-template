@@ -185,6 +185,10 @@ public:
         QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
         if (gearInfo)
         {
+            for (uint8 j = 0; j <= 18; j++)
+            {
+                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
+            }
             do
             {
                 uint16 raceMaskEntry = (*gearInfo)[0].Get<uint16>();
