@@ -205,7 +205,7 @@ public:
                 uint32 enchant6Entry = (*gearInfo)[11].Get<uint32>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
-                if ((slotEntry > 22 && slotEntry <= 150) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
+                if ((slotEntry > 22 && slotEntry <= 135) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
                 if (slotEntry == 200) // Arbitrary hard-coded slotID.
                     player->SetAmmo(itemEntry);
@@ -290,7 +290,7 @@ public:
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if ((slotEntry < 23 || slotEntry > 150) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                if ((slotEntry < 23 || slotEntry > 135) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
                     continue;
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
@@ -358,7 +358,7 @@ public:
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                         continue;
-                    if (slotEntry < 23 || slotEntry > 150) // 150 btw is as high as valid slots in bag 0 allegedly go.
+                    if (slotEntry < 23 || slotEntry > 135) // 135 btw is as high as valid slots in bag 0 allegedly go.
                         continue; // Ignore any equipped items or invalid slot items.
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
