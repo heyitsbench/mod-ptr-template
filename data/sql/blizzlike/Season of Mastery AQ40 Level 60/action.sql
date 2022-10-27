@@ -23,8 +23,7 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 255, 1, 93, 11556, 0, NULL),
 (1, 255, 1, 96, 6603, 0, NULL),
 (1, 255, 1, 108, 6603, 0, NULL),
--- (1, 5, 2, 0, 6603, 0, NULL), -- Paladin
-(1, 5, 2, 1, 21084, 0, NULL),
+(1, 5, 2, 1, 21084, 0, NULL), -- Paladin
 (1, 5, 2, 3, 20271, 0, NULL),
 (1, 5, 2, 4, 25292, 0, NULL),
 (1, 5, 2, 5, 10308, 0, NULL),
@@ -33,7 +32,6 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 5, 2, 8, 10310, 0, NULL),
 (1, 5, 2, 9, 25291, 0, NULL),
 (1, 5, 2, 10, 25290, 0, NULL),
--- (1, 5, 2, 11, 1205, 128, NULL),
 (1, 174, 4, 1, 14287, 0, NULL), -- Hunter
 (1, 174, 4, 2, 75, 0, NULL),
 (1, 174, 4, 3, 14281, 0, NULL),
@@ -56,7 +54,6 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 223, 8, 8, 1766, 0, NULL),
 (1, 223, 8, 9, 11305, 0, NULL),
 (1, 223, 8, 10, 2764, 0, NULL),
--- (1, 223, 8, 11, 3770, 128, NULL),
 (1, 223, 8, 72, 11290, 0, NULL),
 (1, 223, 8, 73, 11297, 0, NULL),
 (1, 223, 8, 74, 921, 0, NULL),
@@ -71,7 +68,6 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 157, 16, 8, 25315, 0, NULL),
 (1, 157, 16, 9, 10952, 0, NULL),
 (1, 157, 16, 10, 10938, 0, NULL),
--- (1, 157, 16, 11, 1205, 128, NULL),
 (1, 162, 64, 0, 8177, 0, NULL), -- Shaman
 (1, 162, 64, 1, 15208, 0, NULL),
 (1, 162, 64, 2, 10414, 0, NULL),
@@ -83,7 +79,6 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 162, 64, 8, 2484, 0, NULL),
 (1, 162, 64, 9, 11315, 0, NULL),
 (1, 162, 64, 10, 25357, 0, NULL),
--- (1, 162, 64, 11, 3770, 128, NULL),
 (1, 162, 64, 60, 20777, 0, NULL),
 (1, 209, 128, 1, 10140, 0, NULL), -- Mage
 (1, 209, 128, 2, 1953, 0, NULL),
@@ -106,10 +101,7 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 83, 256, 7, 6215, 0, NULL),
 (1, 83, 256, 8, 11689, 0, NULL),
 (1, 83, 256, 9, 696, 0, NULL),
--- (1, 83, 256, 10, 3770, 128, NULL),
--- (1, 83, 256, 11, 1205, 128, NULL),
--- (1, 40, 1024, 0, 6603, 0, NULL), -- Druid
-(1, 40, 1024, 1, 9912, 0, NULL),
+(1, 40, 1024, 1, 9912, 0, NULL), -- Druid
 (1, 40, 1024, 2, 9835, 0, NULL),
 (1, 40, 1024, 3, 9910, 0, NULL),
 (1, 40, 1024, 4, 9853, 0, NULL),
@@ -118,8 +110,6 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 40, 1024, 7, 25297, 0, NULL),
 (1, 40, 1024, 8, 9858, 0, NULL),
 (1, 40, 1024, 9, 9885, 0, NULL),
--- (1, 40, 1024, 10, 3770, 128, NULL),
--- (1, 40, 1024, 11, 1205, 128, NULL),
 (1, 40, 1024, 61, 16857, 0, NULL),
 (1, 40, 1024, 62, 9827, 0, NULL),
 (1, 40, 1024, 63, 31018, 0, NULL),
