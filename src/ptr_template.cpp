@@ -3,9 +3,7 @@
 #include "ScriptMgr.h"
 #include "Config.h"
 #include "ReputationMgr.h"
-#include "Object.h"
 #include "ptr_template_loader.h"
-#include <stdlib.h>
 
 using namespace Acore::ChatCommands;
 
