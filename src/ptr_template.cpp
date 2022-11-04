@@ -34,9 +34,9 @@ public:
     }
 };
 
-class createTemplate : public PlayerScript {
-
-public:
+class createTemplate : public PlayerScript { // TODO: Add logging stuff everywhere. I love me some logs.
+    //     Also TODO: Add taximask function because golly me do I love taxis.
+public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a problem I get for later. :)
     createTemplate() : PlayerScript("createTemplate") { }
 
     static bool CheckTemplateQualifier(Player* player, uint32 index)
@@ -53,7 +53,7 @@ public:
             return false;
         }
         if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // TODO: Add config option to allow templates to be applied
-            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress.
+            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress, for those who like headaches.
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
         {
             return true;
@@ -63,8 +63,8 @@ public:
     }
 
     static bool CheckTemplateRaceClass(Player* player, uint16 raceEntry, uint16 classEntry)
-    {
-        if (!(raceEntry & player->getRaceMask()))
+    { //                                             This function is honestly wholly unnecessary, but I don't care because I hated seeing
+        if (!(raceEntry & player->getRaceMask())) // five lines repeated on every function in this file.
             return false;
         if (!(classEntry & player->getClassMask()))
             return false;
@@ -208,7 +208,7 @@ public:
                 if (slotEntry == 200) // Arbitrary hard-coded slotID.
                     player->SetAmmo(itemEntry);
                 else
-                player->EquipNewItem(slotEntry, itemEntry, true);
+                player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
                 if (enchant0Entry != 0)
                 {
@@ -362,9 +362,8 @@ public:
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
-                        player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                         player->StoreNewItem(dest, itemEntry, true);
-                        Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
+                        Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better and cooler.
                         if (enchant0Entry != 0)
                         {
                             player->ApplyEnchantment(item, false);
@@ -409,7 +408,7 @@ public:
                         }
                     }
                 }
-                else if (bagEntry >= 5) // Basically just used for currencies, random sorting, and gold.
+                else if (bagEntry >= 5) // Basically just used for random sorting.
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
@@ -433,7 +432,7 @@ public:
                 uint16 maxEntry = (*skillInfo)[4].Get<uint16>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
-                player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step parameter is used for, being zeroed here.
+                player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
             } while (skillInfo->NextRow());
             player->SaveToDB(false, false);
         }
@@ -508,10 +507,10 @@ public:
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
-            for (uint8 j = 19; j < 39; j++) // Removes any items the DK is carrying at the end of the process.
-            { //                               Includes starting gear as well as quest rewards.
-                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
-            }
+            for (uint8 j = 19; j < 39; j++) //                         Removes any items the DK is carrying at the end of the process.
+            { //                                                       Includes starting gear as well as quest rewards.
+                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); // This is done because I hate fun.
+            } //                                                       ^(;,;)^
         }
     }
 };
@@ -599,7 +598,7 @@ public:
                 Player* target = player->GetConnectedPlayer();
                 if (!(createTemplate::CheckTemplateQualifier(target, index)))
                 {
-                    handler->PSendSysMessage("You do not meet the requirements to apply this template.");
+                    handler->PSendSysMessage("You do not meet the requirements to apply this template."); // Probably a poorly-worded message, but w/e.
                     return true;
                 }
                 createTemplate::AddTemplateDeathKnight(target);
@@ -610,12 +609,12 @@ public:
                 createTemplate::AddTemplateWornGear(target, index);
                 std::this_thread::sleep_for(50ms); //  < - - - - - - -I absolutely despise this solution, but I have
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
-                createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, please.
+                createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, for the love of God.
                 createTemplate::AddTemplateHotbar(target, index);
                 createTemplate::AddTemplatePosition(target, index);
-                std::this_thread::sleep_for(50ms); //                 Still hate this, FYI
-                handler->PSendSysMessage("Please logout for the template to fully apply.");
-            }
+                std::this_thread::sleep_for(50ms); //                 My opinion still hasn't changed five lines later.
+                handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
+            } //                                                                               because I will never ever ever figure out how to do the hotbar correctly.
             else
             {
                 handler->PSendSysMessage("This template is disabled.");
@@ -639,7 +638,7 @@ public:
                 uint8 indexEntry = (*enable)[0].Get<uint8>();
                 uint8 enableEntry = (*enable)[1].Get<uint8>();
                 std::string commentEntry = (*enable)[2].Get<std::string>();
-                handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry);
+                handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry); // TODO: Add config to disallow non-GMs from seeing disabled templates listed.
             } while (enable->NextRow());
         }
         else
