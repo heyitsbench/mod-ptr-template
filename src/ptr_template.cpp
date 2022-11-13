@@ -585,7 +585,7 @@ public:
         }
     }
 
-    static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index)
+    static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index) // TODO: Allow the command to use a target instead of always targetting self.
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
         if(check)
