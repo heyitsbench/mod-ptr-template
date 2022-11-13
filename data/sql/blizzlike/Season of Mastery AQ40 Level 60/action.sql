@@ -8,7 +8,7 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 255, 1, 78, 11581, 0, NULL),
 (1, 255, 1, 79, 2687, 0, NULL),
 (1, 255, 1, 82, 25289, 0, NULL),
-(1, 255, 1, 83, 3770, 128, NULL),
+(1, 255, 1, 83, 3770, 128, 'Mutton Chop'),
 (1, 255, 1, 84, 6603, 0, NULL),
 (1, 255, 1, 85, 7386, 0, NULL),
 (1, 255, 1, 86, 25286, 0, NULL),
@@ -19,7 +19,7 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 255, 1, 91, 2687, 0, NULL),
 (1, 255, 1, 81, 11556, 0, NULL),
 (1, 255, 1, 94, 25289, 0, NULL),
-(1, 255, 1, 95, 3770, 128, NULL),
+(1, 255, 1, 95, 3770, 128, 'Mutton Chop'),
 (1, 255, 1, 93, 11556, 0, NULL),
 (1, 255, 1, 96, 6603, 0, NULL),
 (1, 255, 1, 108, 6603, 0, NULL),
@@ -41,9 +41,9 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 174, 4, 7, 2974, 0, NULL),
 (1, 174, 4, 8, 25296, 0, NULL),
 (1, 174, 4, 9, 13163, 0, NULL),
-(1, 174, 4, 10, 1205, 128, NULL),
-(1, 174, 4, 11, 4538, 128, NULL),
-(1, 223, 8, 0, 7676, 128, NULL), -- Rogue
+(1, 174, 4, 10, 1205, 128, 'Melon Juice'),
+(1, 174, 4, 11, 4538, 128, 'Snapvine Watermelon'),
+(1, 223, 8, 0, 7676, 128, 'Thistle Tea'), -- Rogue
 (1, 223, 8, 1, 11294, 0, NULL),
 (1, 223, 8, 2, 31016, 0, NULL),
 (1, 223, 8, 3, 1776, 0, NULL),
@@ -130,7 +130,7 @@ INSERT INTO `mod_ptrtemplate_action` (`ID`, `RaceMask`, `ClassMask`, `Button`, `
 (1, 40, 1024, 99, 5229, 0, NULL),
 (1, 40, 1024, 100, 8983, 0, NULL),
 (1, 40, 1024, 101, 9898, 0, NULL),
-(1, 255, 1298, 11, 1205, 128, NULL), -- Overlap
-(1, 255, 72, 11, 3770, 128, NULL),
-(1, 123, 1280, 10, 3770, 128, NULL),
-(1, 45, 1026, 0, 6603, 0, NULL);
+(1, 255, 1298, 11, 1205, 128, 'Melon Juice'), -- Overlap
+(1, 123, 1280, 10, 3770, 128, 'Mutton Chop'),
+(1, 255, 72, 11, 3770, 128, 'Mutton Chop'),
+(1, 45, 1026, 0, 6603, 0, 'Auto Attack');
