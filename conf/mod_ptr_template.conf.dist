@@ -2,5 +2,16 @@
 
 # Enable the module announcing its presence.
 # Default: true
-
 Announce.enable=true
+
+# Enable the application of templates.
+# Default: true
+Template.enable=true
+
+# Set the minimum account security level to apply and list enabled templates.
+# Default: 0
+Enable.security=0
+
+# Enable templates to be applied only on start level.
+# Default: false
+Level.enable=false

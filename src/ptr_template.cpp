@@ -52,14 +52,22 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         {
             return false;
         }
-        if (player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT // TODO: Add config option to allow templates to be applied
-            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL) //               on a character that's made some progress, for those who like headaches.
-            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))
+        if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
+            ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
+            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
         {
-            return true;
+            return false;
+        }
+        if (!sConfigMgr->GetOption<bool>("Template.enable", true))
+        {
+            return false;
+        }
+        if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
+        {
+            return false;
         }
         else
-            return false;
+            return true;
     }
 
     static bool CheckTemplateRaceClass(Player* player, uint16 raceEntry, uint16 classEntry)
@@ -638,7 +646,8 @@ public:
                 uint8 indexEntry = (*enable)[0].Get<uint8>();
                 uint8 enableEntry = (*enable)[1].Get<uint8>();
                 std::string commentEntry = (*enable)[2].Get<std::string>();
-                handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry); // TODO: Add config to disallow non-GMs from seeing disabled templates listed.
+                if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
+                    handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry);
             } while (enable->NextRow());
         }
         else
