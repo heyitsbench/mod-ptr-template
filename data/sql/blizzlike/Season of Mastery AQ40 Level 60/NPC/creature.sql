@@ -1,6 +1,8 @@
 SET
 @entry = 184320, -- Blizzlike
-@guid = 4000000; -- ¯\_(ツ)_/¯
+@guid = 4000000, -- ¯\_(ツ)_/¯
+@text = 64000, -- ¯\_(ツ)_/¯
+@menu = 27525; -- Blizzlike (I think)
 
 DELETE FROM `creature_template` WHERE `entry` = @entry; 
 INSERT INTO `creature_template` (`entry`, `difficulty_entry_1`, `difficulty_entry_2`, `difficulty_entry_3`, `KillCredit1`, `KillCredit2`, `modelid1`, `modelid2`, `modelid3`, `modelid4`, `name`, `subname`, `IconName`, `gossip_menu_id`, `minlevel`, `maxlevel`, `exp`, `faction`, `npcflag`, `speed_walk`, `speed_run`, `speed_swim`, `speed_flight`, `detection_range`, `scale`, `rank`, `dmgschool`, `DamageModifier`, `BaseAttackTime`, `RangeAttackTime`, `BaseVariance`, `RangeVariance`, `unit_class`, `unit_flags`, `unit_flags2`, `dynamicflags`, `family`, `trainer_type`, `trainer_spell`, `trainer_class`, `trainer_race`, `type`, `type_flags`, `lootid`, `pickpocketloot`, `skinloot`, `PetSpellDataId`, `VehicleId`, `mingold`, `maxgold`, `AIName`, `MovementType`, `HoverHeight`, `HealthModifier`, `ManaModifier`, `ArmorModifier`, `ExperienceModifier`, `RacialLeader`, `movementId`, `RegenHealth`, `mechanic_immune_mask`, `spell_school_immune_mask`, `flags_extra`, `ScriptName`, `VerifiedBuild`) VALUES
@@ -11,33 +13,33 @@ INSERT INTO `creature` (`guid`, `id1`, `id2`, `id3`, `map`, `zoneId`, `areaId`, 
 (@guid, @entry, 0, 0, 0, 0, 0, 1, 1, 0, -8826.973, 633.6285, 94.33641, 3.773838758468627929, 300, 0, 0, 3052, 0, 0, 0, 0, 0, '', 45437), -- Mostly blizzlike hopefully
 (@guid+1, @entry, 0, 0, 1, 0, 0, 1, 1, 0, 1563.5122, -4403.127, 6.785325, 3.387704849243164062, 300, 0, 0, 3052, 0, 0, 0, 0, 0, '', 45437);
 
-DELETE FROM `npc_text` WHERE `ID` = 64000; -- ¯\_(ツ)_/¯
+DELETE FROM `npc_text` WHERE `ID` = @text;
 INSERT INTO `npc_text` (`ID`, `BroadcastTextID0`, `BroadcastTextID1`, `VerifiedBuild`) VALUES
-(64000, 10117, 10117, 45437);
+(@text, 10117, 10117, 45437);
 
-DELETE FROM `gossip_menu` WHERE `MenuID` = 27525; -- Blizzlike (I think)
+DELETE FROM `gossip_menu` WHERE `MenuID` = @menu;
 INSERT INTO `gossip_menu` (`MenuID`, `TextID`) VALUES
-(27525, 64000);
+(@menu, @text);
 
 DELETE FROM `npc_vendor` WHERE `entry` = @entry;
 INSERT INTO `npc_vendor` (`entry`, `slot`, `item`, `maxcount`, `ExtendedCost`, `VerifiedBuild`) VALUES -- These should all be blizzlike
-(@entry, 1, 191550, 0, 0, 45437),
-(@entry, 2, 191612, 0, 0, 45437),
-(@entry, 3, 191609, 0, 0, 45437),
-(@entry, 4, 191608, 0, 0, 45437),
-(@entry, 5, 191610, 0, 0, 45437),
-(@entry, 6, 191614, 0, 0, 45437),
-(@entry, 7, 191605, 0, 0, 45437),
-(@entry, 8, 191664, 0, 0, 45437),
-(@entry, 9, 191607, 0, 0, 45437),
-(@entry, 10, 191606, 0, 0, 45437),
-(@entry, 11, 191611, 0, 0, 45437),
-(@entry, 12, 191666, 0, 0, 45437),
-(@entry, 13, 191613, 0, 0, 45437),
-(@entry, 14, 191656, 0, 0, 45437),
-(@entry, 15, 191249, 0, 0, 45437),
-(@entry, 16, 191204, 0, 0, 45437),
-(@entry, 17, 191268, 0, 0, 45437),
+-- (@entry, 1, 191550, 0, 0, 45437),
+-- (@entry, 2, 191612, 0, 0, 45437),
+-- (@entry, 3, 191609, 0, 0, 45437),
+-- (@entry, 4, 191608, 0, 0, 45437),
+-- (@entry, 5, 191610, 0, 0, 45437),
+-- (@entry, 6, 191614, 0, 0, 45437),
+-- (@entry, 7, 191605, 0, 0, 45437),
+-- (@entry, 8, 191664, 0, 0, 45437),
+-- (@entry, 9, 191607, 0, 0, 45437),
+-- (@entry, 10, 191606, 0, 0, 45437),
+-- (@entry, 11, 191611, 0, 0, 45437),
+-- (@entry, 12, 191666, 0, 0, 45437),
+-- (@entry, 13, 191613, 0, 0, 45437),
+-- (@entry, 14, 191656, 0, 0, 45437),
+-- (@entry, 15, 191249, 0, 0, 45437),
+-- (@entry, 16, 191204, 0, 0, 45437),
+-- (@entry, 17, 191268, 0, 0, 45437),
 (@entry, 18, 189420, 0, 0, 45437),
 (@entry, 19, 189421, 0, 0, 45437),
 (@entry, 20, 189426, 0, 0, 45437),
