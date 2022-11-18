@@ -1,4 +1,5 @@
-CREATE TABLE `mod_ptrtemplate_index` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_index`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_index` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`Keywords` TEXT NULL DEFAULT NULL,
 	`Level` TINYINT(3) UNSIGNED NOT NULL DEFAULT '1',
@@ -30,7 +31,8 @@ CREATE TABLE `mod_ptrtemplate_index` (
 COLLATE='utf8mb4_general_ci'
 ;
 
-CREATE TABLE `mod_ptrtemplate_action` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_action`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_action` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
@@ -42,7 +44,8 @@ CREATE TABLE `mod_ptrtemplate_action` (
 COLLATE='utf8mb4_general_ci'
 ;
 
-CREATE TABLE `mod_ptrtemplate_inventory` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_inventory`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_inventory` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
@@ -62,7 +65,8 @@ CREATE TABLE `mod_ptrtemplate_inventory` (
 COLLATE='utf8mb4_general_ci'
 ;
 
-CREATE TABLE `mod_ptrtemplate_reputations` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_reputations`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_reputations` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
@@ -73,7 +77,8 @@ CREATE TABLE `mod_ptrtemplate_reputations` (
 COLLATE='utf8mb4_general_ci'
 ;
 
-CREATE TABLE `mod_ptrtemplate_skills` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_skills`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_skills` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
@@ -85,7 +90,8 @@ CREATE TABLE `mod_ptrtemplate_skills` (
 COLLATE='utf8mb4_general_ci'
 ;
 
-CREATE TABLE `mod_ptrtemplate_spells` (
+DROP TABLE IF EXISTS `mod_ptrtemplate_spells`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_spells` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
 	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
