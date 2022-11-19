@@ -85,4 +85,4 @@ INSERT INTO `mod_ptrtemplate_inventory` (`ID`, `RaceMask`, `ClassMask`, `BagID`,
 (1, 1, 16, 3, 13, 16922, 1, NULL),
 (1, 1, 16, 3, 14, 19131, 1, NULL),
 (1, 1, 16, 3, 15, 19140, 1, NULL),
-(1, 1, 16, 4, 0, 13178, 1, NULL),
+(1, 1, 16, 4, 0, 13178, 1, NULL);
