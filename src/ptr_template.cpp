@@ -49,23 +49,15 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
         QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
         if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
-        {
             return false;
-        }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
-        {
             return false;
-        }
         if (!sConfigMgr->GetOption<bool>("Template.enable", true))
-        {
             return false;
-        }
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
-        {
             return false;
-        }
         else
             return true;
     }
@@ -191,7 +183,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
         if (gearInfo)
         {
-            for (uint8 j = 0; j <= 18; j++)
+            for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
             {
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
             }
@@ -211,50 +203,50 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint32 enchant6Entry = (*gearInfo)[11].Get<uint32>();
                 if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
                     continue;
-                if ((slotEntry > 22 && slotEntry <= 135) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
+                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
-                if (slotEntry == 200) // Arbitrary hard-coded slotID.
+                if (slotEntry >= PLAYER_SLOT_END) // Arbitrary hard-coded slotID.
                     player->SetAmmo(itemEntry);
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
-                if (enchant0Entry != 0)
+                if (enchant0Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant1Entry != 0)
+                if (enchant1Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant2Entry != 0)
+                if (enchant2Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant3Entry != 0)
+                if (enchant3Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant4Entry != 0)
+                if (enchant4Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant5Entry != 0)
+                if (enchant5Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                     player->ApplyEnchantment(item, true);
                 }
-                if (enchant6Entry != 0)
+                if (enchant6Entry)
                 {
                     player->ApplyEnchantment(item, false);
                     item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
@@ -296,7 +288,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if ((slotEntry < 23 || slotEntry > 135) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                if ((slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
                     continue;
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
@@ -306,52 +298,52 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                         if (!containerFields) // Apparently this can happen sometimes.
                             continue;
                         uint8 slotDBInfo = containerFields[0].Get<uint8>();
-                        if (bagEntry != (slotDBInfo - 18)) // Check to see if equipped bag matches specified bag for module.
+                        if (bagEntry != (slotDBInfo - 18)) // Check if equipped bag matches specified bag for module.
                             continue;
-                        if (slotDBInfo < 19 || slotDBInfo > 22)
+                        if (slotDBInfo < INVENTORY_SLOT_BAG_START || slotDBInfo >= INVENTORY_SLOT_ITEM_START)
                             continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
                         uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
                         if (validCheck == EQUIP_ERR_OK)
                         {
                             player->StoreNewItem(dest, itemEntry, true);
                             Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
-                            if (enchant0Entry != 0)
+                            if (enchant0Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant1Entry != 0)
+                            if (enchant1Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant2Entry != 0)
+                            if (enchant2Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant3Entry != 0)
+                            if (enchant3Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant4Entry != 0)
+                            if (enchant4Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant5Entry != 0)
+                            if (enchant5Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                                 player->ApplyEnchantment(item, true);
                             }
-                            if (enchant6Entry != 0)
+                            if (enchant6Entry)
                             {
                                 player->ApplyEnchantment(item, false);
                                 item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
@@ -364,7 +356,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                         continue;
-                    if (slotEntry < 23 || slotEntry > 135) // 135 btw is as high as valid slots in bag 0 allegedly go.
+                    if (slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) // 135 btw is as high as valid slots in bag 0 allegedly go.
                         continue; // Ignore any equipped items or invalid slot items.
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
@@ -515,7 +507,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
-            for (uint8 j = 19; j < 39; j++) //                         Removes any items the DK is carrying at the end of the process.
+            for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) //                         Removes any items the DK is carrying at the end of the process.
             { //                                                       Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); // This is done because I hate fun.
             } //                                                       ^(;,;)^
@@ -531,9 +523,7 @@ public:
     void OnLogin(Player* player) override
     {
         if (sConfigMgr->GetOption<bool>("Announce.enable", true))
-        {
             ChatHandler(player->GetSession()).SendSysMessage("This server is running the PTR Template module.");
-        }
     }
 };
 
