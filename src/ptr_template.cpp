@@ -122,17 +122,15 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateReputation(Player* player, uint32 index)
-    { //                                                     0          1          2         3
-        QueryResult repInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                      0         1
+        QueryResult repInfo = WorldDatabase.Query("SELECT FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (repInfo)
         {
             do
             {
                 Field* fields = repInfo->Fetch();
-                uint16 raceMaskEntry = fields[0].Get<uint16>();
-                uint16 classMaskEntry = fields[1].Get<uint16>();
-                uint16 factionEntry = fields[2].Get<uint16>();
-                int32 standingEntry = fields[3].Get<int32>();
+                uint16 factionEntry = fields[0].Get<uint16>();
+                int32 standingEntry = fields[1].Get<int32>();
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
                 player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
@@ -141,8 +139,8 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
-    { //                                                     0          1        2       3      4
-        QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                    0       1      2
+        QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
         { //                                               This doesn't work for spells added by AddTemplateSpells.
             player->removeActionButton(j); //              I don't know why and I've tried everything I can think of, but nothing's worked.
@@ -151,11 +149,9 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         {
             do
             {
-                uint16 raceMaskEntry = (*barInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*barInfo)[1].Get<uint16>();
-                uint8 buttonEntry = (*barInfo)[2].Get<uint8>();
-                uint32 actionEntry = (*barInfo)[3].Get<uint32>();
-                uint8 typeEntry = (*barInfo)[4].Get<uint8>();
+                uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
+                uint32 actionEntry = (*barInfo)[1].Get<uint32>();
+                uint8 typeEntry = (*barInfo)[2].Get<uint8>();
                 player->addActionButton(buttonEntry, actionEntry, typeEntry);
             } while (barInfo->NextRow());
         }
@@ -163,8 +159,8 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateWornGear(Player* player, uint32 index)
-    { //                                                      0          1        2      3       4        5         6         7         8         9         10        11
-        QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                     0      1       2        3         4         5         6         7         8         9
+        QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (gearInfo)
         {
             for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
@@ -173,18 +169,16 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             }
             do
             {
-                uint16 raceMaskEntry = (*gearInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*gearInfo)[1].Get<uint16>();
-                uint32 bagEntry = (*gearInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*gearInfo)[3].Get<uint8>();
-                uint32 itemEntry = (*gearInfo)[4].Get<uint32>();
-                uint32 enchant0Entry = (*gearInfo)[5].Get<uint32>();
-                uint32 enchant1Entry = (*gearInfo)[6].Get<uint32>();
-                uint32 enchant2Entry = (*gearInfo)[7].Get<uint32>();
-                uint32 enchant3Entry = (*gearInfo)[8].Get<uint32>();
-                uint32 enchant4Entry = (*gearInfo)[9].Get<uint32>();
-                uint32 enchant5Entry = (*gearInfo)[10].Get<uint32>();
-                uint32 enchant6Entry = (*gearInfo)[11].Get<uint32>();
+                uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
+                uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
+                uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
+                uint32 enchant0Entry = (*gearInfo)[3].Get<uint32>();
+                uint32 enchant1Entry = (*gearInfo)[4].Get<uint32>();
+                uint32 enchant2Entry = (*gearInfo)[5].Get<uint32>();
+                uint32 enchant3Entry = (*gearInfo)[6].Get<uint32>();
+                uint32 enchant4Entry = (*gearInfo)[7].Get<uint32>();
+                uint32 enchant5Entry = (*gearInfo)[8].Get<uint32>();
+                uint32 enchant6Entry = (*gearInfo)[9].Get<uint32>();
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
                 if (slotEntry >= PLAYER_SLOT_END)
@@ -240,29 +234,26 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateBagGear(Player* player, uint32 index)
-    { //                                                     0          1        2      3       4        5         6         7         8         9         10        11,       12
-        QueryResult bagInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                    0      1       2        3         4         5         6         7         8         9         10
+        QueryResult bagInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (bagInfo)
         {
             do
-            {
-                //                                                           0
+            {   //                                                           0
                 QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid={})", (player->GetGUID().GetCounter()));
                 Field* bagFields = bagInfo->Fetch();
                 Field* containerFields = containerInfo->Fetch();
-                uint16 raceMaskEntry = bagFields[0].Get<uint16>();
-                uint16 classMaskEntry = bagFields[1].Get<uint16>();
-                uint32 bagEntry = bagFields[2].Get<uint32>();
-                uint8 slotEntry = bagFields[3].Get<uint8>();
-                uint32 itemEntry = bagFields[4].Get<uint32>();
-                uint32 quantityEntry = bagFields[5].Get<uint32>();
-                uint32 enchant0Entry = bagFields[6].Get<uint32>();
-                uint32 enchant1Entry = bagFields[7].Get<uint32>();
-                uint32 enchant2Entry = bagFields[8].Get<uint32>();
-                uint32 enchant3Entry = bagFields[9].Get<uint32>();
-                uint32 enchant4Entry = bagFields[10].Get<uint32>();
-                uint32 enchant5Entry = bagFields[11].Get<uint32>();
-                uint32 enchant6Entry = bagFields[12].Get<uint32>();
+                uint32 bagEntry = bagFields[0].Get<uint32>();
+                uint8 slotEntry = bagFields[1].Get<uint8>();
+                uint32 itemEntry = bagFields[2].Get<uint32>();
+                uint32 quantityEntry = bagFields[3].Get<uint32>();
+                uint32 enchant0Entry = bagFields[4].Get<uint32>();
+                uint32 enchant1Entry = bagFields[5].Get<uint32>();
+                uint32 enchant2Entry = bagFields[6].Get<uint32>();
+                uint32 enchant3Entry = bagFields[7].Get<uint32>();
+                uint32 enchant4Entry = bagFields[8].Get<uint32>();
+                uint32 enchant5Entry = bagFields[9].Get<uint32>();
+                uint32 enchant6Entry = bagFields[10].Get<uint32>();
                 if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
                 { //                   This should probably be a slotID and not an itemEntry, similar to ammo.
                     player->SetMoney(quantityEntry);
@@ -399,17 +390,15 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateSkills(Player* player, uint32 index)
-    { //                                                       0          1         2       3     4
-        QueryResult skillInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                       0       1     2
+        QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (skillInfo)
         {
             do
             {
-                uint16 raceMaskEntry = (*skillInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*skillInfo)[1].Get<uint16>();
-                uint16 skillEntry = (*skillInfo)[2].Get<uint16>();
-                uint16 valueEntry = (*skillInfo)[3].Get<uint16>();
-                uint16 maxEntry = (*skillInfo)[4].Get<uint16>();
+                uint16 skillEntry = (*skillInfo)[0].Get<uint16>();
+                uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
+                uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
             } while (skillInfo->NextRow());
             player->SaveToDB(false, false);
@@ -417,15 +406,13 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
     static void AddTemplateSpells(Player* player, uint32 index)
-    { //                                                       0          1         2
-        QueryResult spellInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+    { //                                                       0
+        QueryResult spellInfo = WorldDatabase.Query("SELECT SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (spellInfo)
         {
             do
             {
-                uint16 raceMaskEntry = (*spellInfo)[0].Get<uint16>();
-                uint16 classMaskEntry = (*spellInfo)[1].Get<uint16>();
-                uint64 spellEntry = (*spellInfo)[2].Get<uint64>();
+                uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
                 player->learnSpell(spellEntry);
             } while (spellInfo->NextRow());
         }
