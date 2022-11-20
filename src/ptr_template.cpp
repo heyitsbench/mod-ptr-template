@@ -41,13 +41,11 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static bool CheckTemplateQualifier(Player* player, uint32 index)
     {
-        uint32 raceMask = player->getRaceMask();
-        uint32 classMask = player->getClassMask();
-        QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask); // These are used to figure out if a template has a race/class in mind.
-        QueryResult barInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask); //      For example, the AQ40 blizzlike template doesn't apply to belfs, draenei, or DKs.
-        QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
-        QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
-        QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, raceMask, classMask);
+        QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask()); // These are used to figure out if a template has a race/class in mind.
+        QueryResult barInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask()); //      For example, the AQ40 blizzlike template doesn't apply to belfs, draenei, or DKs.
+        QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
+        QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
+        QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
             return false;
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
@@ -57,16 +55,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         if (!sConfigMgr->GetOption<bool>("Template.enable", true))
             return false;
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
-            return false;
-        else
-            return true;
-    }
-
-    static bool CheckTemplateRaceClass(Player* player, uint16 raceEntry, uint16 classEntry)
-    { //                                             This function is honestly wholly unnecessary, but I don't care because I hated seeing
-        if (!(raceEntry & player->getRaceMask())) // five lines repeated on every function in this file.
-            return false;
-        if (!(classEntry & player->getClassMask()))
             return false;
         else
             return true;
@@ -135,7 +123,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateReputation(Player* player, uint32 index)
     { //                                                     0          1          2         3
-        QueryResult repInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, FactionID, Standing FROM mod_ptrtemplate_reputations WHERE ID={}", index);
+        QueryResult repInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (repInfo)
         {
             do
@@ -145,8 +133,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 classMaskEntry = fields[1].Get<uint16>();
                 uint16 factionEntry = fields[2].Get<uint16>();
                 int32 standingEntry = fields[3].Get<int32>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
                 player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
@@ -156,11 +142,11 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
     { //                                                     0          1        2       3      4
-        QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE ID={}", index);
-        for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) //    This is supposed to go through every available action slot and remove what's there.
-        { //                                                  This doesn't work for spells added by AddTemplateSpells.
-            player->removeActionButton(j); //                 I don't know why and I've tried everything I can think of, but nothing's worked.
-        } //                                                  And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
+        QueryResult barInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
+        { //                                               This doesn't work for spells added by AddTemplateSpells.
+            player->removeActionButton(j); //              I don't know why and I've tried everything I can think of, but nothing's worked.
+        } //                                               And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
         if (barInfo)
         {
             do
@@ -170,8 +156,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint8 buttonEntry = (*barInfo)[2].Get<uint8>();
                 uint32 actionEntry = (*barInfo)[3].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[4].Get<uint8>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 player->addActionButton(buttonEntry, actionEntry, typeEntry);
             } while (barInfo->NextRow());
         }
@@ -180,7 +164,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateWornGear(Player* player, uint32 index)
     { //                                                      0          1        2      3       4        5         6         7         8         9         10        11
-        QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
+        QueryResult gearInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (gearInfo)
         {
             for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
@@ -192,8 +176,8 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 raceMaskEntry = (*gearInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*gearInfo)[1].Get<uint16>();
                 uint32 bagEntry = (*gearInfo)[2].Get<uint32>();
-                uint8 slotEntry = (*gearInfo)[3].Get<uint8>(); //   00-18 = equipped gear
-                uint32 itemEntry = (*gearInfo)[4].Get<uint32>(); // 19-22 = container slots
+                uint8 slotEntry = (*gearInfo)[3].Get<uint8>();
+                uint32 itemEntry = (*gearInfo)[4].Get<uint32>();
                 uint32 enchant0Entry = (*gearInfo)[5].Get<uint32>();
                 uint32 enchant1Entry = (*gearInfo)[6].Get<uint32>();
                 uint32 enchant2Entry = (*gearInfo)[7].Get<uint32>();
@@ -201,11 +185,9 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint32 enchant4Entry = (*gearInfo)[9].Get<uint32>();
                 uint32 enchant5Entry = (*gearInfo)[10].Get<uint32>();
                 uint32 enchant6Entry = (*gearInfo)[11].Get<uint32>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
                     continue;
-                if (slotEntry >= PLAYER_SLOT_END) // Arbitrary hard-coded slotID.
+                if (slotEntry >= PLAYER_SLOT_END)
                     player->SetAmmo(itemEntry);
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
@@ -259,7 +241,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateBagGear(Player* player, uint32 index)
     { //                                                     0          1        2      3       4        5         6         7         8         9         10        11,       12
-        QueryResult bagInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE ID={}", index);
+        QueryResult bagInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (bagInfo)
         {
             do
@@ -271,7 +253,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 raceMaskEntry = bagFields[0].Get<uint16>();
                 uint16 classMaskEntry = bagFields[1].Get<uint16>();
                 uint32 bagEntry = bagFields[2].Get<uint32>();
-                uint8 slotEntry = bagFields[3].Get<uint8>(); // 23-38 = backpack slots
+                uint8 slotEntry = bagFields[3].Get<uint8>();
                 uint32 itemEntry = bagFields[4].Get<uint32>();
                 uint32 quantityEntry = bagFields[5].Get<uint32>();
                 uint32 enchant0Entry = bagFields[6].Get<uint32>();
@@ -281,8 +263,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint32 enchant4Entry = bagFields[10].Get<uint32>();
                 uint32 enchant5Entry = bagFields[11].Get<uint32>();
                 uint32 enchant6Entry = bagFields[12].Get<uint32>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
                 { //                   This should probably be a slotID and not an itemEntry, similar to ammo.
                     player->SetMoney(quantityEntry);
@@ -356,7 +336,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                         continue;
-                    if (slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) // 135 btw is as high as valid slots in bag 0 allegedly go.
+                    if (slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END)
                         continue; // Ignore any equipped items or invalid slot items.
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
@@ -420,7 +400,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateSkills(Player* player, uint32 index)
     { //                                                       0          1         2       3     4
-        QueryResult skillInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE ID={}", index);
+        QueryResult skillInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (skillInfo)
         {
             do
@@ -430,8 +410,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 skillEntry = (*skillInfo)[2].Get<uint16>();
                 uint16 valueEntry = (*skillInfo)[3].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[4].Get<uint16>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
             } while (skillInfo->NextRow());
             player->SaveToDB(false, false);
@@ -440,7 +418,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     static void AddTemplateSpells(Player* player, uint32 index)
     { //                                                       0          1         2
-        QueryResult spellInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SpellID FROM mod_ptrtemplate_spells WHERE ID={}", index);
+        QueryResult spellInfo = WorldDatabase.Query("SELECT RaceMask, ClassMask, SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (spellInfo)
         {
             do
@@ -448,8 +426,6 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 raceMaskEntry = (*spellInfo)[0].Get<uint16>();
                 uint16 classMaskEntry = (*spellInfo)[1].Get<uint16>();
                 uint64 spellEntry = (*spellInfo)[2].Get<uint64>();
-                if (!(CheckTemplateRaceClass(player, raceMaskEntry, classMaskEntry)))
-                    continue;
                 player->learnSpell(spellEntry);
             } while (spellInfo->NextRow());
         }
@@ -507,10 +483,10 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
-            for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) //                         Removes any items the DK is carrying at the end of the process.
-            { //                                                       Includes starting gear as well as quest rewards.
-                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); // This is done because I hate fun.
-            } //                                                       ^(;,;)^
+            for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) // Removes any items the DK is carrying at the end of the process.
+            { //                                                                          Includes starting gear as well as quest rewards.
+                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
+            } //                                                                          ^(;,;)^
         }
     }
 };
@@ -589,7 +565,7 @@ public:
         if(check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
-            if (enable == 1)
+            if (enable)
             {
                 if (!player)
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
@@ -607,7 +583,7 @@ public:
                 createTemplate::AddTemplateWornGear(target, index);
                 std::this_thread::sleep_for(50ms); //  < - - - - - - -I absolutely despise this solution, but I have
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
-                createTemplate::AddTemplateSpells(target, index); //  Open to better solutions, for the love of God.
+                createTemplate::AddTemplateSpells(target, index); //  Might be able to use TaskScheduler for this.
                 createTemplate::AddTemplateHotbar(target, index);
                 createTemplate::AddTemplatePosition(target, index);
                 std::this_thread::sleep_for(50ms); //                 My opinion still hasn't changed five lines later.
