@@ -1094,5 +1094,6 @@ INSERT INTO `mod_ptrtemplate_skills` (`ID`, `RaceMask`, `ClassMask`, `SkillID`, 
 (@somsixty, 255, 3, 293, 1, 1, 'Plate Mail'),
 (@somsixty, 255, 1503, 333, 300, 300, 'Enchanting'),
 (@somsixty, 209, 128, 356, 225, 225, 'Fishing'),
+(@somsixty, 174, 68, 413, 1, 1, 'Mail'),
 (@somsixty, 225, 8, 633, 300, 300, 'Lockpicking'),
 (@somsixty, 255, 1503, 762, 150, 150, 'Riding');
