@@ -47,17 +47,27 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
+        {
             return false;
+        }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
+        {
             return false;
+        }
         if (!sConfigMgr->GetOption<bool>("Template.enable", true))
+        {
             return false;
+        }
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
+        {
             return false;
+        }
         else
+        {
             return true;
+        }
     }
 
     static void AddTemplateLevel(Player* player, uint32 index)
@@ -73,7 +83,8 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     static void AddTemplatePosition(Player* player, uint32 index)
     { //                                                        0           1          2          3          4         5        6       7       8       9
         QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (posEntry) {
+        if (posEntry)
+        {
             uint16 mapAllianceEntry = (*posEntry)[0].Get<uint16>();
             float XAllianceEntry = (*posEntry)[1].Get<float>();
             float YAllianceEntry = (*posEntry)[2].Get<float>();
@@ -85,16 +96,21 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             float ZHordeEntry = (*posEntry)[8].Get<float>();
             float OHordeEntry = (*posEntry)[9].Get<float>();
             if (mapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde pos is the same.
+            {
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
+            }
             else
+            {
                 player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
+            }
         }
     }
 
     static void AddTemplateHomebind(Player* player, uint32 index)
     { //                                                         0              1            2           3           4           5           6          7          8        9       10       11
         QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (homeEntry) {
+        if (homeEntry)
+        {
             uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
             uint16 hZoneAllianceEntry = (*homeEntry)[1].Get<uint16>();
             float HXAllianceEntry = (*homeEntry)[2].Get<float>();
@@ -180,9 +196,13 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint32 enchant5Entry = (*gearInfo)[8].Get<uint32>();
                 uint32 enchant6Entry = (*gearInfo)[9].Get<uint32>();
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
+                {
                     continue;
+                }
                 if (slotEntry >= PLAYER_SLOT_END)
+                {
                     player->SetAmmo(itemEntry);
+                }
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
@@ -260,19 +280,27 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     continue;
                 }
                 if ((slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                {
                     continue;
+                }
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
                 {
                     do
                     {
                         if (!containerFields) // Apparently this can happen sometimes.
+                        {
                             continue;
+                        }
                         uint8 slotDBInfo = containerFields[0].Get<uint8>();
                         if (bagEntry != (slotDBInfo - 18)) // Check if equipped bag matches specified bag for module.
+                        {
                             continue;
+                        }
                         if (slotDBInfo < INVENTORY_SLOT_BAG_START || slotDBInfo >= INVENTORY_SLOT_ITEM_START)
+                        {
                             continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
+                        }
                         uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
                         if (validCheck == EQUIP_ERR_OK)
                         {
@@ -326,52 +354,56 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 else if (bagEntry == 0) // If bag is backpack
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
+                    {
                         continue;
+                    }
                     if (slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END)
+                    {
                         continue; // Ignore any equipped items or invalid slot items.
+                    }
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
                         player->StoreNewItem(dest, itemEntry, true);
                         Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better and cooler.
-                        if (enchant0Entry != 0)
+                        if (enchant0Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant1Entry != 0)
+                        if (enchant1Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant2Entry != 0)
+                        if (enchant2Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant3Entry != 0)
+                        if (enchant3Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant4Entry != 0)
+                        if (enchant4Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant5Entry != 0)
+                        if (enchant5Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
                             player->ApplyEnchantment(item, true);
                         }
-                        if (enchant6Entry != 0)
+                        if (enchant6Entry)
                         {
                             player->ApplyEnchantment(item, false);
                             item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
@@ -383,7 +415,9 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
+                    {
                         player->StoreNewItem(dest, itemEntry, true);
+                    }
                 }
             } while (bagInfo->NextRow());
         }
@@ -470,6 +504,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
                 }
             }
+
             for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) // Removes any items the DK is carrying at the end of the process.
             { //                                                                          Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
@@ -486,7 +521,9 @@ public:
     void OnLogin(Player* player) override
     {
         if (sConfigMgr->GetOption<bool>("Announce.enable", true))
+        {
             ChatHandler(player->GetSession()).SendSysMessage("This server is running the PTR Template module.");
+        }
     }
 };
 
@@ -555,7 +592,9 @@ public:
             if (enable)
             {
                 if (!player)
+                {
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
+                }
                 Player* target = player->GetConnectedPlayer();
                 if (!(createTemplate::CheckTemplateQualifier(target, index)))
                 {
