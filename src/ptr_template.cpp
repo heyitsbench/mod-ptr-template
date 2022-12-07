@@ -423,6 +423,32 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         }
     }
 
+    static void AddTemplateQuests(Player* player, uint32 index)
+    { //                                                       0
+        QueryResult questInfo = WorldDatabase.Query("SELECT QuestID FROM mod_ptrtemplate_quests WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (questInfo)
+        {
+            do
+            {
+                player->SetQuestStatus((*questInfo)[0].Get<uint32>(), QUEST_STATUS_COMPLETE);
+            } while (questInfo->NextRow());
+        }
+    }
+
+    static void AddTemplateAchievements(Player* player, uint32 index)
+    { //                                                                0
+        QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (achievementInfo)
+        {
+            AchievementEntry const* achievementID;
+            do
+            {
+                achievementID = sAchievementStore.LookupEntry((*achievementInfo)[0].Get<uint32>());
+                player->CompletedAchievement(achievementID);
+            } while (achievementInfo->NextRow());
+        }
+    }
+
     static void AddTemplateSkills(Player* player, uint32 index)
     { //                                                       0       1     2
         QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
@@ -604,6 +630,8 @@ public:
                 createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplateHomebind(target, index);
+                createTemplate::AddTemplateAchievements(target, index);
+                createTemplate::AddTemplateQuests(target, index);
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);

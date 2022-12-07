@@ -31,6 +31,17 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_index` (
 COLLATE='utf8mb4_general_ci'
 ;
 
+DROP TABLE IF EXISTS `mod_ptrtemplate_achievements`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_achievements` (
+	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+	`AchievementID` INT UNSIGNED NOT NULL DEFAULT '0',
+	`Comment` TEXT NULL DEFAULT NULL
+)
+COLLATE='utf8mb4_general_ci'
+;
+
 DROP TABLE IF EXISTS `mod_ptrtemplate_action`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_action` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
@@ -60,6 +71,17 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_inventory` (
 	`Enchant4` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Enchant5` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Enchant6` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+	`Comment` TEXT NULL DEFAULT NULL
+)
+COLLATE='utf8mb4_general_ci'
+;
+
+DROP TABLE IF EXISTS `mod_ptrtemplate_quests`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_quests` (
+	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0',
+	`RaceMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
+	`QuestID` MEDIUMINT(7) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
 )
 COLLATE='utf8mb4_general_ci'
