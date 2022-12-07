@@ -98,10 +98,12 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             if (mapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde pos is the same.
             {
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
+                LOG_DEBUG("module", "Template character {} has been teleported to alliance position.", player->GetGUID().ToString());
             }
             else
             {
                 player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
+                LOG_DEBUG("module", "Template character {} has been teleported to horde position.", player->GetGUID().ToString());
             }
         }
     }
@@ -128,11 +130,13 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             {
                 homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
                 player->SetHomebind(homebinding, hZoneAllianceEntry);
+                LOG_DEBUG("module", "Template character {} has had their homebind replaced with alliance.", player->GetGUID().ToString());
             }
             else
             {
                 homebinding = WorldLocation(hMapHordeEntry, HXHordeEntry, HYHordeEntry, HZHordeEntry, HOHordeEntry);
                 player->SetHomebind(homebinding, hZoneHordeEntry);
+                LOG_DEBUG("module", "Template character {} has had their homebind replaced with horde.", player->GetGUID().ToString());
             }
         }
     }
@@ -150,6 +154,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
                 player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
+                LOG_DEBUG("module", "Added standing {} for faction {} for template character {}.", standingEntry, factionEntry, player->GetGUID().ToString());
             } while (repInfo->NextRow());
         }
     }
@@ -169,6 +174,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint32 actionEntry = (*barInfo)[1].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[2].Get<uint8>();
                 player->addActionButton(buttonEntry, actionEntry, typeEntry);
+                LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
             } while (barInfo->NextRow());
         }
         player->SendActionButtons(2);
@@ -285,7 +291,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 }
                 ItemPosCountVec dest;
                 if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
-                {
+                { // TODO: Make this whole section better.
                     do
                     {
                         if (!containerFields) // Apparently this can happen sometimes.
@@ -431,6 +437,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             do
             {
                 player->SetQuestStatus((*questInfo)[0].Get<uint32>(), QUEST_STATUS_COMPLETE);
+                LOG_DEBUG("module", "Added quest {} to template character {}.", ((*questInfo)[0].Get<uint32>()), player->GetGUID().ToString());
             } while (questInfo->NextRow());
         }
     }
@@ -445,6 +452,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             {
                 achievementID = sAchievementStore.LookupEntry((*achievementInfo)[0].Get<uint32>());
                 player->CompletedAchievement(achievementID);
+                LOG_DEBUG("module", "Added achievement {} to template character {}.", (*achievementInfo)[0].Get<uint32>(), player->GetGUID().ToString());
             } while (achievementInfo->NextRow());
         }
     }
@@ -460,6 +468,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                 uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
+                LOG_DEBUG("module", "Added skill {} to template character {} with curvalue {} and maxvalue {}.", skillEntry, player->GetGUID().ToString(), valueEntry, maxEntry);
             } while (skillInfo->NextRow());
             player->SaveToDB(false, false);
         }
@@ -474,6 +483,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             {
                 uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
                 player->learnSpell(spellEntry);
+                LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
             } while (spellInfo->NextRow());
         }
     }
@@ -535,6 +545,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
             { //                                                                          Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
             } //                                                                          ^(;,;)^
+            LOG_DEBUG("module", "Handled death knight case for template character {}.", player->GetGUID().ToString());
         }
     }
 };
@@ -627,6 +638,7 @@ public:
                     handler->PSendSysMessage("You do not meet the requirements to apply this template."); // Probably a poorly-worded message, but w/e.
                     return true;
                 }
+                uint32 oldMSTime = getMSTime();
                 createTemplate::AddTemplateDeathKnight(target);
                 createTemplate::AddTemplateLevel(target, index);
                 createTemplate::AddTemplateHomebind(target, index);
@@ -641,6 +653,7 @@ public:
                 createTemplate::AddTemplateHotbar(target, index);
                 createTemplate::AddTemplatePosition(target, index);
                 std::this_thread::sleep_for(50ms); //                 My opinion still hasn't changed five lines later.
+                LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
                 handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
             } //                                                                               because I will never ever ever figure out how to do the hotbar correctly.
             else
