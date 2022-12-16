@@ -12,6 +12,6 @@ Template.enable=true
 # Default: 0
 Enable.security=0
 
-# Enable templates to be applied only on start level.
+# Enable templates to be applied at any level.
 # Default: false
 Level.enable=false
