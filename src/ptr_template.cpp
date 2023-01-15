@@ -647,12 +647,12 @@ public:
                 createTemplate::AddTemplateReputation(target, index);
                 createTemplate::AddTemplateSkills(target, index);
                 createTemplate::AddTemplateWornGear(target, index);
-                std::this_thread::sleep_for(50ms); //  < - - - - - - -I absolutely despise this solution, but I have
+                // std::this_thread::sleep_for(50ms); //  < - - - - - - -I absolutely despise this solution, but I have
                 createTemplate::AddTemplateBagGear(target, index); // to make sure the bags are equipped before trying to add any gear to said bags.
                 createTemplate::AddTemplateSpells(target, index); //  Might be able to use TaskScheduler for this.
                 createTemplate::AddTemplateHotbar(target, index);
                 createTemplate::AddTemplatePosition(target, index);
-                std::this_thread::sleep_for(50ms); //                 My opinion still hasn't changed five lines later.
+                // std::this_thread::sleep_for(50ms); //                 My opinion still hasn't changed five lines later.
                 LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
                 handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
             } //                                                                               because I will never ever ever figure out how to do the hotbar correctly.
