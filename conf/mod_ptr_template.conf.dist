@@ -15,3 +15,18 @@ Enable.security=0
 # Enable templates to be applied at any level.
 # Default: false
 Level.enable=false
+
+# Enable various aspects of template sets to be enabled.
+# Defaults: true
+Template.dk=true
+Template.level=true
+Template.homebind=true
+Template.achievements=true
+Template.quests=true
+Template.reputation=true
+Template.skills=true
+Template.equipgear=true
+Template.baggear=true
+Template.spells=true
+Template.hotbar=true
+Template.teleport=true
