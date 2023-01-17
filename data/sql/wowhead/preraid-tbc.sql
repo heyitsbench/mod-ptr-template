@@ -819,11 +819,13 @@ INSERT INTO `mod_ptrtemplate_reputations` (`ID`, `RaceMask`, `ClassMask`, `Facti
 INSERT INTO `mod_ptrtemplate_skills` (`ID`, `RaceMask`, `ClassMask`, `SkillID`, `Value`, `Max`, `Comment`) VALUES
 (@preraidtbc, 1791, 3, 293, 1, 1, 'Plate Mail'),
 (@preraidtbc, 1791, 68, 413, 1, 1, 'Mail'),
+(@preraidtbc, 1791, 77, 118, 1, 1, 'Dual Wield'),
 (@preraidtbc, 1791, 1503, 95, 350, 350, 'Defense'),
 (@preraidtbc, 1791, 1503, 762, 300, 300, 'Riding'),
 (@preraidtbc, 1791, 1503, 129, 375, 375, 'First Aid'),
 (@preraidtbc, 1791, 1503, 185, 375, 375, 'Cooking'),
 (@preraidtbc, 1791, 1503, 356, 375, 375, 'Fishing'),
+(@preraidtbc, 1791, 1503, 162, 350, 350, 'Unarmed'),
 (@preraidtbc, 1791, 71, 44, 350, 350, 'One-Handed Axes'),
 (@preraidtbc, 1791, 1115, 54, 350, 350, 'One-Handed Maces'),
 (@preraidtbc, 1791, 7, 172, 350, 350, 'Two-Handed Axes'),
