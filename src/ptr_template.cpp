@@ -1,11 +1,14 @@
-#include "Chat.h"
-#include "Player.h"
-#include "ScriptMgr.h"
-#include "Config.h"
-#include "ReputationMgr.h"
 #include "ptr_template_loader.h"
+#include "Chat.h"
+#include "Config.h"
+#include "Player.h"
+#include "ReputationMgr.h"
+#include "ScriptMgr.h"
+#include "TaskScheduler.h"
 
 using namespace Acore::ChatCommands;
+
+TaskScheduler scheduler;
 
 class createPTR : public WorldScript {
 
@@ -39,6 +42,89 @@ class createTemplate : public PlayerScript { // TODO: Add logging stuff everywhe
 public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a problem I get for later. :)
     createTemplate() : PlayerScript("createTemplate") { }
 
+    void HandleApply(Player* player, uint32 index)
+    {
+        scheduler.Schedule(Milliseconds(25), [player, index](TaskContext context)
+            {
+                switch (context.GetRepeatCounter())
+                {
+                case 0:
+                    if (sConfigMgr->GetOption<bool>("Template.dk", true))
+                    {
+                        AddTemplateDeathKnight(player);
+                    }
+                    break;
+                case 1:
+                    if (sConfigMgr->GetOption<bool>("Template.level", true))
+                    {
+                        AddTemplateLevel(player, index);
+                    }
+                    break;
+                case 2:
+                    if (sConfigMgr->GetOption<bool>("Template.homebind", true))
+                    {
+                        AddTemplateHomebind(player, index);
+                    }
+                    break;
+                case 3:
+                    if (sConfigMgr->GetOption<bool>("Template.achievements", true))
+                    {
+                        AddTemplateAchievements(player, index);
+                    }
+                    break;
+                case 4:
+                    if (sConfigMgr->GetOption<bool>("Template.quests", true))
+                    {
+                        AddTemplateQuests(player, index);
+                    }
+                    break;
+                case 5:
+                    if (sConfigMgr->GetOption<bool>("Template.reputation", true))
+                    {
+                        AddTemplateReputation(player, index);
+                    }
+                    break;
+                case 6:
+                    if (sConfigMgr->GetOption<bool>("Template.skills", true))
+                    {
+                        AddTemplateSkills(player, index);
+                    }
+                    break;
+                case 7:
+                    if (sConfigMgr->GetOption<bool>("Template.equipgear", true))
+                    {
+                        AddTemplateWornGear(player, index);
+                    }
+                    break;
+                case 8:
+                    if (sConfigMgr->GetOption<bool>("Template.baggear", true))
+                    {
+                        AddTemplateBagGear(player, index);
+                    }
+                    break;
+                case 9:
+                    if (sConfigMgr->GetOption<bool>("Template.spells", true))
+                    {
+                        AddTemplateSpells(player, index);
+                    }
+                    break;
+                case 10:
+                    if (sConfigMgr->GetOption<bool>("Template.hotbar", true))
+                    {
+                        AddTemplateHotbar(player, index);
+                    }
+                    break;
+                case 11:
+                    if (sConfigMgr->GetOption<bool>("Template.teleport", true))
+                    {
+                        AddTemplatePosition(player, index);
+                    }
+                    return;
+                }
+                context.Repeat(Milliseconds(50));
+            });
+    }
+
     static bool CheckTemplateQualifier(Player* player, uint32 index)
     {
         QueryResult repInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask()); // These are used to figure out if a template has a race/class in mind.
@@ -70,6 +156,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
         }
     }
 
+private:
     static void AddTemplateLevel(Player* player, uint32 index)
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
@@ -550,6 +637,17 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 };
 
+class schedulediff : public WorldScript {
+
+public:
+    schedulediff() : WorldScript("schedulediff") { }
+
+    void OnUpdate(uint32 diff)
+    {
+        scheduler.Update(diff);
+    }
+};
+
 class announce : public PlayerScript {
 
 public:
@@ -623,6 +721,7 @@ public:
     static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index) // TODO: Allow the command to use a target instead of always targetting self.
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
+        static createTemplate templatevar;
         if(check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
@@ -633,60 +732,13 @@ public:
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 }
                 Player* target = player->GetConnectedPlayer();
-                if (!(createTemplate::CheckTemplateQualifier(target, index)))
+                if (!(templatevar.CheckTemplateQualifier(target, index)))
                 {
                     handler->PSendSysMessage("You do not meet the requirements to apply this template."); // Probably a poorly-worded message, but w/e.
                     return true;
                 }
                 uint32 oldMSTime = getMSTime();
-                if (sConfigMgr->GetOption<bool>("Template.dk", true))
-                {
-                    createTemplate::AddTemplateDeathKnight(target);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.level", true))
-                {
-                    createTemplate::AddTemplateLevel(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.homebind", true))
-                {
-                    createTemplate::AddTemplateHomebind(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.achievements", true))
-                {
-                    createTemplate::AddTemplateAchievements(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.quests", true))
-                {
-                    createTemplate::AddTemplateQuests(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.reputation", true))
-                {
-                    createTemplate::AddTemplateReputation(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.skills", true))
-                {
-                    createTemplate::AddTemplateSkills(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.equipgear", true))
-                {
-                    createTemplate::AddTemplateWornGear(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.baggear", true))
-                {
-                    createTemplate::AddTemplateBagGear(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.spells", true))
-                {
-                    createTemplate::AddTemplateSpells(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.hotbar", true))
-                {
-                    createTemplate::AddTemplateHotbar(target, index);
-                }
-                if (sConfigMgr->GetOption<bool>("Template.teleport", true))
-                {
-                    createTemplate::AddTemplatePosition(target, index);
-                }
+                templatevar.HandleApply(target, index);
                 LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
                 handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
             } //                                                                               because I will never ever ever figure out how to do the hotbar correctly.
@@ -730,6 +782,7 @@ void Add_ptr_template()
     new createPTR();
     new createTemplate();
     new announce();
+    new schedulediff();
 }
 
 void AddSC_ptr_template_commandscript()
