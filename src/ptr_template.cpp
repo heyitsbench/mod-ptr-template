@@ -158,7 +158,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
 private:
 
-    static const enum TemplateEnums
+    enum TemplateEnums
     {
         APPLY_DELAY         = 1,
         APPLY_RATE          = 50,
