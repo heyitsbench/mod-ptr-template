@@ -44,7 +44,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
 
     void HandleApply(Player* player, uint32 index)
     {
-        scheduler.Schedule(Milliseconds(25), [player, index](TaskContext context)
+        scheduler.Schedule(Milliseconds(APPLY_DELAY), [player, index](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
                 {
@@ -121,7 +121,7 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     }
                     return;
                 }
-                context.Repeat(Milliseconds(50));
+                context.Repeat(Milliseconds(APPLY_RATE));
             });
     }
 
@@ -157,6 +157,17 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
     }
 
 private:
+
+    static const enum TemplateEnums
+    {
+        APPLY_DELAY         = 1,
+        APPLY_RATE          = 50,
+        HORDE_SIMILAR       = -1,
+        ACTION_BUTTON_BEGIN = 0,
+        CONTAINER_BACKPACK  = 0,
+        CONTAINER_END       = 5
+    };
+
     static void AddTemplateLevel(Player* player, uint32 index)
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
@@ -177,12 +188,12 @@ private:
             float YAllianceEntry = (*posEntry)[2].Get<float>();
             float ZAllianceEntry = (*posEntry)[3].Get<float>();
             float OAllianceEntry = (*posEntry)[4].Get<float>();
-            int16 mapHordeEntry = (*posEntry)[5].Get<int16>(); // Has to be signed to allow for condition below.
+            int16 mapHordeEntry = (*posEntry)[5].Get<int16>();
             float XHordeEntry = (*posEntry)[6].Get<float>();
             float YHordeEntry = (*posEntry)[7].Get<float>();
             float ZHordeEntry = (*posEntry)[8].Get<float>();
             float OHordeEntry = (*posEntry)[9].Get<float>();
-            if (mapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde pos is the same.
+            if (mapHordeEntry == HORDE_SIMILAR || (player->GetTeamId() == TEAM_ALLIANCE))
             {
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
                 LOG_DEBUG("module", "Template character {} has been teleported to alliance position.", player->GetGUID().ToString());
@@ -206,14 +217,14 @@ private:
             float HYAllianceEntry = (*homeEntry)[3].Get<float>();
             float HZAllianceEntry = (*homeEntry)[4].Get<float>();
             float HOAllianceEntry = (*homeEntry)[5].Get<float>();
-            int16 hMapHordeEntry = (*homeEntry)[6].Get<int16>(); // Has to be signed to allow for condition below.
+            int16 hMapHordeEntry = (*homeEntry)[6].Get<int16>();
             uint16 hZoneHordeEntry = (*homeEntry)[7].Get<uint16>();
             float HXHordeEntry = (*homeEntry)[8].Get<float>();
             float HYHordeEntry = (*homeEntry)[9].Get<float>();
             float HZHordeEntry = (*homeEntry)[10].Get<float>();
             float HOHordeEntry = (*homeEntry)[11].Get<float>();
             WorldLocation homebinding;
-            if (hMapHordeEntry == -1 || (player->GetTeamId() == TEAM_ALLIANCE)) // -1 is used if Alliance/Horde binding is the same.
+            if (hMapHordeEntry == HORDE_SIMILAR || (player->GetTeamId() == TEAM_ALLIANCE))
             {
                 homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
                 player->SetHomebind(homebinding, hZoneAllianceEntry);
@@ -249,10 +260,10 @@ private:
     static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
     { //                                                    0       1      2
         QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        for (uint8 j = 0; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
-        { //                                               This doesn't work for spells added by AddTemplateSpells.
-            player->removeActionButton(j); //              I don't know why and I've tried everything I can think of, but nothing's worked.
-        } //                                               And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
+        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
+        { //                                                                 This doesn't work for spells added by AddTemplateSpells.
+            player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
+        } //                                                                 And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
         if (barInfo)
         {
             do
@@ -288,7 +299,7 @@ private:
                 uint32 enchant4Entry = (*gearInfo)[7].Get<uint32>();
                 uint32 enchant5Entry = (*gearInfo)[8].Get<uint32>();
                 uint32 enchant6Entry = (*gearInfo)[9].Get<uint32>();
-                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != 0) // If item is not either an equipped armorpiece, weapon, or container.
+                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
                 {
                     continue;
                 }
@@ -372,12 +383,12 @@ private:
                     player->SetMoney(quantityEntry);
                     continue;
                 }
-                if ((slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) && bagEntry == 0) // If item is either an equipped armorpiece, weapon, or container.
+                if ((slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) && bagEntry == CONTAINER_BACKPACK) // If item is either an equipped armorpiece, weapon, or container.
                 {
                     continue;
                 }
                 ItemPosCountVec dest;
-                if (bagEntry > 0 && bagEntry < 5) // If bag is an equipped container.
+                if (bagEntry > CONTAINER_BACKPACK && bagEntry < CONTAINER_END) // If bag is an equipped container.
                 { // TODO: Make this whole section better.
                     do
                     {
@@ -444,7 +455,7 @@ private:
                         }
                     } while (containerInfo->NextRow());
                 }
-                else if (bagEntry == 0) // If bag is backpack
+                else if (bagEntry == CONTAINER_BACKPACK) // If bag is backpack
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                     {
@@ -504,7 +515,7 @@ private:
                         }
                     }
                 }
-                else if (bagEntry >= 5) // Basically just used for random sorting.
+                else if (bagEntry >= CONTAINER_END) // Basically just used for random sorting.
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
