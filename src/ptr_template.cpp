@@ -165,7 +165,8 @@ private:
         HORDE_SIMILAR       = -1,
         ACTION_BUTTON_BEGIN = 0,
         CONTAINER_BACKPACK  = 0,
-        CONTAINER_END       = 5
+        CONTAINER_END       = 5,
+        ITEM_GOLD           = 8
     };
 
     static void AddTemplateLevel(Player* player, uint32 index)
@@ -382,8 +383,8 @@ private:
                 uint32 enchant4Entry = bagFields[8].Get<uint32>();
                 uint32 enchant5Entry = bagFields[9].Get<uint32>();
                 uint32 enchant6Entry = bagFields[10].Get<uint32>();
-                if (itemEntry == 8) // Arbitrary non-existent itemID value (Used for gold)
-                { //                   This should probably be a slotID and not an itemEntry, similar to ammo.
+                if (itemEntry == ITEM_GOLD)
+                {
                     player->SetMoney(quantityEntry);
                     continue;
                 }
@@ -394,7 +395,7 @@ private:
                 ItemPosCountVec dest;
                 if (bagEntry > CONTAINER_BACKPACK && bagEntry < CONTAINER_END) // If bag is an equipped container.
                 { // TODO: Make this whole section better.
-                    do
+                    do // Also TODO: Add support for adding to bank bag contents. Damn paladins.
                     {
                         if (!containerFields) // Apparently this can happen sometimes.
                         {
