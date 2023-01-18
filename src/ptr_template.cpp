@@ -790,7 +790,9 @@ public:
                 uint8 enableEntry = (*enable)[1].Get<uint8>();
                 std::string commentEntry = (*enable)[2].Get<std::string>();
                 if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
+                {
                     handler->PSendSysMessage("%u (%s): %u", indexEntry, commentEntry, enableEntry);
+                }
             } while (enable->NextRow());
         }
         else
