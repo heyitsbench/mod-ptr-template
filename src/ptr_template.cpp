@@ -279,7 +279,7 @@ private:
         player->SendActionButtons(2);
     }
 
-    static void AddTemplateWornGear(Player* player, uint32 index)
+    static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
     { //                                                     0      1       2        3         4         5         6         7         8         9
         QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (gearInfo)
@@ -362,7 +362,7 @@ private:
         player->SaveToDB(false, false);
     }
 
-    static void AddTemplateBagGear(Player* player, uint32 index)
+    static void AddTemplateBagGear(Player* player, uint32 index) // Handles bag items and currency.
     { //                                                    0      1       2        3         4         5         6         7         8         9         10
         QueryResult bagInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (bagInfo)
@@ -528,12 +528,12 @@ private:
                         }
                     }
                 }
-                else if (bagEntry >= CONTAINER_END) // Basically just used for random sorting.
+                else if (bagEntry >= CONTAINER_END)
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
-                        player->StoreNewItem(dest, itemEntry, true);
+                        player->StoreNewItem(dest, itemEntry, true); // Add to next available slot in backpack/equipped bags.
                     }
                 }
             } while (bagInfo->NextRow());
