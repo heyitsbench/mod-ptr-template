@@ -311,7 +311,7 @@ private:
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
-                if (item->GetEntry() != itemEntry)
+                if (item && item->GetEntry() != itemEntry)
                 {
                     continue;
                 }
@@ -415,7 +415,7 @@ private:
                         {
                             player->StoreNewItem(dest, itemEntry, true);
                             Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
-                            if (item->GetEntry() != itemEntry)
+                            if (item && item->GetEntry() != itemEntry)
                             {
                                 continue;
                             }
@@ -480,7 +480,7 @@ private:
                     {
                         player->StoreNewItem(dest, itemEntry, true);
                         Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better and cooler.
-                        if (item->GetEntry() != itemEntry)
+                        if (item && item->GetEntry() != itemEntry)
                         {
                             continue;
                         }
