@@ -276,7 +276,7 @@ private:
                 LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
             } while (barInfo->NextRow());
         }
-        player->SendActionButtons(2);
+        player->SendActionButtons(1);
     }
 
     static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
@@ -293,13 +293,6 @@ private:
                 uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
                 uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
                 uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
-                uint32 enchant0Entry = (*gearInfo)[3].Get<uint32>();
-                uint32 enchant1Entry = (*gearInfo)[4].Get<uint32>();
-                uint32 enchant2Entry = (*gearInfo)[5].Get<uint32>();
-                uint32 enchant3Entry = (*gearInfo)[6].Get<uint32>();
-                uint32 enchant4Entry = (*gearInfo)[7].Get<uint32>();
-                uint32 enchant5Entry = (*gearInfo)[8].Get<uint32>();
-                uint32 enchant6Entry = (*gearInfo)[9].Get<uint32>();
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
                 {
                     continue;
@@ -315,48 +308,7 @@ private:
                 {
                     continue;
                 }
-                if (enchant0Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant1Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant2Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant3Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant4Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant5Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
-                if (enchant6Entry)
-                {
-                    player->ApplyEnchantment(item, false);
-                    item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
-                    player->ApplyEnchantment(item, true);
-                }
+                TemplateHelperItemEnchants(gearInfo, player, item, 3);
             } while (gearInfo->NextRow());
         }
         player->SaveToDB(false, false);
@@ -376,13 +328,6 @@ private:
                 uint8 slotEntry = bagFields[1].Get<uint8>();
                 uint32 itemEntry = bagFields[2].Get<uint32>();
                 uint32 quantityEntry = bagFields[3].Get<uint32>();
-                uint32 enchant0Entry = bagFields[4].Get<uint32>();
-                uint32 enchant1Entry = bagFields[5].Get<uint32>();
-                uint32 enchant2Entry = bagFields[6].Get<uint32>();
-                uint32 enchant3Entry = bagFields[7].Get<uint32>();
-                uint32 enchant4Entry = bagFields[8].Get<uint32>();
-                uint32 enchant5Entry = bagFields[9].Get<uint32>();
-                uint32 enchant6Entry = bagFields[10].Get<uint32>();
                 if (itemEntry == ITEM_GOLD)
                 {
                     player->SetMoney(quantityEntry);
@@ -419,48 +364,7 @@ private:
                             {
                                 continue;
                             }
-                            if (enchant0Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant1Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant2Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant3Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant4Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant5Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
-                            if (enchant6Entry)
-                            {
-                                player->ApplyEnchantment(item, false);
-                                item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
-                                player->ApplyEnchantment(item, true);
-                            }
+                            TemplateHelperItemEnchants(bagInfo, player, item, 4);
                         }
                     } while (containerInfo->NextRow());
                 }
@@ -484,48 +388,7 @@ private:
                         {
                             continue;
                         }
-                        if (enchant0Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant1Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant2Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant3Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant4Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant5Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
-                        if (enchant6Entry)
-                        {
-                            player->ApplyEnchantment(item, false);
-                            item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
-                            player->ApplyEnchantment(item, true);
-                        }
+                        TemplateHelperItemEnchants(bagInfo, player, item, 4);
                     }
                 }
                 else if (bagEntry >= CONTAINER_END)
@@ -657,6 +520,60 @@ private:
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
             } //                                                                          ^(;,;)^
             LOG_DEBUG("module", "Handled death knight case for template character {}.", player->GetGUID().ToString());
+        }
+    }
+
+    static void TemplateHelperItemEnchants(QueryResult query, Player* player, Item* item, uint8 offset)
+    {
+        uint32 enchant0Entry = (*query)[offset].Get<uint32>();
+        uint32 enchant1Entry = (*query)[offset + 1].Get<uint32>();
+        uint32 enchant2Entry = (*query)[offset + 2].Get<uint32>();
+        uint32 enchant3Entry = (*query)[offset + 3].Get<uint32>();
+        uint32 enchant4Entry = (*query)[offset + 4].Get<uint32>();
+        uint32 enchant5Entry = (*query)[offset + 5].Get<uint32>();
+        uint32 enchant6Entry = (*query)[offset + 6].Get<uint32>();
+
+        if (enchant0Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(PERM_ENCHANTMENT_SLOT, enchant0Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant1Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(TEMP_ENCHANTMENT_SLOT, enchant1Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant2Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT, enchant2Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant3Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_2, enchant3Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant4Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(SOCK_ENCHANTMENT_SLOT_3, enchant4Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant5Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(BONUS_ENCHANTMENT_SLOT, enchant5Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
+        }
+        if (enchant6Entry)
+        {
+            player->ApplyEnchantment(item, false);
+            item->SetEnchantment(PRISMATIC_ENCHANTMENT_SLOT, enchant6Entry, 0, 0);
+            player->ApplyEnchantment(item, true);
         }
     }
 };
