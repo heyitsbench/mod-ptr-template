@@ -16,7 +16,7 @@ Enable.security=0
 # Default: false
 Level.enable=false
 
-# Enable various aspects of template sets to be enabled.
+# Enable various aspects of template sets to be applied.
 # Defaults: true
 Template.dk=true
 Template.level=true
