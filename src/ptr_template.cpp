@@ -160,7 +160,7 @@ private:
 
     enum TemplateEnums
     {
-        APPLY_DELAY         = 1,
+        APPLY_DELAY         = 25,
         APPLY_RATE          = 50,
         HORDE_SIMILAR       = -1,
         ACTION_BUTTON_BEGIN = 0,
