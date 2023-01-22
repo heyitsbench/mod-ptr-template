@@ -276,7 +276,7 @@ private:
                 LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
             } while (barInfo->NextRow());
         }
-        player->SendActionButtons(1);
+        player->SendActionButtons(2);
     }
 
     static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
@@ -293,7 +293,7 @@ private:
                 uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
                 uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
                 uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
-                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
+                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < BANK_SLOT_BAG_START) || (slotEntry >= BANK_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
                 {
                     continue;
                 }
@@ -303,6 +303,15 @@ private:
                 }
                 else
                 player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
+                if (slotEntry >= BANK_SLOT_BAG_START && slotEntry < BANK_SLOT_BAG_END)
+                {
+                    uint8 slotBuffer = slotEntry - (BANK_SLOT_BAG_START - 1);
+
+                    if (player->GetBankBagSlotCount() < slotBuffer)
+                    {
+                        player->SetBankBagSlotCount(slotBuffer);
+                    }
+                }
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
                 if (item && item->GetEntry() != itemEntry)
                 {
@@ -310,8 +319,8 @@ private:
                 }
                 TemplateHelperItemEnchants(gearInfo, player, item, 3);
             } while (gearInfo->NextRow());
+            player->SaveToDB(false, false);
         }
-        player->SaveToDB(false, false);
     }
 
     static void AddTemplateBagGear(Player* player, uint32 index) // Handles bag items and currency.
@@ -391,7 +400,7 @@ private:
                         TemplateHelperItemEnchants(bagInfo, player, item, 4);
                     }
                 }
-                else if (bagEntry >= CONTAINER_END)
+                else
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
