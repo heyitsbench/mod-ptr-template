@@ -52,72 +52,96 @@ public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a
                     if (sConfigMgr->GetOption<bool>("Template.dk", true))
                     {
                         AddTemplateDeathKnight(player);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying death knight case for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 1:
                     if (sConfigMgr->GetOption<bool>("Template.level", true))
                     {
                         AddTemplateLevel(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying level for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 2:
                     if (sConfigMgr->GetOption<bool>("Template.homebind", true))
                     {
                         AddTemplateHomebind(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying homebind for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 3:
                     if (sConfigMgr->GetOption<bool>("Template.achievements", true))
                     {
                         AddTemplateAchievements(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying achievements for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 4:
                     if (sConfigMgr->GetOption<bool>("Template.quests", true))
                     {
                         AddTemplateQuests(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying quests for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 5:
                     if (sConfigMgr->GetOption<bool>("Template.reputation", true))
                     {
                         AddTemplateReputation(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying reputations for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 6:
                     if (sConfigMgr->GetOption<bool>("Template.skills", true))
                     {
                         AddTemplateSkills(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying skills for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 7:
                     if (sConfigMgr->GetOption<bool>("Template.equipgear", true))
                     {
                         AddTemplateWornGear(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying equipment for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 8:
                     if (sConfigMgr->GetOption<bool>("Template.baggear", true))
                     {
                         AddTemplateBagGear(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying inventory items for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 9:
                     if (sConfigMgr->GetOption<bool>("Template.spells", true))
                     {
                         AddTemplateSpells(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying spells for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 10:
                     if (sConfigMgr->GetOption<bool>("Template.hotbar", true))
                     {
                         AddTemplateHotbar(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying hotbar spells for template character {}.", player->GetGUID().ToString());
                     }
                     break;
                 case 11:
                     if (sConfigMgr->GetOption<bool>("Template.teleport", true))
                     {
                         AddTemplatePosition(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished teleporting template character {}.", player->GetGUID().ToString());
                     }
                     return;
                 }
@@ -176,6 +200,7 @@ private:
         {
             uint8 levelEntry = (*check)[0].Get<uint8>();
             player->GiveLevel(levelEntry);
+            LOG_DEBUG("module", "Template character {} has been made level {}.", player->GetGUID().ToString(), levelEntry);
         }
     }
 
@@ -312,14 +337,13 @@ private:
                         player->SetBankBagSlotCount(slotBuffer);
                     }
                 }
-                Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better.
+                Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry);
                 if (item && item->GetEntry() != itemEntry)
                 {
                     continue;
                 }
                 TemplateHelperItemEnchants(gearInfo, player, item, 3);
             } while (gearInfo->NextRow());
-            player->SaveToDB(false, false);
         }
     }
 
@@ -528,7 +552,6 @@ private:
             { //                                                                          Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
             } //                                                                          ^(;,;)^
-            LOG_DEBUG("module", "Handled death knight case for template character {}.", player->GetGUID().ToString());
         }
     }
 
