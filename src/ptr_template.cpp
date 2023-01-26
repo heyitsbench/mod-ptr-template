@@ -38,8 +38,8 @@ public:
 };
 
 class createTemplate : public PlayerScript { // TODO: Add logging stuff everywhere. I love me some logs.
-    //     Also TODO: Add taximask function because golly me do I love taxis.
-public: // Probably gonna use SetTaximaskNode. Looks like it sucks, but that's a problem I get for later. :)
+
+public:
     createTemplate() : PlayerScript("createTemplate") { }
 
     void HandleApply(Player* player, uint32 index)
@@ -327,7 +327,7 @@ private:
                     player->SetAmmo(itemEntry);
                 }
                 else
-                player->EquipNewItem(slotEntry, itemEntry, true); // For some reason this straight up overwrites anything occupying the slot, so no need for DestroyItem.
+                player->EquipNewItem(slotEntry, itemEntry, true);
                 if (slotEntry >= BANK_SLOT_BAG_START && slotEntry < BANK_SLOT_BAG_END)
                 {
                     uint8 slotBuffer = slotEntry - (BANK_SLOT_BAG_START - 1);
