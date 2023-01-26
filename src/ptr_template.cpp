@@ -431,6 +431,20 @@ private:
                     {
                         player->StoreNewItem(dest, itemEntry, true); // Add to next available slot in backpack/equipped bags.
                     }
+                    else if (validCheck == EQUIP_ERR_INVENTORY_FULL) // No available slots, post office's problem.
+                    {
+                        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+                        Item* itemBuffer = Item::CreateItem(itemEntry, quantityEntry, player, false);
+
+                        TemplateHelperItemEnchants(bagInfo, player, itemBuffer, 4);
+
+                        std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+
+                        MailDraft draft(subject, "There were problems with equipping item(s).");
+                        draft.AddItem(itemBuffer); // TODO: Make a damn queue and allow multiple items to a single message. Druids have so many items their inbox gets full immediately if sending one by one.
+                        draft.SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+                        CharacterDatabase.CommitTransaction(trans);
+                    }
                 }
             } while (bagInfo->NextRow());
         }
