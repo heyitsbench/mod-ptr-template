@@ -1,0 +1,16 @@
+INSERT INTO `mod_ptrtemplate_reputations` (`ID`, `RaceMask`, `ClassMask`, `FactionID`, `Standing`, `Comment`) VALUES
+(2, 1, 8, 42999, 942, NULL),
+(2, 1, 8, 42999, 946, NULL),
+(2, 1, 8, 42999, 989, NULL),
+(2, 1, 8, 42999, 1038, NULL),
+(2, 1, 8, 42999, 933, NULL),
+(2, 1, 8, 42999, 1011, NULL),
+(2, 1, 8, -42000, 932, NULL),
+(2, 1, 8, 42999, 934, NULL),
+(2, 1, 8, 42999, 935, NULL),
+(2, 1, 8, 3267, 69, NULL),
+(2, 1, 8, 3000, 930, NULL),
+(2, 1, 8, 3267, 54, NULL),
+(2, 1, 8, 3771, 47, NULL),
+(2, 1, 8, 4167, 72, NULL),
+(2, 1, 8, 9000, 730, NULL);
