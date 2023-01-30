@@ -14,13 +14,13 @@ Check issues page for current progress on blizzlike templates.
 
 For the most part, the [guide found here](https://www.azerothcore.org/wiki/installing-a-module) can be referred to. However, the SQL portion needs a bit of attention.
 
-If you want to create your own template sets, feel free to only run the [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) and [command.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/command.sql) files in your world DB and create the sets from the created tables.
+If you want to create your own template sets, feel free to only run the [command.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/command.sql) and [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) files in your world DB and create the sets from the created tables.
 
 If you want to use the template sets included with the module, you must then run the contents of the [blizzlike](https://github.com/heyitsbench/mod-ptr-template/tree/master/data/sql/blizzlike) directory on your world DB as well.
 
 ### (Optional) Edit Module Configuration
 
-Though currently sparse, you are also able to edit the [mod_ptr_template.conf](https://github.com/heyitsbench/mod-ptr-template/blob/master/conf/mod_ptr_template.conf.dist) to your liking.
+You are also able to edit the [mod_ptr_template.conf](https://github.com/heyitsbench/mod-ptr-template/blob/master/conf/mod_ptr_template.conf.dist) to your liking. At the time of writing, you can pick and choose what parts of the template sets it should apply, whether it announces itself on login, the security level required to apply templates, and whether it can only be applied at the start level of a character.
 
 ## Creating Template Sets
 
