@@ -744,7 +744,7 @@ public:
 
     static bool listTemplate(ChatHandler* handler)
     { //                                                 0     1        2
-        QueryResult enable = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index");
+        QueryResult enable = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
         if (enable)
         {
             do
