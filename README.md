@@ -12,7 +12,7 @@ Check issues page for current progress on blizzlike templates.
 
 ## How to Install
 
-For the most part, the [guide found here](https://www.azerothcore.org/wiki/add-a-module) can be referred to. However, the SQL portion needs a bit of attention.
+For the most part, the [guide found here](https://www.azerothcore.org/wiki/installing-a-module) can be referred to. However, the SQL portion needs a bit of attention.
 
 If you want to create your own template sets, feel free to only run the [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) and [command.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/command.sql) files in your world DB and create the sets from the created tables.
 
