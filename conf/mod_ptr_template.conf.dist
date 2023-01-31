@@ -20,6 +20,7 @@ Level.enable=false
 # Defaults: true
 Template.dk=true
 Template.level=true
+Template.taximask=true
 Template.homebind=true
 Template.achievements=true
 Template.quests=true
