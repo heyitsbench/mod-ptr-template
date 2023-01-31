@@ -44,6 +44,8 @@ public:
 
     void HandleApply(Player* player, uint32 index)
     {
+        LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
+
         scheduler.Schedule(Milliseconds(APPLY_DELAY), [player, index](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
@@ -65,6 +67,14 @@ public:
                     }
                     break;
                 case 2:
+                    if (sConfigMgr->GetOption<bool>("Template.taximask", true))
+                    {
+                        AddTemplateTaxi(player, index);
+                        player->SaveToDB(false, false);
+                        LOG_DEBUG("module", "Finished applying taximask for template character {}.", player->GetGUID().ToString());
+                    }
+                    break;
+                case 3:
                     if (sConfigMgr->GetOption<bool>("Template.homebind", true))
                     {
                         AddTemplateHomebind(player, index);
@@ -72,7 +82,7 @@ public:
                         LOG_DEBUG("module", "Finished applying homebind for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 3:
+                case 4:
                     if (sConfigMgr->GetOption<bool>("Template.achievements", true))
                     {
                         AddTemplateAchievements(player, index);
@@ -80,7 +90,7 @@ public:
                         LOG_DEBUG("module", "Finished applying achievements for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 4:
+                case 5:
                     if (sConfigMgr->GetOption<bool>("Template.quests", true))
                     {
                         AddTemplateQuests(player, index);
@@ -88,7 +98,7 @@ public:
                         LOG_DEBUG("module", "Finished applying quests for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 5:
+                case 6:
                     if (sConfigMgr->GetOption<bool>("Template.reputation", true))
                     {
                         AddTemplateReputation(player, index);
@@ -96,7 +106,7 @@ public:
                         LOG_DEBUG("module", "Finished applying reputations for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 6:
+                case 7:
                     if (sConfigMgr->GetOption<bool>("Template.skills", true))
                     {
                         AddTemplateSkills(player, index);
@@ -104,7 +114,7 @@ public:
                         LOG_DEBUG("module", "Finished applying skills for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 7:
+                case 8:
                     if (sConfigMgr->GetOption<bool>("Template.equipgear", true))
                     {
                         AddTemplateWornGear(player, index);
@@ -112,7 +122,7 @@ public:
                         LOG_DEBUG("module", "Finished applying equipment for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 8:
+                case 9:
                     if (sConfigMgr->GetOption<bool>("Template.baggear", true))
                     {
                         AddTemplateBagGear(player, index);
@@ -120,7 +130,7 @@ public:
                         LOG_DEBUG("module", "Finished applying inventory items for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 9:
+                case 10:
                     if (sConfigMgr->GetOption<bool>("Template.spells", true))
                     {
                         AddTemplateSpells(player, index);
@@ -128,7 +138,7 @@ public:
                         LOG_DEBUG("module", "Finished applying spells for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 10:
+                case 11:
                     if (sConfigMgr->GetOption<bool>("Template.hotbar", true))
                     {
                         AddTemplateHotbar(player, index);
@@ -136,7 +146,7 @@ public:
                         LOG_DEBUG("module", "Finished applying hotbar spells for template character {}.", player->GetGUID().ToString());
                     }
                     break;
-                case 11:
+                case 12:
                     if (sConfigMgr->GetOption<bool>("Template.teleport", true))
                     {
                         AddTemplatePosition(player, index);
@@ -204,6 +214,24 @@ private:
         }
     }
 
+    static void AddTemplateTaxi(Player* player, uint32 index)
+    { //                                                          0           1
+        QueryResult taxiEntry = WorldDatabase.Query("SELECT TaxiAlliance, TaxiHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (taxiEntry)
+        {
+            if (player->GetTeamId() == TEAM_ALLIANCE || (*taxiEntry)[1].Get<std::string_view>() == "-1")
+            {
+                player->m_taxi.LoadTaxiMask((*taxiEntry)[0].Get<std::string_view>()); // Replaces existing m_taxi with template taximask (if exists)
+                LOG_DEBUG("module", "Template character {} has been given alliance taxi mask.", player->GetGUID().ToString());
+            }
+            else
+            {
+                player->m_taxi.LoadTaxiMask((*taxiEntry)[1].Get<std::string_view>()); // Comes with the downside of having to create a taximask beforehand, but who cares it works
+                LOG_DEBUG("module", "Template character {} has been given horde taxi mask.", player->GetGUID().ToString());
+            }
+        }
+    }
+
     static void AddTemplatePosition(Player* player, uint32 index)
     { //                                                        0           1          2          3          4         5        6       7       8       9
         QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
@@ -219,7 +247,7 @@ private:
             float YHordeEntry = (*posEntry)[7].Get<float>();
             float ZHordeEntry = (*posEntry)[8].Get<float>();
             float OHordeEntry = (*posEntry)[9].Get<float>();
-            if (mapHordeEntry == HORDE_SIMILAR || (player->GetTeamId() == TEAM_ALLIANCE))
+            if (mapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
             {
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
                 LOG_DEBUG("module", "Template character {} has been teleported to alliance position.", player->GetGUID().ToString());
