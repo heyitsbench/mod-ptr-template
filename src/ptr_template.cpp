@@ -278,7 +278,7 @@ private:
             float HZHordeEntry = (*homeEntry)[10].Get<float>();
             float HOHordeEntry = (*homeEntry)[11].Get<float>();
             WorldLocation homebinding;
-            if (hMapHordeEntry == HORDE_SIMILAR || (player->GetTeamId() == TEAM_ALLIANCE))
+            if (hMapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
             {
                 homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
                 player->SetHomebind(homebinding, hZoneAllianceEntry);
