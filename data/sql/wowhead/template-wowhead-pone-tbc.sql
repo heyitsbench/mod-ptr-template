@@ -27,6 +27,18 @@ INSERT INTO `mod_ptrtemplate_inventory` (`ID`, `RaceMask`, `ClassMask`, `BagID`,
 (@ponetbc, 1791, 1503, 0, 89, 30633, 1, 0, 0, 0, 0, 0, 0, 0, 'Auchenai Key'),
 (@ponetbc, 1791, 1503, 0, 90, 30634, 1, 0, 0, 0, 0, 0, 0, 0, 'Warpforge Key'),
 (@ponetbc, 1791, 1503, 0, 91, 30635, 1, 0, 0, 0, 0, 0, 0, 0, 'Key of Time'),
+-- Warrior
+(@ponetbc, 1279, 1, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 178, 1, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1101, 1, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Paladin
+(@ponetbc, 1541, 2, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1029, 2, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 512, 2, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Hunter
+(@ponetbc, 1710, 4, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1036, 4, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 674, 4, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
 -- Rogue
 (@ponetbc, 735, 8, 0, 0, 29044, 1, 3003, 0, 3154, 2756, 0, 0, 0, 'Netherblade Facemask'),
 (@ponetbc, 735, 8, 0, 1, 29381, 1, 0, 0, 0, 0, 0, 0, 0, 'Choker of Vile Intent'),
@@ -88,6 +100,26 @@ INSERT INTO `mod_ptrtemplate_inventory` (`ID`, `RaceMask`, `ClassMask`, `BagID`,
 (@ponetbc, 735, 8, 1, 24, 30724, 1, 2724, 0, 2726, 2726, 0, 0, 0, 'Barrel-Blade Longrifle'),
 (@ponetbc, 77, 8, 1, 25, 29151, 1, 2724, 0, 0, 0, 0, 0, 0, 'Veteran\'s Musket'),
 (@ponetbc, 658, 8, 1, 25, 29152, 1, 2724, 0, 0, 0, 0, 0, 0, 'Marksman\'s Bow'),
+-- Priest
+(@ponetbc, 1693, 16, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1037, 16, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 656, 16, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Shaman
+(@ponetbc, 1186, 64, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1024, 64, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 162, 64, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Mage
+(@ponetbc, 1745, 128, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 656, 128, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 1089, 128, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Warlock
+(@ponetbc, 595, 256, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 530, 256, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 65, 256, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+-- Druid
+(@ponetbc, 40, 1024, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 8, 1024, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
+(@ponetbc, 32, 1024, , , , 1, 0, 0, 0, 0, 0, 0, 0, ''),
 
 INSERT INTO `mod_ptrtemplate_reputations` (`ID`, `RaceMask`, `ClassMask`, `FactionID`, `Standing`, `Comment`) VALUES
 (@ponetbc, 1791, 1503, 933, 42000, 'The Consortium'),
