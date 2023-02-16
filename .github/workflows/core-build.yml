@@ -1,6 +1,9 @@
 name: core-build
 on:
   push:
+    paths-ignore:
+      - 'data/sql/blizzlike/**'
+      - 'data/sql/wowhead/**'
   pull_request:
   workflow_dispatch:
 
