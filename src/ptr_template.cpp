@@ -168,24 +168,29 @@ public:
         QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
         {
+            LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
             return false;
         }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
         {
+            LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}.", player->GetGUID().ToString(), index);
             return false;
         }
         if (!sConfigMgr->GetOption<bool>("Template.enable", true))
         {
+            LOG_DEBUG("module", "Player {} tried to apply template {}, but it is not enabled.", player->GetGUID().ToString(), index);
             return false;
         }
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
         {
+            LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
             return false;
         }
         else
         {
+            LOG_DEBUG("module", "Player {} has passed qualification for template {}.", player->GetGUID().ToString(), index);
             return true;
         }
     }
