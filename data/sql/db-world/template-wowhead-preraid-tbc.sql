@@ -11,7 +11,7 @@ DELETE FROM `mod_ptrtemplate_skills` WHERE `ID` = @preraidtbc;
 DELETE FROM `mod_ptrtemplate_spells` WHERE `ID` = @preraidtbc;
 
 INSERT INTO `mod_ptrtemplate_index` (`ID`, `Keywords`, `Level`, `MapAlliance`, `XAlliance`, `YAlliance`, `ZAlliance`, `OAlliance`, `MapHorde`, `XHorde`, `YHorde`, `ZHorde`, `OHorde`, `HMapAlliance`, `HZoneAlliance`, `HXAlliance`, `HYAlliance`, `HZAlliance`, `HOAlliance`, `HMapHorde`, `HZoneHorde`, `HXHorde`, `HYHorde`, `HZHorde`, `HOHorde`, `TaxiAlliance`, `TaxiHorde`, `Enable`, `Comment`) VALUES
-(@preraidtbc, NULL, 70, 530, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 530, 3703, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 0, '4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295', '-1', 0, 'Wowhead Pre-Raid (TBC Classic)');
+(@preraidtbc, NULL, 70, 530, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 530, 3703, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 0, '4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295', '-1', 1, 'Wowhead Pre-Raid (TBC Classic)');
 
 INSERT INTO `mod_ptrtemplate_inventory` (`ID`, `RaceMask`, `ClassMask`, `BagID`, `SlotID`, `ItemID`, `Quantity`, `Enchant0`, `Enchant1`, `Enchant2`, `Enchant3`, `Enchant4`, `Enchant5`, `Enchant6`, `Comment`) VALUES
 -- General for all races/classes, leaves ~176 slots open, including paper doll.
