@@ -584,7 +584,9 @@ private:
             }
 
             STARTER_QUESTS[22] = specialSurpriseQuestId;
-            STARTER_QUESTS[32] = player->GetTeamId() == TEAM_ALLIANCE ? 13188 : 13189;
+            STARTER_QUESTS[32] = player->GetTeamId() == TEAM_ALLIANCE
+                ? 13188
+                : 13189;
 
             for (int questId : STARTER_QUESTS)
             {
@@ -786,8 +788,8 @@ public:
                 uint8 enableEntry = (*enable)[1].Get<uint8>();
                 std::string commentEntry = (*enable)[2].Get<std::string>();
                 std::string enableText = enableEntry
-                                         ? "Enabled"
-                                         : "Disabled";
+                    ? "Enabled"
+                    : "Disabled";
                 if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
