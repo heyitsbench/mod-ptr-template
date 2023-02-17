@@ -4,6 +4,8 @@
 
 This is a module for [AzerothCore](http://www.azerothcore.org/) that adds commands for creating characters from preset templates.
 
+[Demonstration video](https://www.youtube.com/watch?v=VPczbaUCEvw) (35s)
+
 ## Important Notes
 
 This module depends on the selection of certain template sets that have already been filled out. The sets included in this module (WIP as of the writing of this readme) are based on the following:
