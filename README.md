@@ -6,17 +6,24 @@ This is a module for [AzerothCore](http://www.azerothcore.org/) that adds comman
 
 ## Important Notes
 
-This module depends on the selection of certain template sets that have already been filled out. The sets included in this module (WIP as of the writing of this readme) are based on the template characters as seen on the Classic and Season of Mastery public test realms. In the future, this may be expanded to include many more sets, and anyone willing is free to contribute to this module.
+This module depends on the selection of certain template sets that have already been filled out. The sets included in this module (WIP as of the writing of this readme) are based on the following:
 
-Check issues page for current progress on blizzlike templates.
+- Template characters as seen on the Season of Mastery and Wrath Classic public test realms.
+- Best-in-slot gear lists from Wowhead for the various phases of Classic's release.
+
+In the future, this may be expanded to include many more sets, and anyone willing is free to contribute to this module.
+
+Check issues page for current progress on included templates.
 
 ## How to Install
 
 For the most part, the [guide found here](https://www.azerothcore.org/wiki/installing-a-module) can be referred to. However, the SQL portion needs a bit of attention.
 
-If you want to create your own template sets, feel free to only run the [command.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/command.sql) and [structure.sql](https://github.com/heyitsbench/mod-ptr-template/blob/master/data/sql/db-world/structure.sql) files in your world DB and create the sets from the created tables.
+**This module does have certain SQL queries in automated directories.**
 
-If you want to use the template sets included with the module, you must then run the contents of the [blizzlike](https://github.com/heyitsbench/mod-ptr-template/tree/master/data/sql/blizzlike) directory on your world DB as well.
+Queries required to use the module are automated, as well as any completed template sets. Automated template sets are enabled and available to apply by default.
+
+Any incomplete template set queries will need to be run manually while in development. They are disabled and need to be enabled manually (by command or editing the index entry) to be available to apply.
 
 ### (Optional) Edit Module Configuration
 
@@ -27,6 +34,6 @@ You are also able to edit the [mod_ptr_template.conf](https://github.com/heyitsb
 For information on creating your own template sets (and submitting them here for others to use), please refer to the [wiki](https://github.com/heyitsbench/mod-ptr-template/wiki).
 
 ## Credits
-- [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the skip-dk-starting area module as well as an example of storing SQL results into variables.
-- [AnchyDev](https://github.com/AnchyDev) for pointing out some much needed info regarding item storage.
+- [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the [skip-dk-starting area module](https://github.com/azerothcore/mod-skip-dk-starting-area) as well as an example of storing SQL results into variables.
+- [AnchyDev](https://github.com/AnchyDev) for pointing out some much needed info regarding item storage and TaskScheduler implementation.
 - [Nyeriah](https://github.com/Nyeriah) for identifying a couple points of confusion to me, resulting in issues.
