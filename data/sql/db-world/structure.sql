@@ -29,9 +29,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_index` (
 	`TaxiHorde` TEXT NULL DEFAULT NULL,
 	`Enable` TINYINT(1) NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_achievements`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_achievements` (
@@ -40,9 +38,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_achievements` (
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`AchievementID` INT UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_action`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_action` (
@@ -53,9 +49,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_action` (
 	`Action` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Type` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_inventory`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_inventory` (
@@ -74,9 +68,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_inventory` (
 	`Enchant5` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Enchant6` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_quests`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_quests` (
@@ -85,9 +77,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_quests` (
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`QuestID` MEDIUMINT(7) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_reputations`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_reputations` (
@@ -97,9 +87,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_reputations` (
 	`FactionID` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
 	`Standing` INT(10) NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_skills`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_skills` (
@@ -110,9 +98,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_skills` (
 	`Value` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
 	`Max` SMALLINT(5) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
 
 DROP TABLE IF EXISTS `mod_ptrtemplate_spells`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_spells` (
@@ -121,6 +107,4 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_spells` (
 	`ClassMask` SMALLINT UNSIGNED NOT NULL DEFAULT '0',
 	`SpellID` MEDIUMINT(7) UNSIGNED NOT NULL DEFAULT '0',
 	`Comment` TEXT NULL DEFAULT NULL
-)
-COLLATE='utf8mb4_general_ci'
-;
+) COLLATE='utf8mb4_general_ci';
