@@ -40,6 +40,6 @@ For information on creating your own template sets (and submitting them here for
 To uninstall the module, you must remove the module from the `modules` directory of your AC source, rerun CMake steps depending on your OS, and recompile. You will also need to run the `uninstall.sql` on your world DB to remove vestigial entries and tables.
 
 ## Credits
-- [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the [skip-dk-starting area module](https://github.com/azerothcore/mod-skip-dk-starting-area) as well as an example of storing SQL results into variables.
+- [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the [skip-dk-starting-area module](https://github.com/azerothcore/mod-skip-dk-starting-area) as well as an example of storing SQL results into variables.
 - [AnchyDev](https://github.com/AnchyDev) for pointing out some much needed info regarding item storage and TaskScheduler implementation.
 - [Nyeriah](https://github.com/Nyeriah) for identifying a couple points of confusion to me, resulting in issues.
