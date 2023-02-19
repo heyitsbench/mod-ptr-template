@@ -216,6 +216,17 @@ private:
             uint8 levelEntry = (*check)[0].Get<uint8>();
             player->GiveLevel(levelEntry);
             LOG_DEBUG("module", "Template character {} has been made level {}.", player->GetGUID().ToString(), levelEntry);
+
+            player->SetFullHealth();
+            if (player->getPowerType() == POWER_MANA)
+            {
+                player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
+            }
+            else if (player->getPowerType() == POWER_ENERGY)
+            {
+                player->SetPower(POWER_ENERGY, player->GetMaxPower(POWER_ENERGY));
+            }
+            LOG_DEBUG("module", "Template character {} has been given full health/power.", player->GetGUID().ToString());
         }
     }
 
