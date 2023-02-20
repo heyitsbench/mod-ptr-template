@@ -37,7 +37,7 @@ public:
     }
 };
 
-class createTemplate : public PlayerScript { // TODO: Add logging stuff everywhere. I love me some logs.
+class createTemplate : public PlayerScript {
 
 public:
     createTemplate() : PlayerScript("createTemplate") { }
@@ -445,7 +445,7 @@ private:
                         }
                     } while (containerInfo->NextRow());
                 }
-                else if (bagEntry == CONTAINER_BACKPACK) // If bag is backpack
+                else if (bagEntry == CONTAINER_BACKPACK)
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
                     {
@@ -558,7 +558,7 @@ private:
         if (player->getClass() == CLASS_DEATH_KNIGHT)
         {
             int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
-
+            // Blizz just dumped all of the special surprise quests on every DK template. Don't know yet if I want to do the same.
             int specialSurpriseQuestId = -1;
             switch (player->getRace())
             {
