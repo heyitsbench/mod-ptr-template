@@ -224,7 +224,7 @@ private:
             }
             else if (player->getPowerType() == POWER_ENERGY)
             {
-                player->SetPower(POWER_ENERGY, player->GetMaxPower(POWER_ENERGY));
+                player->SetPower(POWER_ENERGY, 0);
             }
             LOG_DEBUG("module", "Template character {} has been given full health/power.", player->GetGUID().ToString());
         }
