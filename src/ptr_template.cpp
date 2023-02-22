@@ -166,7 +166,9 @@ public:
         QueryResult itemInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         QueryResult skillInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
         QueryResult spellInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
-        if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo)
+        QueryResult achievementInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_achievements WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
+        QueryResult questInfo = WorldDatabase.Query("SELECT * FROM mod_ptrtemplate_quests WHERE (ID={} AND RaceMask & {} AND ClassMask & {}) LIMIT 1", index, player->getRaceMask(), player->getClassMask());
+        if (!repInfo && !barInfo && !itemInfo && !skillInfo && !spellInfo && !achievementInfo && !questInfo)
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
             return false;
