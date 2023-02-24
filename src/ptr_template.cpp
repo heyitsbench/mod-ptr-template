@@ -188,7 +188,7 @@ public:
             index, raceMask, classMask,
             index, raceMask, classMask);
 
-        if (!((*queryCheck)[0].Get<uint32>()))
+        if (!((*queryCheck)[0].Get<uint64>()))
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
             return false;
