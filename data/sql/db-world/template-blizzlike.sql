@@ -1,7 +1,7 @@
 SET
-@somsixty = 1,
+@somsixty     = 1,
 @wotlkseventy = 2,
-@wotlkeighty = 3;
+@wotlkeighty  = 3;
 
 DELETE FROM `mod_ptrtemplate_achievements` WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
 DELETE FROM `mod_ptrtemplate_action`       WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
