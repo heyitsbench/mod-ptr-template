@@ -179,7 +179,7 @@ public:
             "SELECT ID FROM mod_ptrtemplate_achievements WHERE(ID = {} AND RaceMask & {} AND ClassMask & {})"
             " UNION ALL "
             "SELECT ID FROM mod_ptrtemplate_quests WHERE(ID = {} AND RaceMask & {} AND ClassMask & {})"
-            ") AS combined LIMIT 1",
+            ") AS combined",
             index, raceMask, classMask,
             index, raceMask, classMask,
             index, raceMask, classMask,
@@ -188,7 +188,7 @@ public:
             index, raceMask, classMask,
             index, raceMask, classMask);
 
-        if (!queryCheck)
+        if (!((*queryCheck)[0].Get<uint32>()))
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
             return false;
