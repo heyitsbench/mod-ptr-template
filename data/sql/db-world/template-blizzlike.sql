@@ -1,14 +1,16 @@
 SET
-@somsixty = 1,
+@somsixty     = 1,
 @wotlkseventy = 2,
-@wotlkeighty = 3;
+@wotlkeighty  = 3;
 
-DELETE FROM `mod_ptrtemplate_action` WHERE `ID` = @somsixty;
-DELETE FROM `mod_ptrtemplate_index` WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
-DELETE FROM `mod_ptrtemplate_inventory` WHERE `ID` = @somsixty;
-DELETE FROM `mod_ptrtemplate_quests` WHERE `ID` IN (@wotlkseventy, @wotlkeighty);
-DELETE FROM `mod_ptrtemplate_reputations` WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
-DELETE FROM `mod_ptrtemplate_skills` WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_achievements` WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_action`       WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_index`        WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_inventory`    WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_quests`       WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_reputations`  WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_skills`       WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
+DELETE FROM `mod_ptrtemplate_spells`       WHERE `ID` IN (@somsixty, @wotlkseventy, @wotlkeighty);
 
 INSERT INTO `mod_ptrtemplate_index` (`ID`, `Keywords`, `Level`, `MapAlliance`, `XAlliance`, `YAlliance`, `ZAlliance`, `OAlliance`, `MapHorde`, `XHorde`, `YHorde`, `ZHorde`, `OHorde`, `HMapAlliance`, `HZoneAlliance`, `HXAlliance`, `HYAlliance`, `HZAlliance`, `HOAlliance`, `HMapHorde`, `HZoneHorde`, `HXHorde`, `HYHorde`, `HZHorde`, `HOHorde`, `TaxiAlliance`, `TaxiHorde`, `Enable`, `Comment`) VALUES
 (@somsixty, NULL, 60, 0, -8865.09, 671.793, 97.9034, 2.16098, 1, 1633.8, -4440.47, 15.634, 3.08343, 0, 1537, -4840.65, -861.023, 501.915, 1.69675, 1, 1637, 1633.24, -4440.51, 15.6699, 5.71953, '3456411898 2148078929 49991 8 0 0 0 0 0 0 0 0 0 0', '830150144 315656864 56504 4 0 0 0 0 0 0 0 0 0 0', 0, 'Season of Mastery AQ40 Level 60'),
