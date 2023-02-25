@@ -812,22 +812,25 @@ public:
 
     static bool listTemplate(ChatHandler* handler)
     { //                                                 0     1        2
-        QueryResult enable = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
-        if (enable)
+        QueryResult index = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
+        if (index)
         {
+            handler->PSendSysMessage("Available template sets:");
+
             do
             {
-                uint8 indexEntry = (*enable)[0].Get<uint8>();
-                uint8 enableEntry = (*enable)[1].Get<uint8>();
-                std::string commentEntry = (*enable)[2].Get<std::string>();
+                uint8 indexEntry = (*index)[0].Get<uint8>();
+                uint8 enableEntry = (*index)[1].Get<uint8>();
+                std::string commentEntry = (*index)[2].Get<std::string>();
                 std::string enableText = enableEntry
                     ? "Enabled"
                     : "Disabled";
+
                 if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
                 }
-            } while (enable->NextRow());
+            } while (index->NextRow());
         }
         else
         {
