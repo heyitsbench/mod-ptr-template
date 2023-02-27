@@ -18,16 +18,16 @@ Level.enable=false
 
 # Enable various aspects of template sets to be applied.
 # Defaults: true
-Template.dk=true
-Template.level=true
-Template.taximask=true
-Template.homebind=true
 Template.achievements=true
-Template.quests=true
+Template.baggear=true
+Template.dk=true
+Template.equipgear=true
+Template.homebind=true
+Template.hotbar=false
+Template.level=true
+Template.quests=false
 Template.reputation=true
 Template.skills=true
-Template.equipgear=true
-Template.baggear=true
 Template.spells=true
-Template.hotbar=true
+Template.taximask=true
 Template.teleport=true
