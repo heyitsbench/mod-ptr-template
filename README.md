@@ -8,7 +8,7 @@ This is a module for [AzerothCore](http://www.azerothcore.org/) that adds comman
 
 ## Important Notes
 
-This module depends on the selection of certain template sets that have already been filled out. The sets included in this module (WIP as of the writing of this readme) are based on the following:
+This module depends on the selection of certain template sets that have already been filled out. The sets included in this module are based on the following:
 
 - Template characters as seen on the Season of Mastery and Wrath Classic public test realms.
 - Best-in-slot gear lists from Wowhead for the various phases of Classic's release.
