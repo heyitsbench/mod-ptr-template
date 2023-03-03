@@ -1,4 +1,5 @@
 INSERT INTO `mod_ptrtemplate_spells` (`ID`, `RaceMask`, `ClassMask`, `SpellID`, `Comment`) VALUES
+(2, 1, 1, 818, NULL),
 (2, 1, 1, 2018, NULL),
 (2, 1, 1, 3100, NULL),
 (2, 1, 1, 3538, NULL),
