@@ -159,7 +159,7 @@ public:
             });
     }
 
-    static bool CheckTemplateQualifier(Player* player, uint32 index)
+    static uint8 CheckTemplateQualifier(Player* player, uint32 index)
     {
         uint32 raceMask = player->getRaceMask();
         uint32 classMask = player->getClassMask();
@@ -191,29 +191,29 @@ public:
         if (!((*queryCheck)[0].Get<uint64>()))
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
-            return false;
+            return 1;
         }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
         {
             LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}.", player->GetGUID().ToString(), index);
-            return false;
+            return 2;
         }
         if (!sConfigMgr->GetOption<bool>("Template.enable", true))
         {
-            LOG_DEBUG("module", "Player {} tried to apply template {}, but it is not enabled.", player->GetGUID().ToString(), index);
-            return false;
+            LOG_DEBUG("module", "Player {} tried to apply template {}, but templates are disabled.", player->GetGUID().ToString(), index);
+            return 3;
         }
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
-            return false;
+            return 4;
         }
         else
         {
             LOG_DEBUG("module", "Player {} has passed qualification for template {}.", player->GetGUID().ToString(), index);
-            return true;
+            return 0;
         }
     }
 
@@ -787,10 +787,21 @@ public:
                     player = PlayerIdentifier::FromTargetOrSelf(handler);
                 }
                 Player* target = player->GetConnectedPlayer();
-                if (!(templatevar.CheckTemplateQualifier(target, index)))
+                switch(templatevar.CheckTemplateQualifier(target, index))
                 {
-                    handler->PSendSysMessage("You do not meet the requirements to apply this template."); // Probably a poorly-worded message, but w/e.
-                    return true;
+                    case 1: // No template info for character.
+                        handler->PSendSysMessage("The selected template does not apply to you.");
+                        return true;
+                    case 2: // Not initial level
+                        handler->PSendSysMessage("You must be a new character to apply this template.");
+                        return true;
+                    case 3: // Templates are disabled by config
+                        handler->PSendSysMessage("Templates currently cannot be applied.");
+                        return true;
+                    case 4: // Not high enough security
+                        handler->PSendSysMessage("You do not meet the security to apply templates.");
+                        return true;
+                    default:
                 }
                 uint32 oldMSTime = getMSTime();
                 templatevar.HandleApply(target, index);
