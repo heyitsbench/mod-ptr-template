@@ -802,6 +802,7 @@ public:
                         handler->PSendSysMessage("You do not meet the security to apply templates.");
                         return true;
                     default:
+                        break;
                 }
                 uint32 oldMSTime = getMSTime();
                 templatevar.HandleApply(target, index);
