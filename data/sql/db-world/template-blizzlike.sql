@@ -6339,7 +6339,7 @@ INSERT INTO `mod_ptrtemplate_skills` (`ID`, `RaceMask`, `ClassMask`, `SkillID`, 
 (@wotlkeighty, 1745, 128, 762, 300, 300, 'Riding'),
 (@wotlkeighty, 1791, 32, 762, 300, 300, 'Riding');
 
-INSERT INTO `mod_ptrtemplate_spells` (`ID`, `SUM(RaceMask)`, `ClassMask`, `SpellID`, `Comment`) VALUES
+INSERT INTO `mod_ptrtemplate_spells` (`ID`, `RaceMask`, `ClassMask`, `SpellID`, `Comment`) VALUES
 (@wotlkseventy, 1279, 1, 71, NULL),
 (@wotlkseventy, 1279, 1, 72, NULL),
 (@wotlkseventy, 1279, 1, 100, NULL),
