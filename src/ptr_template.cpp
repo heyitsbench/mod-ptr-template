@@ -746,7 +746,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Set index %u enable flag (%s) to enabled.", index, comment);
+            handler->PSendSysMessage("Disabled index %u (%s).", index, comment);
             return true;
         }
         else
@@ -763,7 +763,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Set index %u enable flag (%s) to disabled.", index, comment);
+            handler->PSendSysMessage("Enabled index %u (%s).", index, comment);
             return true;
         }
         else
@@ -792,13 +792,13 @@ public:
                     case 1: // No template info for character.
                         handler->PSendSysMessage("The selected template does not apply to you.");
                         return true;
-                    case 2: // Not initial level
+                    case 2: // Not initial level.
                         handler->PSendSysMessage("You must be a new character to apply this template.");
                         return true;
-                    case 3: // Templates are disabled by config
+                    case 3: // Templates are disabled by config.
                         handler->PSendSysMessage("Templates currently cannot be applied.");
                         return true;
-                    case 4: // Not high enough security
+                    case 4: // Not high enough security.
                         handler->PSendSysMessage("You do not meet the security to apply templates.");
                         return true;
                     default:
@@ -838,7 +838,11 @@ public:
                     ? "Enabled"
                     : "Disabled";
 
-                if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
+                if (handler->IsConsole())
+                {
+                    handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
+                }
+                else if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
                 }
