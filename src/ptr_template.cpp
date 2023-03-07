@@ -239,175 +239,18 @@ private:
         ITEM_GOLD           = 8
     };
 
-    static void AddTemplateLevel(Player* player, uint32 index)
-    { //                                                  0
-        QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (check)
+    static void AddTemplateAchievements(Player* player, uint32 index)
+    { //                                                                0
+        QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (achievementInfo)
         {
-            uint8 levelEntry = (*check)[0].Get<uint8>();
-            player->GiveLevel(levelEntry);
-            LOG_DEBUG("module", "Template character {} has been made level {}.", player->GetGUID().ToString(), levelEntry);
-        }
-    }
-
-    static void AddTemplateTaxi(Player* player, uint32 index)
-    { //                                                          0           1
-        QueryResult taxiEntry = WorldDatabase.Query("SELECT TaxiAlliance, TaxiHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (taxiEntry)
-        {
-            if (player->GetTeamId() == TEAM_ALLIANCE || (*taxiEntry)[1].Get<std::string_view>() == "-1")
-            {
-                player->m_taxi.LoadTaxiMask((*taxiEntry)[0].Get<std::string_view>()); // Replaces existing m_taxi with template taximask (if exists)
-                LOG_DEBUG("module", "Template character {} has been given alliance taxi mask.", player->GetGUID().ToString());
-            }
-            else
-            {
-                player->m_taxi.LoadTaxiMask((*taxiEntry)[1].Get<std::string_view>()); // Comes with the downside of having to create a taximask beforehand, but who cares it works
-                LOG_DEBUG("module", "Template character {} has been given horde taxi mask.", player->GetGUID().ToString());
-            }
-        }
-    }
-
-    static void AddTemplatePosition(Player* player, uint32 index)
-    { //                                                        0           1          2          3          4         5        6       7       8       9
-        QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (posEntry)
-        {
-            uint16 mapAllianceEntry = (*posEntry)[0].Get<uint16>();
-            float XAllianceEntry = (*posEntry)[1].Get<float>();
-            float YAllianceEntry = (*posEntry)[2].Get<float>();
-            float ZAllianceEntry = (*posEntry)[3].Get<float>();
-            float OAllianceEntry = (*posEntry)[4].Get<float>();
-            int16 mapHordeEntry = (*posEntry)[5].Get<int16>();
-            float XHordeEntry = (*posEntry)[6].Get<float>();
-            float YHordeEntry = (*posEntry)[7].Get<float>();
-            float ZHordeEntry = (*posEntry)[8].Get<float>();
-            float OHordeEntry = (*posEntry)[9].Get<float>();
-            if (mapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
-            {
-                player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
-                LOG_DEBUG("module", "Template character {} has been teleported to alliance position.", player->GetGUID().ToString());
-            }
-            else
-            {
-                player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
-                LOG_DEBUG("module", "Template character {} has been teleported to horde position.", player->GetGUID().ToString());
-            }
-        }
-    }
-
-    static void AddTemplateHomebind(Player* player, uint32 index)
-    { //                                                         0              1            2           3           4           5           6          7          8        9       10       11
-        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
-        if (homeEntry)
-        {
-            uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
-            uint16 hZoneAllianceEntry = (*homeEntry)[1].Get<uint16>();
-            float HXAllianceEntry = (*homeEntry)[2].Get<float>();
-            float HYAllianceEntry = (*homeEntry)[3].Get<float>();
-            float HZAllianceEntry = (*homeEntry)[4].Get<float>();
-            float HOAllianceEntry = (*homeEntry)[5].Get<float>();
-            int16 hMapHordeEntry = (*homeEntry)[6].Get<int16>();
-            uint16 hZoneHordeEntry = (*homeEntry)[7].Get<uint16>();
-            float HXHordeEntry = (*homeEntry)[8].Get<float>();
-            float HYHordeEntry = (*homeEntry)[9].Get<float>();
-            float HZHordeEntry = (*homeEntry)[10].Get<float>();
-            float HOHordeEntry = (*homeEntry)[11].Get<float>();
-            WorldLocation homebinding;
-            if (hMapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
-            {
-                homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
-                player->SetHomebind(homebinding, hZoneAllianceEntry);
-                LOG_DEBUG("module", "Template character {} has had their homebind replaced with alliance.", player->GetGUID().ToString());
-            }
-            else
-            {
-                homebinding = WorldLocation(hMapHordeEntry, HXHordeEntry, HYHordeEntry, HZHordeEntry, HOHordeEntry);
-                player->SetHomebind(homebinding, hZoneHordeEntry);
-                LOG_DEBUG("module", "Template character {} has had their homebind replaced with horde.", player->GetGUID().ToString());
-            }
-        }
-    }
-
-    static void AddTemplateReputation(Player* player, uint32 index)
-    { //                                                      0         1
-        QueryResult repInfo = WorldDatabase.Query("SELECT FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (repInfo)
-        {
+            AchievementEntry const* achievementID;
             do
             {
-                Field* fields = repInfo->Fetch();
-                uint16 factionEntry = fields[0].Get<uint16>();
-                int32 standingEntry = fields[1].Get<int32>();
-                FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
-                player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
-                player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
-                LOG_DEBUG("module", "Added standing {} for faction {} for template character {}.", standingEntry, factionEntry, player->GetGUID().ToString());
-            } while (repInfo->NextRow());
-        }
-    }
-
-    static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
-    { //                                                    0       1      2
-        QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
-        { //                                                                 This doesn't work for spells added by AddTemplateSpells.
-            player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
-        } //                                                                 And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
-        if (barInfo)
-        {
-            do
-            {
-                uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
-                uint32 actionEntry = (*barInfo)[1].Get<uint32>();
-                uint8 typeEntry = (*barInfo)[2].Get<uint8>();
-                player->addActionButton(buttonEntry, actionEntry, typeEntry);
-                LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
-            } while (barInfo->NextRow());
-        }
-        player->SendActionButtons(2);
-    }
-
-    static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
-    { //                                                     0      1       2        3         4         5         6         7         8         9
-        QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (gearInfo)
-        {
-            for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
-            {
-                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
-            }
-            do
-            {
-                uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
-                uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
-                uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
-                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < BANK_SLOT_BAG_START) || (slotEntry >= BANK_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
-                {
-                    continue;
-                }
-                if (slotEntry >= PLAYER_SLOT_END)
-                {
-                    player->SetAmmo(itemEntry);
-                }
-                else
-                player->EquipNewItem(slotEntry, itemEntry, true);
-                if (slotEntry >= BANK_SLOT_BAG_START && slotEntry < BANK_SLOT_BAG_END)
-                {
-                    uint8 slotBuffer = slotEntry - (BANK_SLOT_BAG_START - 1);
-
-                    if (player->GetBankBagSlotCount() < slotBuffer)
-                    {
-                        player->SetBankBagSlotCount(slotBuffer);
-                    }
-                }
-                Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry);
-                if (item && item->GetEntry() != itemEntry)
-                {
-                    continue;
-                }
-                TemplateHelperItemEnchants(gearInfo, player, item, 3);
-            } while (gearInfo->NextRow());
+                achievementID = sAchievementStore.LookupEntry((*achievementInfo)[0].Get<uint32>());
+                player->CompletedAchievement(achievementID);
+                LOG_DEBUG("module", "Added achievement {} to template character {}.", (*achievementInfo)[0].Get<uint32>(), player->GetGUID().ToString());
+            } while (achievementInfo->NextRow());
         }
     }
 
@@ -514,79 +357,6 @@ private:
         }
     }
 
-    static void AddTemplateQuests(Player* player, uint32 index)
-    { //                                                       0
-        QueryResult questInfo = WorldDatabase.Query("SELECT QuestID FROM mod_ptrtemplate_quests WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (questInfo)
-        {
-            do
-            {
-                player->SetQuestStatus((*questInfo)[0].Get<uint32>(), QUEST_STATUS_COMPLETE);
-                LOG_DEBUG("module", "Added quest {} to template character {}.", ((*questInfo)[0].Get<uint32>()), player->GetGUID().ToString());
-            } while (questInfo->NextRow());
-        }
-    }
-
-    static void AddTemplateAchievements(Player* player, uint32 index)
-    { //                                                                0
-        QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (achievementInfo)
-        {
-            AchievementEntry const* achievementID;
-            do
-            {
-                achievementID = sAchievementStore.LookupEntry((*achievementInfo)[0].Get<uint32>());
-                player->CompletedAchievement(achievementID);
-                LOG_DEBUG("module", "Added achievement {} to template character {}.", (*achievementInfo)[0].Get<uint32>(), player->GetGUID().ToString());
-            } while (achievementInfo->NextRow());
-        }
-    }
-
-    static void AddTemplateSkills(Player* player, uint32 index)
-    { //                                                       0       1     2
-        QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (skillInfo)
-        {
-            do
-            {
-                uint16 skillEntry = (*skillInfo)[0].Get<uint16>();
-                uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
-                uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
-                player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
-                LOG_DEBUG("module", "Added skill {} to template character {} with curvalue {} and maxvalue {}.", skillEntry, player->GetGUID().ToString(), valueEntry, maxEntry);
-            } while (skillInfo->NextRow());
-            player->SaveToDB(false, false);
-        }
-    }
-
-    static void AddTemplateSpells(Player* player, uint32 index)
-    { //                                                       0
-        QueryResult spellInfo = WorldDatabase.Query("SELECT SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        if (spellInfo)
-        {
-            do
-            {
-                uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
-                player->learnSpell(spellEntry);
-                LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
-            } while (spellInfo->NextRow());
-        }
-    }
-
-    static void AddTemplateResources(Player* player)
-    {
-        player->SetFullHealth();
-        if (player->getPowerType() == POWER_MANA)
-        {
-            player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-        }
-        else if (player->getPowerType() == POWER_ENERGY)
-        {
-            player->SetPower(POWER_ENERGY, player->GetMaxPower(POWER_ENERGY));
-        }
-        LOG_DEBUG("module", "Template character {} has been given full health/power.", player->GetGUID().ToString());
-    }
-
     static void AddTemplateDeathKnight(Player* player) // Pretty much all of this is copied from acidmanifesto's lovely work on the skip-dk-starting-area module.
     {
         if (player->getClass() == CLASS_DEATH_KNIGHT)
@@ -646,6 +416,236 @@ private:
             { //                                                                          Includes starting gear as well as quest rewards.
                 player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
             } //                                                                          ^(;,;)^
+        }
+    }
+
+    static void AddTemplateHomebind(Player* player, uint32 index)
+    { //                                                         0              1            2           3           4           5           6          7          8        9       10       11
+        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (homeEntry)
+        {
+            uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
+            uint16 hZoneAllianceEntry = (*homeEntry)[1].Get<uint16>();
+            float HXAllianceEntry = (*homeEntry)[2].Get<float>();
+            float HYAllianceEntry = (*homeEntry)[3].Get<float>();
+            float HZAllianceEntry = (*homeEntry)[4].Get<float>();
+            float HOAllianceEntry = (*homeEntry)[5].Get<float>();
+            int16 hMapHordeEntry = (*homeEntry)[6].Get<int16>();
+            uint16 hZoneHordeEntry = (*homeEntry)[7].Get<uint16>();
+            float HXHordeEntry = (*homeEntry)[8].Get<float>();
+            float HYHordeEntry = (*homeEntry)[9].Get<float>();
+            float HZHordeEntry = (*homeEntry)[10].Get<float>();
+            float HOHordeEntry = (*homeEntry)[11].Get<float>();
+            WorldLocation homebinding;
+            if (hMapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
+            {
+                homebinding = WorldLocation(hMapAllianceEntry, HXAllianceEntry, HYAllianceEntry, HZAllianceEntry, HOAllianceEntry);
+                player->SetHomebind(homebinding, hZoneAllianceEntry);
+                LOG_DEBUG("module", "Template character {} has had their homebind replaced with alliance.", player->GetGUID().ToString());
+            }
+            else
+            {
+                homebinding = WorldLocation(hMapHordeEntry, HXHordeEntry, HYHordeEntry, HZHordeEntry, HOHordeEntry);
+                player->SetHomebind(homebinding, hZoneHordeEntry);
+                LOG_DEBUG("module", "Template character {} has had their homebind replaced with horde.", player->GetGUID().ToString());
+            }
+        }
+    }
+
+    static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
+    { //                                                    0       1      2
+        QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
+        { //                                                                 This doesn't work for spells added by AddTemplateSpells.
+            player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
+        } //                                                                 And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
+        if (barInfo)
+        {
+            do
+            {
+                uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
+                uint32 actionEntry = (*barInfo)[1].Get<uint32>();
+                uint8 typeEntry = (*barInfo)[2].Get<uint8>();
+                player->addActionButton(buttonEntry, actionEntry, typeEntry);
+                LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
+            } while (barInfo->NextRow());
+        }
+        player->SendActionButtons(2);
+    }
+
+    static void AddTemplateLevel(Player* player, uint32 index)
+    { //                                                  0
+        QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (check)
+        {
+            uint8 levelEntry = (*check)[0].Get<uint8>();
+            player->GiveLevel(levelEntry);
+            LOG_DEBUG("module", "Template character {} has been made level {}.", player->GetGUID().ToString(), levelEntry);
+        }
+    }
+
+    static void AddTemplatePosition(Player* player, uint32 index)
+    { //                                                        0           1          2          3          4         5        6       7       8       9
+        QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (posEntry)
+        {
+            uint16 mapAllianceEntry = (*posEntry)[0].Get<uint16>();
+            float XAllianceEntry = (*posEntry)[1].Get<float>();
+            float YAllianceEntry = (*posEntry)[2].Get<float>();
+            float ZAllianceEntry = (*posEntry)[3].Get<float>();
+            float OAllianceEntry = (*posEntry)[4].Get<float>();
+            int16 mapHordeEntry = (*posEntry)[5].Get<int16>();
+            float XHordeEntry = (*posEntry)[6].Get<float>();
+            float YHordeEntry = (*posEntry)[7].Get<float>();
+            float ZHordeEntry = (*posEntry)[8].Get<float>();
+            float OHordeEntry = (*posEntry)[9].Get<float>();
+            if (mapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
+            {
+                player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
+                LOG_DEBUG("module", "Template character {} has been teleported to alliance position.", player->GetGUID().ToString());
+            }
+            else
+            {
+                player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
+                LOG_DEBUG("module", "Template character {} has been teleported to horde position.", player->GetGUID().ToString());
+            }
+        }
+    }
+
+    static void AddTemplateQuests(Player* player, uint32 index)
+    { //                                                       0
+        QueryResult questInfo = WorldDatabase.Query("SELECT QuestID FROM mod_ptrtemplate_quests WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (questInfo)
+        {
+            do
+            {
+                player->SetQuestStatus((*questInfo)[0].Get<uint32>(), QUEST_STATUS_COMPLETE);
+                LOG_DEBUG("module", "Added quest {} to template character {}.", ((*questInfo)[0].Get<uint32>()), player->GetGUID().ToString());
+            } while (questInfo->NextRow());
+        }
+    }
+
+    static void AddTemplateReputation(Player* player, uint32 index)
+    { //                                                      0         1
+        QueryResult repInfo = WorldDatabase.Query("SELECT FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (repInfo)
+        {
+            do
+            {
+                Field* fields = repInfo->Fetch();
+                uint16 factionEntry = fields[0].Get<uint16>();
+                int32 standingEntry = fields[1].Get<int32>();
+                FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
+                player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
+                player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
+                LOG_DEBUG("module", "Added standing {} for faction {} for template character {}.", standingEntry, factionEntry, player->GetGUID().ToString());
+            } while (repInfo->NextRow());
+        }
+    }
+
+    static void AddTemplateResources(Player* player)
+    {
+        player->SetFullHealth();
+        if (player->getPowerType() == POWER_MANA)
+        {
+            player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
+        }
+        else if (player->getPowerType() == POWER_ENERGY)
+        {
+            player->SetPower(POWER_ENERGY, player->GetMaxPower(POWER_ENERGY));
+        }
+        LOG_DEBUG("module", "Template character {} has been given full health/power.", player->GetGUID().ToString());
+    }
+
+    static void AddTemplateSkills(Player* player, uint32 index)
+    { //                                                       0       1     2
+        QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (skillInfo)
+        {
+            do
+            {
+                uint16 skillEntry = (*skillInfo)[0].Get<uint16>();
+                uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
+                uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
+                player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
+                LOG_DEBUG("module", "Added skill {} to template character {} with curvalue {} and maxvalue {}.", skillEntry, player->GetGUID().ToString(), valueEntry, maxEntry);
+            } while (skillInfo->NextRow());
+            player->SaveToDB(false, false);
+        }
+    }
+
+    static void AddTemplateSpells(Player* player, uint32 index)
+    { //                                                       0
+        QueryResult spellInfo = WorldDatabase.Query("SELECT SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (spellInfo)
+        {
+            do
+            {
+                uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
+                player->learnSpell(spellEntry);
+                LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
+            } while (spellInfo->NextRow());
+        }
+    }
+
+    static void AddTemplateTaxi(Player* player, uint32 index)
+    { //                                                          0           1
+        QueryResult taxiEntry = WorldDatabase.Query("SELECT TaxiAlliance, TaxiHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        if (taxiEntry)
+        {
+            if (player->GetTeamId() == TEAM_ALLIANCE || (*taxiEntry)[1].Get<std::string_view>() == "-1")
+            {
+                player->m_taxi.LoadTaxiMask((*taxiEntry)[0].Get<std::string_view>()); // Replaces existing m_taxi with template taximask (if exists)
+                LOG_DEBUG("module", "Template character {} has been given alliance taxi mask.", player->GetGUID().ToString());
+            }
+            else
+            {
+                player->m_taxi.LoadTaxiMask((*taxiEntry)[1].Get<std::string_view>()); // Comes with the downside of having to create a taximask beforehand, but who cares it works
+                LOG_DEBUG("module", "Template character {} has been given horde taxi mask.", player->GetGUID().ToString());
+            }
+        }
+    }
+
+    static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
+    { //                                                     0      1       2        3         4         5         6         7         8         9
+        QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        if (gearInfo)
+        {
+            for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
+            {
+                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
+            }
+            do
+            {
+                uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
+                uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
+                uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
+                if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < BANK_SLOT_BAG_START) || (slotEntry >= BANK_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
+                {
+                    continue;
+                }
+                if (slotEntry >= PLAYER_SLOT_END)
+                {
+                    player->SetAmmo(itemEntry);
+                }
+                else
+                player->EquipNewItem(slotEntry, itemEntry, true);
+                if (slotEntry >= BANK_SLOT_BAG_START && slotEntry < BANK_SLOT_BAG_END)
+                {
+                    uint8 slotBuffer = slotEntry - (BANK_SLOT_BAG_START - 1);
+
+                    if (player->GetBankBagSlotCount() < slotBuffer)
+                    {
+                        player->SetBankBagSlotCount(slotBuffer);
+                    }
+                }
+                Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry);
+                if (item && item->GetEntry() != itemEntry)
+                {
+                    continue;
+                }
+                TemplateHelperItemEnchants(gearInfo, player, item, 3);
+            } while (gearInfo->NextRow());
         }
     }
 
