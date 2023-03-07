@@ -746,7 +746,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Disabled index %u (%s).", index, comment);
+            handler->PSendSysMessage("Enabled template %u (%s).", index, comment);
             return true;
         }
         else
@@ -763,7 +763,7 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Enabled index %u (%s).", index, comment);
+            handler->PSendSysMessage("Disabled template %u (%s).", index, comment);
             return true;
         }
         else
