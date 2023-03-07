@@ -27,6 +27,7 @@ Template.hotbar       = false # Defaulted false.
 Template.level        = true
 Template.quests       = false # Defaulted false.
 Template.reputation   = true
+Template.resources    = true
 Template.skills       = true
 Template.spells       = true
 Template.taximask     = true
