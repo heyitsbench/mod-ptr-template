@@ -867,11 +867,7 @@ public:
                     ? "Enabled"
                     : "Disabled";
 
-                if (handler->IsConsole())
-                {
-                    handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
-                }
-                else if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
+                if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
