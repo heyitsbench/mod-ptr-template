@@ -789,16 +789,22 @@ public:
     { //                                                  0
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
         static createTemplate templatevar;
+        bool secure = false;
         if(check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
-            if (enable)
+            if (!player)
             {
-                if (!player)
-                {
-                    player = PlayerIdentifier::FromTargetOrSelf(handler);
-                }
-                Player* target = player->GetConnectedPlayer();
+                player = PlayerIdentifier::FromTargetOrSelf(handler);
+            }
+            Player* target = player->GetConnectedPlayer();
+
+            if (!enable && (target->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("DisableApplySecurity", true)))
+            {
+                secure = true;
+            }
+            if (enable || secure)
+            {
                 switch(templatevar.CheckTemplateQualifier(target, index))
                 {
                     case 1: // No template info for character.
@@ -811,8 +817,15 @@ public:
                         handler->PSendSysMessage("Templates currently cannot be applied.");
                         return true;
                     case 4: // Not high enough security.
-                        handler->PSendSysMessage("You do not meet the security to apply templates.");
-                        return true;
+                        if (secure)
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            handler->PSendSysMessage("You do not meet the security to apply templates.");
+                            return true;
+                        }
                     default:
                         break;
                 }
@@ -841,6 +854,10 @@ public:
         {
             handler->PSendSysMessage("Available template sets:");
 
+            int8 playerSecurity = handler->IsConsole()
+                ? SEC_CONSOLE
+                : handler->GetSession()->GetSecurity();
+
             do
             {
                 uint8 indexEntry = (*index)[0].Get<uint8>();
@@ -854,9 +871,16 @@ public:
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
                 }
-                else if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("EnableApplySecurity", true)) || (enableEntry))
+                else if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
-                    handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
+                    if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
+                    {
+                        handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
+                    }
+                    else
+                    {
+                        handler->PSendSysMessage("%u (%s)", indexEntry, commentEntry);
+                    }
                 }
             } while (index->NextRow());
         }

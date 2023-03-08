@@ -60,3 +60,31 @@ TemplateTeleport     = true
 #        Default:     0
 
 EnableApplySecurity = 0
+
+#
+#    DisableApplySecurity
+#        Description: Set the minimum account security level to apply disabled templates.
+#        Default:     4
+
+DisableApplySecurity = 4
+
+#
+#    EnableListSecurity
+#        Description: Set the minimum account security level to list enabled templates.
+#        Default:     0
+
+EnableListSecurity = 0
+
+#
+#    DisableListSecurity
+#        Description: Set the minimum account security level to list disabled templates.
+#        Default:     2
+
+DisableListSecurity = 2
+
+#
+#    StatusSecurityText
+#        Description: Set the minimum account security level to show "Enabled/Disabled" text when listing templates.
+#        Default:     2
+
+StatusSecurityText = 2
