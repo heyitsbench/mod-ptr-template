@@ -1,34 +1,62 @@
 [worldserver]
 
-# Enable the module announcing its presence.
-# Default: true
-Announce.enable=true
+#
+#    AnnounceEnable
+#        Description: Enable the module announcing its presence.
+#        Default:     true
 
-# Enable the application of templates.
-# Default: true
-Template.enable=true
+AnnounceEnable = true
 
-# Set the minimum account security level to apply and list enabled templates.
-# Default: 0
-Enable.security=0
+#
+#    TemplateEnable
+#        Description: Enable the application of templates.
+#        Default:     true
 
-# Enable templates to be applied at any level.
-# Default: false
-Level.enable=false
+TemplateEnable = true
 
-# Enable various aspects of template sets to be applied.
-# Defaults: true
-Template.achievements = true
-Template.baggear      = true
-Template.dk           = true
-Template.equipgear    = true
-Template.homebind     = true
-Template.hotbar       = false # Defaulted false.
-Template.level        = true
-Template.quests       = false # Defaulted false.
-Template.reputation   = true
-Template.resources    = true
-Template.skills       = true
-Template.spells       = true
-Template.taximask     = true
-Template.teleport     = true
+#
+#    LevelEnable
+#        Description: Enable templates to be applied at any level.
+#        Default:     false
+
+LevelEnable = false
+
+#
+#   TemplateAchievements
+#   TemplateBagGear
+#   TemplateDK
+#   TemplateEquipGear
+#   TemplateHomebind
+#   TemplateHotbar       # false
+#   TemplateLevel
+#   TemplateQuests       # false
+#   TemplateReputation
+#   TemplateResources
+#   TemplateSkills
+#   TemplateSpells
+#   TemplateTaximask
+#   TemplateTeleport
+#       Description: Enable various aspects of template sets to be applied.
+#       Defaults:    true
+
+TemplateAchievements = true
+TemplateBagGear      = true
+TemplateDK           = true
+TemplateEquipGear    = true
+TemplateHomebind     = true
+TemplateHotbar       = false # Defaulted false.
+TemplateLevel        = true
+TemplateQuests       = false # Defaulted false.
+TemplateReputation   = true
+TemplateResources    = true
+TemplateSkills       = true
+TemplateSpells       = true
+TemplateTaximask     = true
+TemplateTeleport     = true
+
+#
+#    EnableApplySecurity
+#        Description: Set the minimum account security level to apply enabled templates.
+#        Default:     0
+
+EnableApplySecurity = 0

@@ -52,7 +52,7 @@ public:
                 switch (context.GetRepeatCounter())
                 {
                 case 0:
-                    if (sConfigMgr->GetOption<bool>("Template.dk", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateDK", true))
                     {
                         AddTemplateDeathKnight(player);
                         player->SaveToDB(false, false);
@@ -60,7 +60,7 @@ public:
                     }
                     break;
                 case 1:
-                    if (sConfigMgr->GetOption<bool>("Template.level", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateLevel", true))
                     {
                         AddTemplateLevel(player, index);
                         player->SaveToDB(false, false);
@@ -68,7 +68,7 @@ public:
                     }
                     break;
                 case 2:
-                    if (sConfigMgr->GetOption<bool>("Template.taximask", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateTaximask", true))
                     {
                         AddTemplateTaxi(player, index);
                         player->SaveToDB(false, false);
@@ -76,7 +76,7 @@ public:
                     }
                     break;
                 case 3:
-                    if (sConfigMgr->GetOption<bool>("Template.homebind", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateHomebind", true))
                     {
                         AddTemplateHomebind(player, index);
                         player->SaveToDB(false, false);
@@ -84,7 +84,7 @@ public:
                     }
                     break;
                 case 4:
-                    if (sConfigMgr->GetOption<bool>("Template.achievements", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateAchievements", true))
                     {
                         AddTemplateAchievements(player, index);
                         player->SaveToDB(false, false);
@@ -92,7 +92,7 @@ public:
                     }
                     break;
                 case 5:
-                    if (sConfigMgr->GetOption<bool>("Template.quests", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateQuests", true))
                     {
                         AddTemplateQuests(player, index);
                         player->SaveToDB(false, false);
@@ -100,7 +100,7 @@ public:
                     }
                     break;
                 case 6:
-                    if (sConfigMgr->GetOption<bool>("Template.reputation", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateReputation", true))
                     {
                         AddTemplateReputation(player, index);
                         player->SaveToDB(false, false);
@@ -108,7 +108,7 @@ public:
                     }
                     break;
                 case 7:
-                    if (sConfigMgr->GetOption<bool>("Template.skills", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateSkills", true))
                     {
                         AddTemplateSkills(player, index);
                         player->SaveToDB(false, false);
@@ -116,7 +116,7 @@ public:
                     }
                     break;
                 case 8:
-                    if (sConfigMgr->GetOption<bool>("Template.equipgear", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
                     {
                         AddTemplateWornGear(player, index);
                         player->SaveToDB(false, false);
@@ -124,7 +124,7 @@ public:
                     }
                     break;
                 case 9:
-                    if (sConfigMgr->GetOption<bool>("Template.baggear", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
                     {
                         AddTemplateBagGear(player, index);
                         player->SaveToDB(false, false);
@@ -132,7 +132,7 @@ public:
                     }
                     break;
                 case 10:
-                    if (sConfigMgr->GetOption<bool>("Template.spells", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateSpells", true))
                     {
                         AddTemplateSpells(player, index);
                         player->SaveToDB(false, false);
@@ -140,7 +140,7 @@ public:
                     }
                     break;
                 case 11:
-                    if (sConfigMgr->GetOption<bool>("Template.hotbar", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateHotbar", true))
                     {
                         AddTemplateHotbar(player, index);
                         player->SaveToDB(false, false);
@@ -148,7 +148,7 @@ public:
                     }
                     break;
                 case 12:
-                    if (sConfigMgr->GetOption<bool>("Template.teleport", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateTeleport", true))
                     {
                         AddTemplatePosition(player, index);
                         player->SaveToDB(false, false);
@@ -156,7 +156,7 @@ public:
                     }
                     break;
                 case 13:
-                    if (sConfigMgr->GetOption<bool>("Template.resources", true))
+                    if (sConfigMgr->GetOption<bool>("TemplateResources", true))
                     {
                         AddTemplateResources(player);
                         player->SaveToDB(false, false);
@@ -204,17 +204,17 @@ public:
         }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
-            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("Level.enable", true)))
+            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("LevelEnable", true)))
         {
             LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}.", player->GetGUID().ToString(), index);
             return 2;
         }
-        if (!sConfigMgr->GetOption<bool>("Template.enable", true))
+        if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but templates are disabled.", player->GetGUID().ToString(), index);
             return 3;
         }
-        if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)))
+        if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("EnableApplySecurity", true)))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
             return 4;
@@ -722,7 +722,7 @@ public:
 
     void OnLogin(Player* player) override
     {
-        if (sConfigMgr->GetOption<bool>("Announce.enable", true))
+        if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
         {
             ChatHandler(player->GetSession()).SendSysMessage("This server is running the PTR Template module.");
         }
@@ -854,7 +854,7 @@ public:
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
                 }
-                else if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("Enable.security", true)) || (enableEntry))
+                else if ((handler->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("EnableApplySecurity", true)) || (enableEntry))
                 {
                     handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
                 }
