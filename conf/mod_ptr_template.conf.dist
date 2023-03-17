@@ -64,9 +64,9 @@ EnableApplySecurity = 0
 #
 #    DisableApplySecurity
 #        Description: Set the minimum account security level to apply disabled templates.
-#        Default:     4
+#        Default:     3
 
-DisableApplySecurity = 4
+DisableApplySecurity = 3
 
 #
 #    EnableListSecurity
