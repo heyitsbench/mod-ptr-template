@@ -738,10 +738,10 @@ public:
     {
         static ChatCommandTable templateTable =
         {
-            { "apply",   applyTemplate,   SEC_PLAYER,    Console::No },
-            { "disable", disableTemplate, SEC_MODERATOR, Console::Yes },
-            { "enable",  enableTemplate,  SEC_MODERATOR, Console::Yes },
-            { "list",    listTemplate,    SEC_PLAYER,    Console::Yes },
+            { "apply",   applyTemplate,   SEC_PLAYER,        Console::No },
+            { "disable", disableTemplate, SEC_ADMINISTRATOR, Console::Yes },
+            { "enable",  enableTemplate,  SEC_ADMINISTRATOR, Console::Yes },
+            { "list",    listTemplate,    SEC_PLAYER,        Console::Yes },
         };
 
         static ChatCommandTable commandTable =
