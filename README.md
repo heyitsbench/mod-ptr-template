@@ -31,6 +31,10 @@ Any incomplete template set queries will need to be run manually while in develo
 
 You are also able to edit the [mod_ptr_template.conf](https://github.com/heyitsbench/mod-ptr-template/blob/master/conf/mod_ptr_template.conf.dist) to your liking. At the time of writing, you can pick and choose what parts of the template sets it should apply, whether it announces itself on login, the security level required to apply templates, and whether it can only be applied at the start level of a character.
 
+## Usage
+
+By default, any account can list and apply enabled templates using `.template list` and `.template apply [template index number]` respectively. Gamemaster or higher security will also have disabled templates listed with the list command. Administrators are the only ones that can apply a disabled template. Administrators and the console are also the only ones that can enable/disable templates through the `.template enable/disable [template index number]` command.
+
 ## Creating Template Sets
 
 For information on creating your own template sets (and submitting them here for others to use), please refer to the [wiki](https://github.com/heyitsbench/mod-ptr-template/wiki).
