@@ -2,13 +2,13 @@ SET
 @preraidtbc = 4;
 
 DELETE FROM `mod_ptrtemplate_achievements` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_action` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_index` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_inventory` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_quests` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_reputations` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_skills` WHERE `ID` = @preraidtbc;
-DELETE FROM `mod_ptrtemplate_spells` WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_action`       WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_index`        WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_inventory`    WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_quests`       WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_reputations`  WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_skills`       WHERE `ID` = @preraidtbc;
+DELETE FROM `mod_ptrtemplate_spells`       WHERE `ID` = @preraidtbc;
 
 INSERT INTO `mod_ptrtemplate_index` (`ID`, `Keywords`, `Level`, `MapAlliance`, `XAlliance`, `YAlliance`, `ZAlliance`, `OAlliance`, `MapHorde`, `XHorde`, `YHorde`, `ZHorde`, `OHorde`, `HMapAlliance`, `HZoneAlliance`, `HXAlliance`, `HYAlliance`, `HZAlliance`, `HOAlliance`, `HMapHorde`, `HZoneHorde`, `HXHorde`, `HYHorde`, `HZHorde`, `HOHorde`, `TaxiAlliance`, `TaxiHorde`, `Enable`, `Comment`) VALUES
 (@preraidtbc, NULL, 70, 530, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 530, 3703, -1845.01, 5392.53, -12.428, 2.08404, -1, 0, 0, 0, 0, 0, '4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295 4294967295', '-1', 1, 'Wowhead Pre-Raid (TBC Classic)');
