@@ -28,48 +28,48 @@ INSERT INTO `mod_ptrtemplate_inventory` (`ID`, `RaceMask`, `ClassMask`, `BagID`,
 (@ccpreraidtbc, 1791, 1503, 0, 90, 30634, 1, 0, 0, 0, 0, 0, 0, 0, 'Warpforge Key'),
 (@ccpreraidtbc, 1791, 1503, 0, 91, 30635, 1, 0, 0, 0, 0, 0, 0, 0, 'Key of Time'),
 -- Warrior
-(@ccpreraidtbc, 1279, 1, 0, 0, 32083, 1, 0, 0, 0, 0, 0, 0, 0, 'Faceguard of Determination'),
+(@ccpreraidtbc, 1279, 1, 0, 0, 32083, 1, 0, 0, 0, 0, 0, 0, 0, 'Faceguard of Determination'), -- Arcanum of the Defender; Eternal Earthstorm Diamond, Solid Star of Elune
 (@ccpreraidtbc, 1279, 1, 0, 1, 28321, 1, 0, 0, 0, 0, 0, 0, 0, 'Enchanted Thorium Torque'),
-(@ccpreraidtbc, 1279, 1, 0, 2, 32073, 1, 0, 0, 0, 0, 0, 0, 0, 'Spaulders of Dementia'),
-(@ccpreraidtbc, 1279, 1, 0, 4, 28205, 1, 0, 0, 0, 0, 0, 0, 0, 'Breastplate of the Bold'),
+(@ccpreraidtbc, 1279, 1, 0, 2, 32073, 1, 0, 0, 0, 0, 0, 0, 0, 'Spaulders of Dementia'), -- Aldor/Scryer Inscription
+(@ccpreraidtbc, 1279, 1, 0, 4, 28205, 1, 0, 0, 0, 0, 0, 0, 0, 'Breastplate of the Bold'), -- Enchant Chest - Defense; Solid Star of Elune [3]
 (@ccpreraidtbc, 1279, 1, 0, 5, 29253, 1, 0, 0, 0, 0, 0, 0, 0, 'Girdle of Valorous Deeds'),
-(@ccpreraidtbc, 1279, 1, 0, 6, 27527, 1, 0, 0, 0, 0, 0, 0, 0, 'Greaves of the Shatterer'),
-(@ccpreraidtbc, 1279, 1, 0, 7, 29239, 1, 0, 0, 0, 0, 0, 0, 0, 'Eaglecrest Warboots'),
-(@ccpreraidtbc, 1279, 1, 0, 8, 27459, 1, 0, 0, 0, 0, 0, 0, 0, 'Vambraces of Daring'),
-(@ccpreraidtbc, 1279, 1, 0, 9, 28390, 1, 0, 0, 0, 0, 0, 0, 0, 'Thatia\'s Self-Correcting Gauntlets'),
+(@ccpreraidtbc, 1279, 1, 0, 6, 27527, 1, 0, 0, 0, 0, 0, 0, 0, 'Greaves of the Shatterer'), -- Nethercleft Leg Armor; Solid Star of Elune [2], Rigid Dawnstone
+(@ccpreraidtbc, 1279, 1, 0, 7, 29239, 1, 0, 0, 0, 0, 0, 0, 0, 'Eaglecrest Warboots'), -- Enchant Boots - Boar's Speed
+(@ccpreraidtbc, 1279, 1, 0, 8, 27459, 1, 0, 0, 0, 0, 0, 0, 0, 'Vambraces of Daring'), -- Enchant Bracers - Major Defense
+(@ccpreraidtbc, 1279, 1, 0, 9, 28390, 1, 0, 0, 0, 0, 0, 0, 0, 'Thatia\'s Self-Correcting Gauntlets'), -- Enchant Gloves - Precise Strikes
 (@ccpreraidtbc, 1279, 1, 0, 10, 27822, 1, 0, 0, 0, 0, 0, 0, 0, 'Crystal Band of Valor'),
 (@ccpreraidtbc, 1279, 1, 0, 11, 30834, 1, 0, 0, 0, 0, 0, 0, 0, 'Shapeshifter\'s Signet'),
 (@ccpreraidtbc, 1279, 1, 0, 12, 31858, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkmoon Card: Vengeance'),
 (@ccpreraidtbc, 1279, 1, 0, 13, 27891, 1, 0, 0, 0, 0, 0, 0, 0, 'Adamantine Figurine'),
-(@ccpreraidtbc, 1279, 1, 0, 14, 27878, 1, 0, 0, 0, 0, 0, 0, 0, 'Auchenai Death Shroud'),
-(@ccpreraidtbc, 1279, 1, 0, 15, 29165, 1, 0, 0, 0, 0, 0, 0, 0, 'Warbringer'),
-(@ccpreraidtbc, 1279, 1, 0, 16, 29266, 1, 0, 0, 0, 0, 0, 0, 0, 'Azure-Shield of Coldarra'),
+(@ccpreraidtbc, 1279, 1, 0, 14, 27878, 1, 0, 0, 0, 0, 0, 0, 0, 'Auchenai Death Shroud'), -- Enchant Cloak - Dodge
+(@ccpreraidtbc, 1279, 1, 0, 15, 29165, 1, 0, 0, 0, 0, 0, 0, 0, 'Warbringer'), -- Enchant Weapon - Crusader
+(@ccpreraidtbc, 1279, 1, 0, 16, 29266, 1, 0, 0, 0, 0, 0, 0, 0, 'Azure-Shield of Coldarra'), -- Enchant Shield - Tough Shield
 (@ccpreraidtbc, 1279, 1, 0, 17, 32780, 1, 0, 0, 0, 0, 0, 0, 0, 'The Boomstick'),
-(@ccpreraidtbc, 1279, 1, 0, 24, 28180, 1, 0, 0, 0, 0, 0, 0, 0, 'Myrmidon\'s Headdress'),
-(@ccpreraidtbc, 1279, 1, 0, 25, 29176, 1, 0, 0, 0, 0, 0, 0, 0, 'Crest of the Sha\'tar'),
-(@ccpreraidtbc, 1279, 1, 0, 26, 32087, 1, 0, 0, 0, 0, 0, 0, 0, 'Mask of the Deceiver'),
+(@ccpreraidtbc, 1279, 1, 0, 24, 28180, 1, 0, 0, 0, 0, 0, 0, 0, 'Myrmidon\'s Headdress'), -- Arcanum of the Defender
+(@ccpreraidtbc, 1279, 1, 0, 25, 29176, 1, 0, 0, 0, 0, 0, 0, 0, 'Crest of the Sha\'tar'), -- Enchant Shield - Tough Shield
+(@ccpreraidtbc, 1279, 1, 0, 26, 32087, 1, 0, 0, 0, 0, 0, 0, 0, 'Mask of the Deceiver'), -- Arcanum of Ferocity; Chaotic Skyfire Diamond, Pristine Fire Opal
 (@ccpreraidtbc, 1279, 1, 0, 27, 29381, 1, 0, 0, 0, 0, 0, 0, 0, 'Choker of Vile Intent'),
-(@ccpreraidtbc, 1279, 1, 0, 28, 33173, 1, 0, 0, 0, 0, 0, 0, 0, 'Ragesteel Shoulders'),
-(@ccpreraidtbc, 1279, 1, 0, 29, 27892, 1, 0, 0, 0, 0, 0, 0, 0, 'Cloak of the Inciter'),
-(@ccpreraidtbc, 1279, 1, 0, 30, 31548, 1, 0, 0, 0, 0, 0, 0, 0, 'Blackened Chestplate'),
-(@ccpreraidtbc, 1279, 1, 0, 31, 23537, 1, 0, 0, 0, 0, 0, 0, 0, 'Black Felsteel Bracers'),
-(@ccpreraidtbc, 1279, 1, 0, 32, 23520, 1, 0, 0, 0, 0, 0, 0, 0, 'Ragesteel Gloves'),
-(@ccpreraidtbc, 1279, 1, 0, 33, 27985, 1, 0, 0, 0, 0, 0, 0, 0, 'Deathforge Girdle'),
-(@ccpreraidtbc, 1279, 1, 0, 34, 30533, 1, 0, 0, 0, 0, 0, 0, 0, 'Vanquisher\'s Legplates'),
-(@ccpreraidtbc, 1279, 1, 0, 35, 28176, 1, 0, 0, 0, 0, 0, 0, 0, 'Sha\'tari Wrought Greaves'),
+(@ccpreraidtbc, 1279, 1, 0, 28, 33173, 1, 0, 0, 0, 0, 0, 0, 0, 'Ragesteel Shoulders'), -- Aldor/Scryer Inscription; Ensribed Fire Opal, Deadly Fire Opal
+(@ccpreraidtbc, 1279, 1, 0, 29, 27892, 1, 0, 0, 0, 0, 0, 0, 0, 'Cloak of the Inciter'), -- Enchant Cloak - Greater Agility
+(@ccpreraidtbc, 1279, 1, 0, 30, 31548, 1, 0, 0, 0, 0, 0, 0, 0, 'Blackened Chestplate'), -- Enchant Chest - Exceptional Stats
+(@ccpreraidtbc, 1279, 1, 0, 31, 23537, 1, 0, 0, 0, 0, 0, 0, 0, 'Black Felsteel Bracers'), -- Enchant Bracers - Brawn
+(@ccpreraidtbc, 1279, 1, 0, 32, 23520, 1, 0, 0, 0, 0, 0, 0, 0, 'Ragesteel Gloves'), -- Enchant Gloves - Major Strength
+(@ccpreraidtbc, 1279, 1, 0, 33, 27985, 1, 0, 0, 0, 0, 0, 0, 0, 'Deathforge Girdle'), -- Bold Living Ruby, Sovereign Tanzanite
+(@ccpreraidtbc, 1279, 1, 0, 34, 30533, 1, 0, 0, 0, 0, 0, 0, 0, 'Vanquisher\'s Legplates'), -- Nethercobra Leg Armor; Bold Living Ruby [2], Brutal Tanzanite
+(@ccpreraidtbc, 1279, 1, 0, 35, 28176, 1, 0, 0, 0, 0, 0, 0, 0, 'Sha\'tari Wrought Greaves'), -- Enchant Boots - Cat's Swiftness; Bold Living Ruby [2]
 (@ccpreraidtbc, 1279, 1, 0, 36, 29177, 1, 0, 0, 0, 0, 0, 0, 0, 'A\'dal\'s Command'),
 (@ccpreraidtbc, 1279, 1, 0, 37, 29383, 1, 0, 0, 0, 0, 0, 0, 0, 'Bloodlust Brooch'),
 (@ccpreraidtbc, 1279, 1, 0, 38, 31856, 1, 0, 0, 0, 0, 0, 0, 0, 'Darkmoon Card: Crusade'),
-(@ccpreraidtbc, 1279, 1, 1, 0, 23543, 1, 0, 0, 0, 0, 0, 0, 0, 'Felsteel Reaper'),
+(@ccpreraidtbc, 1279, 1, 1, 0, 23543, 1, 0, 0, 0, 0, 0, 0, 0, 'Felsteel Reaper'), -- Enchant Weapon - Crusader
 (@ccpreraidtbc, 1279, 1, 1, 1, 30279, 1, 0, 0, 0, 0, 0, 0, 0, 'Mama\'s Insurance'),
-(@ccpreraidtbc, 1279, 1, 1, 2, 28182, 1, 0, 0, 0, 0, 0, 0, 0, 'Helm of the Claw'),
+(@ccpreraidtbc, 1279, 1, 1, 2, 28182, 1, 0, 0, 0, 0, 0, 0, 0, 'Helm of the Claw'), -- Arcanum of Ferocity
 (@ccpreraidtbc, 1279, 1, 1, 3, 31695, 1, 0, 0, 0, 0, 0, 0, 0, 'Natasha\'s Choker'),
-(@ccpreraidtbc, 1279, 1, 1, 4, 27771, 1, 0, 0, 0, 0, 0, 0, 0, 'Doomplate Shoulderguards'),
-(@ccpreraidtbc, 1279, 1, 1, 5, 30352, 1, 0, 0, 0, 0, 0, 0, 0, 'Demolisher\'s Bracers'),
-(@ccpreraidtbc, 1279, 1, 1, 6, 27497, 1, 0, 0, 0, 0, 0, 0, 0, 'Doomplate Gauntlets'),
+(@ccpreraidtbc, 1279, 1, 1, 4, 27771, 1, 0, 0, 0, 0, 0, 0, 0, 'Doomplate Shoulderguards'), -- Aldor/Scryer Inscription
+(@ccpreraidtbc, 1279, 1, 1, 5, 30352, 1, 0, 0, 0, 0, 0, 0, 0, 'Demolisher\'s Bracers'), -- Enchant Bracers - Brawn
+(@ccpreraidtbc, 1279, 1, 1, 6, 27497, 1, 0, 0, 0, 0, 0, 0, 0, 'Doomplate Gauntlets'), -- Enchant Gloves - Major Strength
 (@ccpreraidtbc, 1279, 1, 1, 7, 28288, 1, 0, 0, 0, 0, 0, 0, 0, 'Abacus of Violent Odds'),
 (@ccpreraidtbc, 1279, 1, 1, 8, 28034, 1, 0, 0, 0, 0, 0, 0, 0, 'Hourglass of the Unraveller'),
-(@ccpreraidtbc, 1279, 1, 1, 9, 27986, 1, 0, 0, 0, 0, 0, 0, 0, 'Crow Wing Reaper'),
+(@ccpreraidtbc, 1279, 1, 1, 9, 27986, 1, 0, 0, 0, 0, 0, 0, 0, 'Crow Wing Reaper'), -- Enchant Weapon - Crusader
 -- Paladin
 (@ccpreraidtbc, 1541, 2, 0, 0, 32083, 1, 0, 0, 0, 0, 0, 0, 0, 'Faceguard of Determination'),
 (@ccpreraidtbc, 1541, 2, 0, 1, 28321, 1, 0, 0, 0, 0, 0, 0, 0, 'Enchanted Thorium Torque'),
