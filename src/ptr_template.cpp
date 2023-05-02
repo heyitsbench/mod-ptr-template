@@ -300,6 +300,7 @@ private:
                         {
                             player->StoreNewItem(dest, itemEntry, true);
                             Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
+                            player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                             if (item && item->GetEntry() != itemEntry)
                             {
                                 continue;
@@ -324,6 +325,7 @@ private:
                     {
                         player->StoreNewItem(dest, itemEntry, true);
                         Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better and cooler.
+                        player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                         if (item && item->GetEntry() != itemEntry)
                         {
                             continue;
@@ -337,6 +339,7 @@ private:
                     if (validCheck == EQUIP_ERR_OK)
                     {
                         player->StoreNewItem(dest, itemEntry, true); // Add to next available slot in backpack/equipped bags.
+                                                                     // TODO: Create the item and make it usable for item enchant helper. Also packet broadcast.
                     }
                     else if (validCheck == EQUIP_ERR_INVENTORY_FULL) // No available slots, post office's problem.
                     {
@@ -640,6 +643,7 @@ private:
                     }
                 }
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry);
+                player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                 if (item && item->GetEntry() != itemEntry)
                 {
                     continue;
