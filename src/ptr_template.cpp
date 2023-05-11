@@ -200,31 +200,40 @@ public:
         if (!((*queryCheck)[0].Get<uint64>()))
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
-            return 1;
+            return MISSING_TEMPLATE_INFO;
         }
         if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("LevelEnable", true)))
         {
-            LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}.", player->GetGUID().ToString(), index);
-            return 2;
+            LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}. Current level: {}", player->GetGUID().ToString(), index, player->GetLevel());
+            return NOT_INITIAL_LEVEL;
         }
         if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but templates are disabled.", player->GetGUID().ToString(), index);
-            return 3;
+            return TEMPLATES_DISABLED;
         }
         if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("EnableApplySecurity", true)))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
-            return 4;
+            return INSUFFICIENT_SECURITY_LEVEL;
         }
         else
         {
             LOG_DEBUG("module", "Player {} has passed qualification for template {}.", player->GetGUID().ToString(), index);
-            return 0;
+            return CHECK_PASSED;
         }
     }
+
+    enum checkCodes
+    {
+        MISSING_TEMPLATE_INFO = 1,
+        NOT_INITIAL_LEVEL = 2,
+        TEMPLATES_DISABLED = 3,
+        INSUFFICIENT_SECURITY_LEVEL = 4,
+        CHECK_PASSED = 0
+    };
 
 private:
 
@@ -811,16 +820,16 @@ public:
             {
                 switch(templatevar.CheckTemplateQualifier(target, index))
                 {
-                    case 1: // No template info for character.
+                    case templatevar.MISSING_TEMPLATE_INFO:
                         handler->PSendSysMessage("The selected template does not apply to you.");
                         return true;
-                    case 2: // Not initial level.
+                    case templatevar.NOT_INITIAL_LEVEL:
                         handler->PSendSysMessage("You must be a new character to apply this template.");
                         return true;
-                    case 3: // Templates are disabled by config.
+                    case templatevar.TEMPLATES_DISABLED:
                         handler->PSendSysMessage("Templates currently cannot be applied.");
                         return true;
-                    case 4: // Not high enough security.
+                    case templatevar.INSUFFICIENT_SECURITY_LEVEL:
                         if (secure)
                         {
                             break;
