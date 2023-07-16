@@ -27,9 +27,9 @@ LevelEnable = false
 #   TemplateDK
 #   TemplateEquipGear
 #   TemplateHomebind
-#   TemplateHotbar       # false
+#   TemplateHotbar       - false
 #   TemplateLevel
-#   TemplateQuests       # false
+#   TemplateQuests       - false
 #   TemplateReputation
 #   TemplateResources
 #   TemplateSkills
@@ -44,9 +44,9 @@ TemplateBagGear      = true
 TemplateDK           = true
 TemplateEquipGear    = true
 TemplateHomebind     = true
-TemplateHotbar       = false # Defaulted false.
+TemplateHotbar       = false
 TemplateLevel        = true
-TemplateQuests       = false # Defaulted false.
+TemplateQuests       = false
 TemplateReputation   = true
 TemplateResources    = true
 TemplateSkills       = true
