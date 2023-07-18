@@ -470,7 +470,7 @@ private:
         for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
         { //                                                                 This doesn't work for spells added by AddTemplateSpells.
             player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
-        } //                                                                 And yes, I do want the hotbar cleared for characters that don't fit the requirements of the template.
+        } //                                                                 And yes, I do want the hotbar cleared for characters that don't have any hotbar data in the template.
         if (barInfo)
         {
             do
