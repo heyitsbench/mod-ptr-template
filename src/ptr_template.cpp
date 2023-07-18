@@ -22,7 +22,7 @@ public:
 
         LOG_INFO("module", " "); //\n
         LOG_INFO("module", "Loading index entries for the PTR template module...");
-        QueryResult result = WorldDatabase.Query("SELECT ID FROM mod_ptrtemplate_index;");
+        QueryResult result = WorldDatabase.Query("SELECT ID FROM mod_ptrtemplate_index");
 
         if (!result)
         {
