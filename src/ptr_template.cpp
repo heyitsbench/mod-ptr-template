@@ -812,7 +812,7 @@ public:
             }
             Player* target = player->GetConnectedPlayer();
 
-            if (!enable && (target->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("DisableApplySecurity", true)))
+            if (target->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("DisableApplySecurity", true))
             {
                 secure = true;
             }
