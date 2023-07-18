@@ -228,11 +228,11 @@ public:
 
     enum checkCodes
     {
-        MISSING_TEMPLATE_INFO = 1,
-        NOT_INITIAL_LEVEL = 2,
-        TEMPLATES_DISABLED = 3,
+        MISSING_TEMPLATE_INFO       = 1,
+        NOT_INITIAL_LEVEL           = 2,
+        TEMPLATES_DISABLED          = 3,
         INSUFFICIENT_SECURITY_LEVEL = 4,
-        CHECK_PASSED = 0
+        CHECK_PASSED                = 0
     };
 
 private:
