@@ -168,7 +168,7 @@ public:
             });
     }
 
-    static uint8 CheckTemplateQualifier(Player* player, uint32 index)
+    static uint8 CheckTemplateQualifier(Player* player, uint32 index, uint8 enable)
     {
         uint32 raceMask = player->getRaceMask();
         uint32 classMask = player->getClassMask();
@@ -197,6 +197,17 @@ public:
             index, raceMask, classMask,
             index, raceMask, classMask);
 
+        uint8 security = player->GetSession()->GetSecurity();
+        if ((security < sConfigMgr->GetOption<int8>("EnableApplySecurity", true)) && (security < sConfigMgr->GetOption<int8>("DisableApplySecurity", true)))
+        {
+            LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
+            return INSUFFICIENT_SECURITY_LEVEL;
+        }
+        if ((security < sConfigMgr->GetOption<int8>("DisableApplySecurity", true)) && !enable)
+        {
+            LOG_DEBUG("module", "Player {} tried to apply template {}, but the template is disabled.", player->GetGUID().ToString(), index);
+            return TEMPLATE_DISABLED_LOCAL;
+        }
         if (!((*queryCheck)[0].Get<uint64>()))
         {
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
@@ -212,12 +223,7 @@ public:
         if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but templates are disabled.", player->GetGUID().ToString(), index);
-            return TEMPLATES_DISABLED;
-        }
-        if (!(player->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("EnableApplySecurity", true)))
-        {
-            LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
-            return INSUFFICIENT_SECURITY_LEVEL;
+            return TEMPLATE_DISABLED_GLOBAL;
         }
         else
         {
@@ -230,8 +236,9 @@ public:
     {
         MISSING_TEMPLATE_INFO       = 1,
         NOT_INITIAL_LEVEL           = 2,
-        TEMPLATES_DISABLED          = 3,
+        TEMPLATE_DISABLED_GLOBAL    = 3,
         INSUFFICIENT_SECURITY_LEVEL = 4,
+        TEMPLATE_DISABLED_LOCAL     = 5,
         CHECK_PASSED                = 0
     };
 
@@ -812,46 +819,31 @@ public:
             }
             Player* target = player->GetConnectedPlayer();
 
-            if (target->GetSession()->GetSecurity() >= sConfigMgr->GetOption<int8>("DisableApplySecurity", true))
+            switch(templatevar.CheckTemplateQualifier(target, index, enable))
             {
-                secure = true;
+                case templatevar.MISSING_TEMPLATE_INFO:
+                    handler->PSendSysMessage("The selected template does not apply to you.");
+                    return true;
+                case templatevar.NOT_INITIAL_LEVEL:
+                    handler->PSendSysMessage("You must be a new character to apply this template.");
+                    return true;
+                case templatevar.TEMPLATE_DISABLED_GLOBAL:
+                    handler->PSendSysMessage("Templates currently cannot be applied.");
+                    return true;
+                case templatevar.INSUFFICIENT_SECURITY_LEVEL:
+                    handler->PSendSysMessage("You do not meet the security to apply templates.");
+                    return true;
+                case templatevar.TEMPLATE_DISABLED_LOCAL:
+                    handler->PSendSysMessage("This template is disabled.");
+                    return true;
+                default:
+                    break;
             }
-            if (enable || secure)
-            {
-                switch(templatevar.CheckTemplateQualifier(target, index))
-                {
-                    case templatevar.MISSING_TEMPLATE_INFO:
-                        handler->PSendSysMessage("The selected template does not apply to you.");
-                        return true;
-                    case templatevar.NOT_INITIAL_LEVEL:
-                        handler->PSendSysMessage("You must be a new character to apply this template.");
-                        return true;
-                    case templatevar.TEMPLATES_DISABLED:
-                        handler->PSendSysMessage("Templates currently cannot be applied.");
-                        return true;
-                    case templatevar.INSUFFICIENT_SECURITY_LEVEL:
-                        if (secure)
-                        {
-                            break;
-                        }
-                        else
-                        {
-                            handler->PSendSysMessage("You do not meet the security to apply templates.");
-                            return true;
-                        }
-                    default:
-                        break;
-                }
-                uint32 oldMSTime = getMSTime();
-                templatevar.HandleApply(target, index);
-                LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
-                handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
-            } //                                                                               because I will never ever ever figure out how to do the hotbar correctly.
-            else
-            {
-                handler->PSendSysMessage("This template is disabled.");
-            }
-            return true;
+            uint32 oldMSTime = getMSTime();
+            templatevar.HandleApply(target, index);
+            LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
+            handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
+            return true; //                                                                because I will never ever ever figure out how to do the hotbar correctly.
         }
         else
         {
