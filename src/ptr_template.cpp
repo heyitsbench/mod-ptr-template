@@ -888,14 +888,15 @@ public:
                 uint8 indexEntry = (*index)[0].Get<uint8>();
                 uint8 enableEntry = (*index)[1].Get<uint8>();
                 std::string commentEntry = (*index)[2].Get<std::string>();
-                std::string enableText = enableEntry
-                    ? handler->GetSession()->GetAcoreString(createTemplate::DETAIL_ENABLE)
-                    : handler->GetSession()->GetAcoreString(createTemplate::DETAIL_DISABLE);
 
                 if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
+                        std::string enableText = enableEntry
+                            ? handler->GetSession()->GetAcoreString(createTemplate::DETAIL_ENABLE)
+                            : handler->GetSession()->GetAcoreString(createTemplate::DETAIL_DISABLE);
+
                         handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
                     }
                     else
