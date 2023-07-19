@@ -888,9 +888,9 @@ public:
                 uint8 indexEntry = (*index)[0].Get<uint8>();
                 uint8 enableEntry = (*index)[1].Get<uint8>();
                 std::string commentEntry = (*index)[2].Get<std::string>();
-                uint32 enableText = enableEntry
-                    ? createTemplate::DETAIL_ENABLE
-                    : createTemplate::DETAIL_DISABLE;
+                std::string enableText = enableEntry
+                    ? handler->GetSession()->GetAcoreString(createTemplate::DETAIL_ENABLE)
+                    : handler->GetSession()->GetAcoreString(createTemplate::DETAIL_DISABLE);
 
                 if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
