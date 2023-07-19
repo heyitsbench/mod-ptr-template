@@ -862,12 +862,12 @@ public:
             uint32 oldMSTime = getMSTime();
             templatevar.HandleApply(target, index);
             LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
-            handler->PSendSysMessage(ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
+            handler->PSendSysMessage(templatevar.ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
             return true; //                                     because I will never ever ever figure out how to do the hotbar correctly.
         }
         else
         {
-            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendSysMessage(templatevar.FEEDBACK_TEMPLATE_MISSING);
             return true;
         }
     }
@@ -877,7 +877,7 @@ public:
         QueryResult index = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
         if (index)
         {
-            handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST);
+            handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST);
 
             int8 playerSecurity = handler->IsConsole()
                 ? SEC_CONSOLE
