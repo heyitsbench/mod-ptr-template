@@ -764,7 +764,7 @@ public:
     {
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
         {
-            ChatHandler(player->GetSession()).SendSysMessage(ALERT_MODULE_PRESENCE);
+            ChatHandler(player->GetSession()).SendSysMessage(createTemplate::ALERT_MODULE_PRESENCE);
         }
     }
 };
@@ -798,12 +798,12 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage(FEEDBACK_TEMPLATE_ENABLE, index, comment);
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, comment);
             return true;
         }
         else
         {
-            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -815,12 +815,12 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage(FEEDBACK_TEMPLATE_DISABLE, index, comment);
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, comment);
             return true;
         }
         else
         {
-            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -842,19 +842,19 @@ public:
             switch(templatevar.CheckTemplateQualifier(target, index, enable))
             {
                 case templatevar.MISSING_TEMPLATE_INFO:
-                    handler->PSendSysMessage(ERROR_TEMPLATE_INFO);
+                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_INFO);
                     return true;
                 case templatevar.NOT_INITIAL_LEVEL:
-                    handler->PSendSysMessage(ERROR_TEMPLATE_LEVEL);
+                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_LEVEL);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_GLOBAL:
-                    handler->PSendSysMessage(ERROR_TEMPLATE_DIABLE_GLOBAL);
+                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_DIABLE_GLOBAL);
                     return true;
                 case templatevar.INSUFFICIENT_SECURITY_LEVEL:
-                    handler->PSendSysMessage(ERROR_TEMPLATE_SECURITY);
+                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_SECURITY);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_LOCAL:
-                    handler->PSendSysMessage(ERROR_TEMPLATE_DISABLE_LOCAL);
+                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_DISABLE_LOCAL);
                     return true;
                 default:
                     break;
@@ -889,25 +889,25 @@ public:
                 uint8 enableEntry = (*index)[1].Get<uint8>();
                 std::string commentEntry = (*index)[2].Get<std::string>();
                 uint32 enableText = enableEntry
-                    ? DETAIL_ENABLE
-                    : DETAIL_DISABLE;
+                    ? createTemplate::DETAIL_ENABLE
+                    : createTemplate::DETAIL_DISABLE;
 
                 if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
-                        handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
+                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
                     }
                     else
                     {
-                        handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, commentEntry);
+                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, commentEntry);
                     }
                 }
             } while (index->NextRow());
         }
         else
         {
-            handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_EMPTY);
+            handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
         }
         return true;
     }
