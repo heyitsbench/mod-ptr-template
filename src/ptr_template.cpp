@@ -242,6 +242,26 @@ public:
         CHECK_PASSED                = 0
     };
 
+    enum templateStrings
+	{
+		FEEDBACK_TEMPLATE_ENABLE     = 40000,
+		FEEDBACK_TEMPLATE_MISSING    = 40001,
+		FEEDBACK_TEMPLATE_DISABLE    = 40002,
+		ERROR_TEMPLATE_INFO          = 40003,
+		ERROR_TEMPLATE_LEVEL         = 40004,
+		ERROR_TEMPLATE_DIABLE_GLOBAL = 40005,
+		ERROR_TEMPLATE_SECURITY      = 40006,
+		ERROR_TEMPLATE_DISABLE_LOCAL = 40007,
+		ALERT_TEMPLATE_LOGOUT        = 40008,
+		MESSAGE_TEMPLATE_LIST        = 40009,
+		MESSAGE_TEMPLATE_LIST_DETAIL = 40010,
+		MESSAGE_TEMPLATE_LIST_SIMPLE = 40011,
+		MESSAGE_TEMPLATE_LIST_EMPTY  = 40012,
+		DETAIL_ENABLE                = 40013,
+		DETAIL_DISABLE               = 40014,
+		ALERT_MODULE_PRESENCE        = 40015
+	};
+
 private:
 
     enum TemplateEnums
@@ -744,7 +764,7 @@ public:
     {
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
         {
-            ChatHandler(player->GetSession()).SendSysMessage("This server is running the PTR Template module.");
+            ChatHandler(player->GetSession()).SendSysMessage(ALERT_MODULE_PRESENCE);
         }
     }
 };
@@ -778,12 +798,12 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Enabled template %u (%s).", index, comment);
+            handler->PSendSysMessage(FEEDBACK_TEMPLATE_ENABLE, index, comment);
             return true;
         }
         else
         {
-            handler->PSendSysMessage("This template has not been added.");
+            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -795,12 +815,12 @@ public:
         if (result)
         {
             std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage("Disabled template %u (%s).", index, comment);
+            handler->PSendSysMessage(FEEDBACK_TEMPLATE_DISABLE, index, comment);
             return true;
         }
         else
         {
-            handler->PSendSysMessage("This template has not been added.");
+            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -822,19 +842,19 @@ public:
             switch(templatevar.CheckTemplateQualifier(target, index, enable))
             {
                 case templatevar.MISSING_TEMPLATE_INFO:
-                    handler->PSendSysMessage("The selected template does not apply to you.");
+                    handler->PSendSysMessage(ERROR_TEMPLATE_INFO);
                     return true;
                 case templatevar.NOT_INITIAL_LEVEL:
-                    handler->PSendSysMessage("You must be a new character to apply this template.");
+                    handler->PSendSysMessage(ERROR_TEMPLATE_LEVEL);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_GLOBAL:
-                    handler->PSendSysMessage("Templates currently cannot be applied.");
+                    handler->PSendSysMessage(ERROR_TEMPLATE_DIABLE_GLOBAL);
                     return true;
                 case templatevar.INSUFFICIENT_SECURITY_LEVEL:
-                    handler->PSendSysMessage("You do not meet the security to apply templates.");
+                    handler->PSendSysMessage(ERROR_TEMPLATE_SECURITY);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_LOCAL:
-                    handler->PSendSysMessage("This template is disabled.");
+                    handler->PSendSysMessage(ERROR_TEMPLATE_DISABLE_LOCAL);
                     return true;
                 default:
                     break;
@@ -842,12 +862,12 @@ public:
             uint32 oldMSTime = getMSTime();
             templatevar.HandleApply(target, index);
             LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
-            handler->PSendSysMessage("Please logout for the template to fully apply."); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
-            return true; //                                                                because I will never ever ever figure out how to do the hotbar correctly.
+            handler->PSendSysMessage(ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
+            return true; //                                     because I will never ever ever figure out how to do the hotbar correctly.
         }
         else
         {
-            handler->PSendSysMessage("This template has not been added.");
+            handler->PSendSysMessage(FEEDBACK_TEMPLATE_MISSING);
             return true;
         }
     }
@@ -857,7 +877,7 @@ public:
         QueryResult index = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
         if (index)
         {
-            handler->PSendSysMessage("Available template sets:");
+            handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST);
 
             int8 playerSecurity = handler->IsConsole()
                 ? SEC_CONSOLE
@@ -868,26 +888,26 @@ public:
                 uint8 indexEntry = (*index)[0].Get<uint8>();
                 uint8 enableEntry = (*index)[1].Get<uint8>();
                 std::string commentEntry = (*index)[2].Get<std::string>();
-                std::string enableText = enableEntry
-                    ? "Enabled"
-                    : "Disabled";
+                uint32 enableText = enableEntry
+                    ? DETAIL_ENABLE
+                    : DETAIL_DISABLE;
 
                 if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
-                        handler->PSendSysMessage("%u (%s): %s", indexEntry, commentEntry, enableText);
+                        handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
                     }
                     else
                     {
-                        handler->PSendSysMessage("%u (%s)", indexEntry, commentEntry);
+                        handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, commentEntry);
                     }
                 }
             } while (index->NextRow());
         }
         else
         {
-            handler->PSendSysMessage("There are no added templates.");
+            handler->PSendSysMessage(MESSAGE_TEMPLATE_LIST_EMPTY);
         }
         return true;
     }
