@@ -863,7 +863,7 @@ public:
             templatevar.HandleApply(target, index);
             LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
             handler->PSendSysMessage(templatevar.ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
-            return true; //                                     because I will never ever ever figure out how to do the hotbar correctly.
+            return true; //                                                 because I will never ever ever figure out how to do the hotbar correctly.
         }
         else
         {
