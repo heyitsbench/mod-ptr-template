@@ -896,8 +896,8 @@ public:
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
                         std::string enableText = enableEntry
-                            ? handler->GetSession()->GetAcoreString(createTemplate::DETAIL_ENABLE)
-                            : handler->GetSession()->GetAcoreString(createTemplate::DETAIL_DISABLE);
+                            ? handler->GetAcoreString(createTemplate::DETAIL_ENABLE)
+                            : handler->GetAcoreString(createTemplate::DETAIL_DISABLE);
 
                         handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
                     }
