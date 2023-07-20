@@ -1,0 +1,18 @@
+INSERT INTO `mod_ptrtemplate_skills` (`ID`, `RaceMask`, `ClassMask`, `SkillID`, `Value`, `Max`, `Comment`) VALUES
+(6, 2, 4, 333, 300, 300, 'Enchanting'),
+(6, 2, 4, 202, 300, 300, 'Engineering'),
+(6, 2, 4, 129, 300, 300, 'First Aid'),
+(6, 2, 4, 762, 150, 150, 'Riding'),
+(6, 2, 4, 44, 300, 300, 'Axes'),
+(6, 2, 4, 45, 300, 300, 'Bows'),
+(6, 2, 4, 226, 300, 300, 'Crossbows'),
+(6, 2, 4, 173, 300, 300, 'Daggers'),
+(6, 2, 4, 95, 300, 300, 'Defense'),
+(6, 2, 4, 46, 300, 300, 'Guns'),
+(6, 2, 4, 136, 300, 300, 'Staves'),
+(6, 2, 4, 43, 300, 300, 'Swords'),
+(6, 2, 4, 176, 300, 300, 'Thrown'),
+(6, 2, 4, 172, 300, 300, 'Two-Handed Axes'),
+(6, 2, 4, 55, 300, 300, 'Two-Handed Swords'),
+(6, 2, 4, 162, 300, 300, 'Unarmed'),
+(6, 2, 4, 413, 1, 1, 'Mail');
