@@ -794,13 +794,15 @@ public:
     }
 
     static bool enableTemplate(ChatHandler* handler, uint32 index)
-    { //                                                    0
-        QueryResult result = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID={}", index);
-        WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=1 WHERE ID={}", index);
+    { //                                                   0
+        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
         if (result)
         {
-            std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, comment);
+            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=1 WHERE ID={}", index);
+
+            std::string templateName = GetTemplateName(handler, index);
+
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, templateName);
             return true;
         }
         else
@@ -811,13 +813,15 @@ public:
     }
 
     static bool disableTemplate(ChatHandler* handler, uint32 index)
-    { //                                                    0
-        QueryResult result = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID={}", index);
-        WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=0 WHERE ID={}", index);
+    { //                                                   0
+        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
         if (result)
         {
-            std::string comment = (*result)[0].Get<std::string>();
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, comment);
+            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=0 WHERE ID={}", index);
+
+            std::string templateName = GetTemplateName(handler, index);
+
+            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, templateName);
             return true;
         }
         else
@@ -875,8 +879,8 @@ public:
     }
 
     static bool listTemplate(ChatHandler* handler)
-    { //                                                 0     1        2
-        QueryResult index = WorldDatabase.Query("SELECT ID, Enable, Comment FROM mod_ptrtemplate_index ORDER BY ID");
+    { //                                                 0     1
+        QueryResult index = WorldDatabase.Query("SELECT ID, Enable FROM mod_ptrtemplate_index ORDER BY ID");
         if (index)
         {
             handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST);
@@ -889,7 +893,7 @@ public:
             {
                 uint8 indexEntry = (*index)[0].Get<uint8>();
                 uint8 enableEntry = (*index)[1].Get<uint8>();
-                std::string commentEntry = (*index)[2].Get<std::string>();
+                std::string templateName = GetTemplateName(handler, indexEntry);
 
                 if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
                 {
@@ -899,11 +903,11 @@ public:
                             ? handler->GetAcoreString(createTemplate::DETAIL_ENABLE)
                             : handler->GetAcoreString(createTemplate::DETAIL_DISABLE);
 
-                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, commentEntry, enableText);
+                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
                     }
                     else
                     {
-                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, commentEntry);
+                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
                     }
                 }
             } while (index->NextRow());
@@ -913,6 +917,41 @@ public:
             handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
         }
         return true;
+    }
+
+private:
+    static std::string GetTemplateName(ChatHandler* handler, uint8 index)
+    {
+        LocaleConstant locale;
+
+        if (handler->IsConsole())
+        {
+            locale = LOCALE_enUS;
+        }
+        else
+        {
+            locale = handler->GetSession()->GetSessionDbLocaleIndex();
+        }
+        //                                                   0
+        QueryResult defQuery = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID = {}", index);
+
+        std::string defName = (*defQuery)[0].Get<std::string>();
+
+        if (locale != LOCALE_enUS)
+        { //                                                    0     1     2     3     4     5     6     7
+            QueryResult locQuery = WorldDatabase.Query("SELECT koKR, frFR, deDE, zhCN, zhTW, esES, esMX, ruRU FROM mod_ptrtemplate_locale WHERE ID = {}", index);
+            if (locQuery)
+            {
+                std::string locName = (*locQuery)[locale - 1].Get<std::string>();
+
+                if (!locName.empty())
+                {
+                    return locName;
+                }
+            }
+        }
+
+        return defName; // If locale == enUS || no localized text found, send enUS
     }
 };
 
