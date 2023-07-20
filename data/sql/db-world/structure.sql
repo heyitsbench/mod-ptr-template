@@ -70,6 +70,19 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_inventory` (
 	`Comment` TEXT NULL DEFAULT NULL
 ) COLLATE='utf8mb4_general_ci';
 
+DROP TABLE IF EXISTS `mod_ptrtemplate_locale`;
+CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_locale` (
+	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Template index ID',
+	`koKR` TEXT NULL DEFAULT NULL COMMENT 'Korean template name translation',
+	`frFR` TEXT NULL DEFAULT NULL COMMENT 'French template name translation',
+	`deDE` TEXT NULL DEFAULT NULL COMMENT 'German template name translation',
+	`zhCN` TEXT NULL DEFAULT NULL COMMENT 'Chinese (Simplified) template name translation',
+	`zhTW` TEXT NULL DEFAULT NULL COMMENT 'Chinese (Traditional) template name translation',
+	`esES` TEXT NULL DEFAULT NULL COMMENT 'Spanish template name translation',
+	`esMX` TEXT NULL DEFAULT NULL COMMENT 'Other Spanish template name translation',
+	`ruRU` TEXT NULL DEFAULT NULL COMMENT 'Russian template name translation'
+) COLLATE='utf8mb4_general_ci';
+
 DROP TABLE IF EXISTS `mod_ptrtemplate_quests`;
 CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_quests` (
 	`ID` TINYINT UNSIGNED NOT NULL DEFAULT '0' COMMENT 'Template index ID',
