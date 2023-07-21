@@ -400,64 +400,66 @@ private:
 
     static void AddTemplateDeathKnight(Player* player) // Pretty much all of this is copied from acidmanifesto's lovely work on the skip-dk-starting-area module.
     {
-        if (player->getClass() == CLASS_DEATH_KNIGHT)
+        if (!player->getClass() == CLASS_DEATH_KNIGHT)
         {
-            int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
-            // Blizz just dumped all of the special surprise quests on every DK template. Don't know yet if I want to do the same.
-            int specialSurpriseQuestId = -1;
-            switch (player->getRace())
-            {
-            case RACE_TAUREN:
-                specialSurpriseQuestId = 12739;
-                break;
-            case RACE_HUMAN:
-                specialSurpriseQuestId = 12742;
-                break;
-            case RACE_NIGHTELF:
-                specialSurpriseQuestId = 12743;
-                break;
-            case RACE_DWARF:
-                specialSurpriseQuestId = 12744;
-                break;
-            case RACE_GNOME:
-                specialSurpriseQuestId = 12745;
-                break;
-            case RACE_DRAENEI:
-                specialSurpriseQuestId = 12746;
-                break;
-            case RACE_BLOODELF:
-                specialSurpriseQuestId = 12747;
-                break;
-            case RACE_ORC:
-                specialSurpriseQuestId = 12748;
-                break;
-            case RACE_TROLL:
-                specialSurpriseQuestId = 12749;
-                break;
-            case RACE_UNDEAD_PLAYER:
-                specialSurpriseQuestId = 12750;
-                break;
-            }
-
-            STARTER_QUESTS[22] = specialSurpriseQuestId;
-            STARTER_QUESTS[32] = player->GetTeamId() == TEAM_ALLIANCE
-                ? 13188
-                : 13189;
-
-            for (int questId : STARTER_QUESTS)
-            {
-                if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
-                {
-                    player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
-                    player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
-                }
-            }
-
-            for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) // Removes any items the DK is carrying at the end of the process.
-            { //                                                                          Includes starting gear as well as quest rewards.
-                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
-            } //                                                                          ^(;,;)^
+            return;
         }
+            
+        int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
+        // Blizz just dumped all of the special surprise quests on every DK template. Don't know yet if I want to do the same.
+        int specialSurpriseQuestId = -1;
+        switch (player->getRace())
+        {
+        case RACE_TAUREN:
+            specialSurpriseQuestId = 12739;
+            break;
+        case RACE_HUMAN:
+            specialSurpriseQuestId = 12742;
+            break;
+        case RACE_NIGHTELF:
+            specialSurpriseQuestId = 12743;
+            break;
+        case RACE_DWARF:
+            specialSurpriseQuestId = 12744;
+            break;
+        case RACE_GNOME:
+            specialSurpriseQuestId = 12745;
+            break;
+        case RACE_DRAENEI:
+            specialSurpriseQuestId = 12746;
+            break;
+        case RACE_BLOODELF:
+            specialSurpriseQuestId = 12747;
+            break;
+        case RACE_ORC:
+            specialSurpriseQuestId = 12748;
+            break;
+        case RACE_TROLL:
+            specialSurpriseQuestId = 12749;
+            break;
+        case RACE_UNDEAD_PLAYER:
+            specialSurpriseQuestId = 12750;
+            break;
+        }
+
+        STARTER_QUESTS[22] = specialSurpriseQuestId;
+        STARTER_QUESTS[32] = player->GetTeamId() == TEAM_ALLIANCE
+            ? 13188
+            : 13189;
+
+        for (int questId : STARTER_QUESTS)
+        {
+            if (player->GetQuestStatus(questId) == QUEST_STATUS_NONE)
+            {
+                player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
+                player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
+            }
+        }
+
+        for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) // Removes any items the DK is carrying at the end of the process.
+        { //                                                                          Includes starting gear as well as quest rewards.
+            player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
+        } //                                                                          ^(;,;)^
     }
 
     static void AddTemplateHomebind(Player* player, uint32 index)
