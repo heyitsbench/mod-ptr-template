@@ -278,7 +278,7 @@ private:
 
     static void AddTemplateAchievements(Player* player, uint32 index)
     { //                                                                0
-        QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (achievementInfo)
         {
             AchievementEntry const* achievementID;
@@ -293,12 +293,12 @@ private:
 
     static void AddTemplateBagGear(Player* player, uint32 index) // Handles bag items and currency.
     { //                                                    0      1       2        3         4         5         6         7         8         9         10
-        QueryResult bagInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult bagInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (bagInfo)
         {
             do
             {   //                                                           0
-                QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid={})", (player->GetGUID().GetCounter()));
+                QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid = {})", (player->GetGUID().GetCounter()));
                 Field* bagFields = bagInfo->Fetch();
                 Field* containerFields = containerInfo->Fetch();
                 uint32 bagEntry = bagFields[0].Get<uint32>();
@@ -462,7 +462,7 @@ private:
 
     static void AddTemplateHomebind(Player* player, uint32 index)
     { //                                                         0              1            2           3           4           5           6          7          8        9       10       11
-        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult homeEntry = WorldDatabase.Query("SELECT HMapAlliance, HZoneAlliance, HXAlliance, HYAlliance, HZAlliance, HOAlliance, HMapHorde, HZoneHorde, HXHorde, HYHorde, HZHorde, HOHorde FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (homeEntry)
         {
             uint16 hMapAllianceEntry = (*homeEntry)[0].Get<uint16>();
@@ -495,7 +495,7 @@ private:
 
     static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
     { //                                                    0       1      2
-        QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
         { //                                                                 This doesn't work for spells added by AddTemplateSpells.
             player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
@@ -516,7 +516,7 @@ private:
 
     static void AddTemplateLevel(Player* player, uint32 index)
     { //                                                  0
-        QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult check = WorldDatabase.Query("SELECT Level FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (check)
         {
             uint8 levelEntry = (*check)[0].Get<uint8>();
@@ -527,7 +527,7 @@ private:
 
     static void AddTemplatePosition(Player* player, uint32 index)
     { //                                                        0           1          2          3          4         5        6       7       8       9
-        QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult posEntry = WorldDatabase.Query("SELECT MapAlliance, XAlliance, YAlliance, ZAlliance, OAlliance, MapHorde, XHorde, YHorde, ZHorde, OHorde FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (posEntry)
         {
             uint16 mapAllianceEntry = (*posEntry)[0].Get<uint16>();
@@ -555,7 +555,7 @@ private:
 
     static void AddTemplateQuests(Player* player, uint32 index)
     { //                                                       0
-        QueryResult questInfo = WorldDatabase.Query("SELECT QuestID FROM mod_ptrtemplate_quests WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult questInfo = WorldDatabase.Query("SELECT QuestID FROM mod_ptrtemplate_quests WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (questInfo)
         {
             do
@@ -568,7 +568,7 @@ private:
 
     static void AddTemplateReputation(Player* player, uint32 index)
     { //                                                      0         1
-        QueryResult repInfo = WorldDatabase.Query("SELECT FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult repInfo = WorldDatabase.Query("SELECT FactionID, Standing FROM mod_ptrtemplate_reputations WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (repInfo)
         {
             do
@@ -600,7 +600,7 @@ private:
 
     static void AddTemplateSkills(Player* player, uint32 index)
     { //                                                       0       1     2
-        QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult skillInfo = WorldDatabase.Query("SELECT SkillID, Value, Max FROM mod_ptrtemplate_skills WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (skillInfo)
         {
             do
@@ -617,7 +617,7 @@ private:
 
     static void AddTemplateSpells(Player* player, uint32 index)
     { //                                                       0
-        QueryResult spellInfo = WorldDatabase.Query("SELECT SpellID FROM mod_ptrtemplate_spells WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult spellInfo = WorldDatabase.Query("SELECT SpellID FROM mod_ptrtemplate_spells WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (spellInfo)
         {
             do
@@ -631,7 +631,7 @@ private:
 
     static void AddTemplateTaxi(Player* player, uint32 index)
     { //                                                          0           1
-        QueryResult taxiEntry = WorldDatabase.Query("SELECT TaxiAlliance, TaxiHorde FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult taxiEntry = WorldDatabase.Query("SELECT TaxiAlliance, TaxiHorde FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (taxiEntry)
         {
             if (player->GetTeamId() == TEAM_ALLIANCE || (*taxiEntry)[1].Get<std::string_view>() == "-1")
@@ -649,7 +649,7 @@ private:
 
     static void AddTemplateWornGear(Player* player, uint32 index) // Handles paper doll items and equipped bags.
     { //                                                     0      1       2        3         4         5         6         7         8         9
-        QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID={} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
+        QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (gearInfo)
         {
             for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
@@ -795,10 +795,10 @@ public:
 
     static bool enableTemplate(ChatHandler* handler, uint32 index)
     { //                                                   0
-        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (result)
         {
-            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=1 WHERE ID={}", index);
+            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=1 WHERE ID = {}", index);
 
             std::string templateName = GetTemplateName(handler, index);
 
@@ -814,10 +814,10 @@ public:
 
     static bool disableTemplate(ChatHandler* handler, uint32 index)
     { //                                                   0
-        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index);
+        QueryResult result = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID = {}", index);
         if (result)
         {
-            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=0 WHERE ID={}", index);
+            WorldDatabase.Execute("UPDATE mod_ptrtemplate_index SET Enable=0 WHERE ID = {}", index);
 
             std::string templateName = GetTemplateName(handler, index);
 
@@ -833,7 +833,7 @@ public:
 
     static bool applyTemplate(ChatHandler* handler, Optional<PlayerIdentifier> player, uint32 index) // TODO: Allow the command to use a target instead of always targetting self.
     { //                                                  0
-        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID={}", index); // TODO: Check keywords column for template...keywords.
+        QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID = {}", index); // TODO: Check keywords column for template...keywords.
         static createTemplate templatevar;
 
         if(check)
