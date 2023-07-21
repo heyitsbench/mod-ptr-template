@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_index` (
 	`TaxiAlliance` TEXT NULL DEFAULT NULL COMMENT 'TaxiMask for Alliance characters',
 	`TaxiHorde` TEXT NULL DEFAULT NULL COMMENT 'TaxiMask for Horde characters',
 	`Enable` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Determines if the template can be applied or not',
-	`Comment` TEXT NULL DEFAULT NULL COMMENT 'Name for the template'
+	`Comment` TEXT NULL DEFAULT NULL COMMENT 'Name for the template',
 	PRIMARY KEY (`ID`)
 ) COLLATE='utf8mb4_general_ci';
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `mod_ptrtemplate_locale` (
 	`zhTW` TEXT NULL DEFAULT NULL COMMENT 'Chinese (Traditional) template name translation',
 	`esES` TEXT NULL DEFAULT NULL COMMENT 'Spanish template name translation',
 	`esMX` TEXT NULL DEFAULT NULL COMMENT 'Other Spanish template name translation',
-	`ruRU` TEXT NULL DEFAULT NULL COMMENT 'Russian template name translation'
+	`ruRU` TEXT NULL DEFAULT NULL COMMENT 'Russian template name translation',
 	PRIMARY KEY (`ID`)
 ) COLLATE='utf8mb4_general_ci';
 
