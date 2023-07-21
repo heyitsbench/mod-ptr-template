@@ -400,7 +400,7 @@ private:
 
     static void AddTemplateDeathKnight(Player* player) // Pretty much all of this is copied from acidmanifesto's lovely work on the skip-dk-starting-area module.
     {
-        if (!player->getClass() == CLASS_DEATH_KNIGHT)
+        if (!(player->getClass() == CLASS_DEATH_KNIGHT))
         {
             return;
         }
