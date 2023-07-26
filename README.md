@@ -12,6 +12,7 @@ This module depends on the selection of certain template sets that have already 
 
 - Template characters as seen on the Classic Era, Season of Mastery, and Wrath Classic public test realms.
 - Best-in-slot gear lists from Wowhead for the various phases of Classic's release.
+- Premade characters used in [VMaNGOS](https://github.com/vmangos/core).
 
 In the future, this may be expanded to include many more sets, and anyone willing is free to contribute to this module.
 
@@ -47,3 +48,4 @@ To uninstall the module, you must remove the module from the `modules` directory
 - [acidmanifesto](https://github.com/acidmanifesto) for providing portions of the [skip-dk-starting-area module](https://github.com/azerothcore/mod-skip-dk-starting-area) as well as an example of storing SQL results into variables.
 - [AnchyDev](https://github.com/AnchyDev) for pointing out some much needed info regarding item storage and TaskScheduler implementation.
 - [Nyeriah](https://github.com/Nyeriah) for identifying a couple points of confusion to me, resulting in issues.
+- [ratkosrb](https://github.com/ratkosrb) for creating the VMaNGOS premade character sets and allowing them to be adapted for this module.
