@@ -260,7 +260,9 @@ public:
 		DETAIL_ENABLE                = 40013,
 		DETAIL_DISABLE               = 40014,
 		ALERT_MODULE_PRESENCE        = 40015,
-		ERROR_TEMPLATE_EQUIP         = 40016
+		MAIL_ERROR_EQUIP_BODY        = 40016,
+        MAIL_BOOST_SUBJECT           = 40017,
+        MAIL_BOOST_BODY              = 40018
 	};
 
 private:
@@ -386,7 +388,7 @@ private:
                         TemplateHelperItemEnchants(bagInfo, player, itemBuffer, 4);
 
                         std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
-                        std::string content = player->GetSession()->GetAcoreString(ERROR_TEMPLATE_EQUIP);
+                        std::string content = player->GetSession()->GetAcoreString(MAIL_ERROR_EQUIP_BODY);
 
                         MailDraft draft(subject, content);
                         draft.AddItem(itemBuffer); // TODO: Make a damn queue and allow multiple items to a single message. Druids have so many items their inbox gets full immediately if sending one by one.
