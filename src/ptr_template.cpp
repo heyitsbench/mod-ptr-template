@@ -48,7 +48,7 @@ public:
         LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
 
         uint8 itemRoutine = METHOD_BOOST;
-        if (sConfigMgr->GetOption<bool>("DeleteItems", false))
+        if (sConfigMgr->GetOption<bool>("DeleteItems", true))
         {
             itemRoutine = METHOD_DELETE;
         }
@@ -60,6 +60,18 @@ public:
                 case 0:
                     if (sConfigMgr->GetOption<bool>("TemplateDK", true))
                     {
+                        if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true) && sConfigMgr->GetOption<bool>("TemplateBagGear", true))
+                        {
+                            TemplateHelperItemCleanup(player, SCOPE_ALL, itemRoutine);
+                        }
+                        else if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
+                        {
+                            TemplateHelperItemCleanup(player, SCOPE_BAGS, itemRoutine);
+                        }
+                        else if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
+                        {
+                            TemplateHelperItemCleanup(player, SCOPE_EQUIPPED, itemRoutine);
+                        }
                         AddTemplateDeathKnight(player);
                         player->SaveToDB(false, false);
                         LOG_DEBUG("module", "Finished applying death knight case for template character {}.", player->GetGUID().ToString());
@@ -286,7 +298,8 @@ private:
         CONTAINER_BACKPACK   = 0,
         CONTAINER_END        = 5,
         ITEM_GOLD            = 8,
-        INVENTORY_SLOT_START = 0
+        INVENTORY_SLOT_START = 0,
+        MAILED_ITEM_DELAY    = 180
     };
 
     enum itemCleanupCodes
@@ -476,12 +489,14 @@ private:
                 player->AddQuest(sObjectMgr->GetQuestTemplate(questId), nullptr);
                 player->RewardQuest(sObjectMgr->GetQuestTemplate(questId), 0, player, false);
             }
+            if (player->GetItemByPos(INVENTORY_SLOT_BAG_0, INVENTORY_SLOT_ITEM_START))
+            {
+                TemplateHelperItemCleanup(player, SCOPE_BAGS, METHOD_DELETE); // Removes any items the DK is rewarded with during the process.
+                //                                                               Guarantees player won't receive quest rewards in the mail.
+                //                                                               This is done because I hate fun.
+                //                                                               ^(;,;)^
+            }
         }
-
-        TemplateHelperItemCleanup(player, SCOPE_ALL, METHOD_DELETE); // Removes any items the DK is carrying at the end of the process.
-        //                                                                Includes starting gear as well as quest rewards.
-        //                                                                This is done because I hate fun.
-        //                                                                ^(;,;)^
     }
 
     static void AddTemplateHomebind(Player* player, uint32 index)
@@ -717,7 +732,58 @@ private:
         {
             if (method != METHOD_DELETE)
             {
-                return; // TODO: Implement boost/scroll item mailing.
+                CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+                std::list<Item*> vestigialBagItems;
+
+                for (uint8 b = INVENTORY_SLOT_ITEM_START; b < INVENTORY_SLOT_ITEM_END; b++)
+                {
+                    Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, b);
+                    if (!item)
+                    {
+                        continue;
+                    }
+
+                    player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, b, true);
+                    item->DeleteFromInventoryDB(trans);
+                    vestigialBagItems.push_back(item);
+                }
+                for (uint8 c = INVENTORY_SLOT_BAG_START; c < INVENTORY_SLOT_BAG_END; c++)
+                {
+                    for (uint8 i = INVENTORY_SLOT_START; i < MAX_BAG_SIZE; i++)
+                    {
+                        Item* item = player->GetItemByPos(c, i);
+                        if (!item)
+                        {
+                            continue;
+                        }
+
+                        player->MoveItemFromInventory(c, i, true);
+                        item->DeleteFromInventoryDB(trans);
+                        vestigialBagItems.push_back(item);
+                    }
+                }
+
+                while (!vestigialBagItems.empty())
+                {
+                    std::string subject = player->GetSession()->GetAcoreString(MAIL_BOOST_SUBJECT);
+                    std::string content = player->GetSession()->GetAcoreString(MAIL_BOOST_BODY);
+
+                    if (method == METHOD_SCROLL)
+                    {
+                        subject = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_SUBJECT);
+                        content = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_BODY);
+                    }
+
+                    MailDraft draft(subject, content);
+                    for (uint8 i = 0; !vestigialBagItems.empty() && i < MAX_MAIL_ITEMS; ++i)
+                    {
+                        draft.AddItem(vestigialBagItems.front());
+                        vestigialBagItems.pop_front();
+                    }
+                    draft.SendMailTo(trans, player, MailSender(player), MAIL_CHECK_MASK_COPIED, 0U, MAILED_ITEM_DELAY);
+                }
+
+                CharacterDatabase.CommitTransaction(trans);
             }
             else
             {
@@ -738,7 +804,43 @@ private:
         {
             if (method != METHOD_DELETE)
             {
-                return; // TODO: Implement boost/scroll item mailing.
+                CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+                std::list<Item*> vestigialEquipItems;
+
+                for (uint8 e = EQUIPMENT_SLOT_START; e < INVENTORY_SLOT_BAG_END; e++)
+                {
+                    Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, e);
+                    if (!item)
+                    {
+                        continue;
+                    }
+
+                    player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, e, true);
+                    item->DeleteFromInventoryDB(trans);
+                    vestigialEquipItems.push_back(item);
+                }
+                
+                while (!vestigialEquipItems.empty())
+                {
+                    std::string subject = player->GetSession()->GetAcoreString(MAIL_BOOST_SUBJECT);
+                    std::string content = player->GetSession()->GetAcoreString(MAIL_BOOST_BODY);
+
+                    if (method == METHOD_SCROLL)
+                    {
+                        subject = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_SUBJECT);
+                        content = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_BODY);
+                    }
+
+                    MailDraft draft(subject, content);
+                    for (uint8 i = 0; !vestigialEquipItems.empty() && i < MAX_MAIL_ITEMS; ++i)
+                    {
+                        draft.AddItem(vestigialEquipItems.front());
+                        vestigialEquipItems.pop_front();
+                    }
+                    draft.SendMailTo(trans, player, MailSender(player), MAIL_CHECK_MASK_COPIED, 0U, MAILED_ITEM_DELAY);
+                }
+
+                CharacterDatabase.CommitTransaction(trans);
             }
             else
             {
