@@ -332,6 +332,9 @@ private:
         QueryResult bagInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Quantity, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (bagInfo)
         {
+            CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
+            std::list<Item*> excessiveItems;
+
             do
             {   //                                                           0
                 QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid = {})", (player->GetGUID().GetCounter()));
@@ -415,21 +418,30 @@ private:
                     }
                     else if (validCheck == EQUIP_ERR_INVENTORY_FULL) // No available slots, post office's problem.
                     {
-                        CharacterDatabaseTransaction trans = CharacterDatabase.BeginTransaction();
                         Item* itemBuffer = Item::CreateItem(itemEntry, quantityEntry, player, false);
 
                         TemplateHelperItemEnchants(bagInfo, player, itemBuffer, 4);
 
-                        std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
-                        std::string content = player->GetSession()->GetAcoreString(MAIL_ERROR_EQUIP_BODY);
-
-                        MailDraft draft(subject, content);
-                        draft.AddItem(itemBuffer); // TODO: Make a damn queue and allow multiple items to a single message. Druids have so many items their inbox gets full immediately if sending one by one.
-                        draft.SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
-                        CharacterDatabase.CommitTransaction(trans);
+                        excessiveItems.push_back(itemBuffer);
                     }
                 }
             } while (bagInfo->NextRow());
+
+            while (!excessiveItems.empty())
+            {
+                std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+                std::string content = player->GetSession()->GetAcoreString(MAIL_ERROR_EQUIP_BODY);
+
+                MailDraft draft(subject, content);
+                for (uint8 i = 0; !excessiveItems.empty() && i < MAX_MAIL_ITEMS; ++i)
+                {
+                    draft.AddItem(excessiveItems.front());
+                    excessiveItems.pop_front();
+                }
+                draft.SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+            }
+
+            CharacterDatabase.CommitTransaction(trans);
         }
     }
 
