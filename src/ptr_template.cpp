@@ -47,7 +47,13 @@ public:
     {
         LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
 
-        scheduler.Schedule(Milliseconds(APPLY_DELAY), [player, index](TaskContext context)
+        uint8 itemRoutine = METHOD_BOOST;
+        if (sConfigMgr->GetOption<bool>("DeleteItems", false))
+        {
+            itemRoutine = METHOD_DELETE;
+        }
+        
+        scheduler.Schedule(Milliseconds(APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
                 {
@@ -118,6 +124,7 @@ public:
                 case 8:
                     if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
                     {
+                        TemplateHelperItemCleanup(player, SCOPE_EQUIPPED, itemRoutine);
                         AddTemplateWornGear(player, index);
                         player->SaveToDB(false, false);
                         LOG_DEBUG("module", "Finished applying equipment for template character {}.", player->GetGUID().ToString());
@@ -126,6 +133,7 @@ public:
                 case 9:
                     if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
                     {
+                        TemplateHelperItemCleanup(player, SCOPE_BAGS, itemRoutine);
                         AddTemplateBagGear(player, index);
                         player->SaveToDB(false, false);
                         LOG_DEBUG("module", "Finished applying inventory items for template character {}.", player->GetGUID().ToString());
@@ -271,13 +279,24 @@ private:
 
     enum TemplateEnums
     {
-        APPLY_DELAY         = 25,
-        APPLY_RATE          = 50,
-        HORDE_SIMILAR       = -1,
-        ACTION_BUTTON_BEGIN = 0,
-        CONTAINER_BACKPACK  = 0,
-        CONTAINER_END       = 5,
-        ITEM_GOLD           = 8
+        APPLY_DELAY          = 25,
+        APPLY_RATE           = 50,
+        HORDE_SIMILAR        = -1,
+        ACTION_BUTTON_BEGIN  = 0,
+        CONTAINER_BACKPACK   = 0,
+        CONTAINER_END        = 5,
+        ITEM_GOLD            = 8,
+        INVENTORY_SLOT_START = 0
+    };
+
+    enum itemCleanupCodes
+    {
+        METHOD_DELETE    = 0,
+        METHOD_BOOST     = 1,
+        METHOD_SCROLL    = 2,
+        SCOPE_EQUIPPED   = 0,
+        SCOPE_BAGS       = 1,
+        SCOPE_ALL        = 2
     };
 
     static void AddTemplateAchievements(Player* player, uint32 index)
@@ -360,7 +379,6 @@ private:
                     {
                         continue; // Ignore any equipped items or invalid slot items.
                     }
-                    player->DestroyItem(INVENTORY_SLOT_BAG_0, slotEntry, true);
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
@@ -460,10 +478,10 @@ private:
             }
         }
 
-        for (uint8 j = INVENTORY_SLOT_BAG_START; j < INVENTORY_SLOT_ITEM_END; j++) // Removes any items the DK is carrying at the end of the process.
-        { //                                                                          Includes starting gear as well as quest rewards.
-            player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true); //                    This is done because I hate fun.
-        } //                                                                          ^(;,;)^
+        TemplateHelperItemCleanup(player, SCOPE_ALL, METHOD_DELETE); // Removes any items the DK is carrying at the end of the process.
+        //                                                                Includes starting gear as well as quest rewards.
+        //                                                                This is done because I hate fun.
+        //                                                                ^(;,;)^
     }
 
     static void AddTemplateHomebind(Player* player, uint32 index)
@@ -658,10 +676,6 @@ private:
         QueryResult gearInfo = WorldDatabase.Query("SELECT BagID, SlotID, ItemID, Enchant0, Enchant1, Enchant2, Enchant3, Enchant4, Enchant5, Enchant6 FROM mod_ptrtemplate_inventory WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (gearInfo)
         {
-            for (uint8 j = EQUIPMENT_SLOT_START; j < EQUIPMENT_SLOT_END; j++)
-            {
-                player->DestroyItem(INVENTORY_SLOT_BAG_0, j, true);
-            }
             do
             {
                 uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
@@ -694,6 +708,45 @@ private:
                 }
                 TemplateHelperItemEnchants(gearInfo, player, item, 3);
             } while (gearInfo->NextRow());
+        }
+    }
+
+    static void TemplateHelperItemCleanup(Player* player, uint8 scope, uint8 method)
+    {
+        if (scope == SCOPE_BAGS || scope == SCOPE_ALL)
+        {
+            if (method != METHOD_DELETE)
+            {
+                return; // TODO: Implement boost/scroll item mailing.
+            }
+            else
+            {
+                for (uint8 b = INVENTORY_SLOT_ITEM_START; b < INVENTORY_SLOT_ITEM_END; b++) // Iterate each backpack slot.
+                {
+                    player->DestroyItem(INVENTORY_SLOT_BAG_0, b, true); // Kill.
+                }
+                for (uint8 c = INVENTORY_SLOT_BAG_START; c < INVENTORY_SLOT_BAG_END; c++) // Iterate each equipped container.
+                {
+                    for (uint8 i = INVENTORY_SLOT_START; i < MAX_BAG_SIZE; i++) // Iterate each possible container slot.
+                    {
+                        player->DestroyItem(c, i, true); // Kill.
+                    }
+                }
+            }
+        }
+        if (scope == SCOPE_EQUIPPED || scope == SCOPE_ALL)
+        {
+            if (method != METHOD_DELETE)
+            {
+                return; // TODO: Implement boost/scroll item mailing.
+            }
+            else
+            {
+                for (uint8 e = EQUIPMENT_SLOT_START; e < INVENTORY_SLOT_BAG_END; e++) // Iterate through equip slots.
+                {
+                    player->DestroyItem(INVENTORY_SLOT_BAG_0, e, true); // Kill.
+                }
+            }
         }
     }
 

@@ -59,6 +59,14 @@ TemplateTaximask     = true
 TemplateTeleport     = true
 
 #
+#    DeleteItems
+#        Description: Set whether items in inventory before the template is applied are deleted entirely or sent through the mail.
+#        Default:     true  - (Enabled, delete items in inventory)
+#                     false - (Disabled, send items through mail)
+
+DeleteItems = true
+
+#
 #    EnableApplySecurity
 #        Description: Set the minimum account security level to apply enabled templates.
 #        Default:     0  - (Enabled, Everyone)
