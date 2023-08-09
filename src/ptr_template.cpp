@@ -262,7 +262,9 @@ public:
 		ALERT_MODULE_PRESENCE        = 40015,
 		MAIL_ERROR_EQUIP_BODY        = 40016,
         MAIL_BOOST_SUBJECT           = 40017,
-        MAIL_BOOST_BODY              = 40018
+        MAIL_BOOST_BODY              = 40018,
+        MAIL_RESURRECTION_SUBJECT    = 40019,
+        MAIL_RESURRECTION_BODY       = 40020
 	};
 
 private:
