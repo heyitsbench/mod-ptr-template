@@ -43,7 +43,7 @@ class createTemplate : public PlayerScript {
 public:
     createTemplate() : PlayerScript("createTemplate") { }
 
-    void HandleApply(Player* player, uint32 index, uint32 delayMultiplier = APPLY_DELAY)
+    void HandleApply(Player* player, uint32 index, uint32 delayMultiplier = 1)
     {
         LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
 
@@ -53,7 +53,7 @@ public:
             itemRoutine = METHOD_DELETE;
         }
         
-        scheduler.Schedule(Milliseconds(delayMultiplier), [player, index, itemRoutine](TaskContext context)
+        scheduler.Schedule(Milliseconds(delayMultiplier * APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
                 {
