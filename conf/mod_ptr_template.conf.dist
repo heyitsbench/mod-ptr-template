@@ -67,6 +67,13 @@ TemplateTeleport     = true
 DeleteItems = true
 
 #
+#    LoginTemplateIndex
+#        Description: Template index to automatically apply to characters on first login.
+#        Default:     0 - (Disabled, no template will be applied)
+
+LoginTemplateIndex = 0
+
+#
 #    EnableApplySecurity
 #        Description: Set the minimum account security level to apply enabled templates.
 #        Default:     0  - (Enabled, Everyone)

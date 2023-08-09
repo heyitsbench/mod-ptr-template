@@ -43,7 +43,7 @@ class createTemplate : public PlayerScript {
 public:
     createTemplate() : PlayerScript("createTemplate") { }
 
-    void HandleApply(Player* player, uint32 index)
+    void HandleApply(Player* player, uint32 index, uint32 delayMultiplier = APPLY_DELAY)
     {
         LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
 
@@ -53,7 +53,7 @@ public:
             itemRoutine = METHOD_DELETE;
         }
         
-        scheduler.Schedule(Milliseconds(APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
+        scheduler.Schedule(Milliseconds(delayMultiplier), [player, index, itemRoutine](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
                 {
@@ -601,6 +601,7 @@ private:
                 player->TeleportTo(mapHordeEntry, XHordeEntry, YHordeEntry, ZHordeEntry, OHordeEntry);
                 LOG_DEBUG("module", "Template character {} has been teleported to horde position.", player->GetGUID().ToString());
             }
+            player->UpdatePositionData();
         }
     }
 
@@ -937,10 +938,23 @@ public:
 
     void OnLogin(Player* player) override
     {
+        static createTemplate templatevar;
+
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
         {
-            ChatHandler(player->GetSession()).SendSysMessage(createTemplate::ALERT_MODULE_PRESENCE);
+            ChatHandler(player->GetSession()).SendSysMessage(templatevar.ALERT_MODULE_PRESENCE);
         }
+
+        uint32 templateIndex = sConfigMgr->GetOption<uint32>("LoginTemplateIndex", 0);
+        if (!templateIndex || !player->HasAtLoginFlag(AT_LOGIN_FIRST))
+        {
+            return;
+        }
+        uint32 oldMSTime = getMSTime();
+        player->GetCinematicMgr()->EndCinematic();
+        templatevar.HandleApply(player, templateIndex, 5);
+        LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
+        return;
     }
 };
 
