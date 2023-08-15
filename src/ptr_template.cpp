@@ -321,6 +321,7 @@ private:
             do
             {
                 achievementID = sAchievementStore.LookupEntry((*achievementInfo)[0].Get<uint32>());
+
                 player->CompletedAchievement(achievementID);
                 LOG_DEBUG("module", "Added achievement {} to template character {}.", (*achievementInfo)[0].Get<uint32>(), player->GetGUID().ToString());
             } while (achievementInfo->NextRow());
@@ -344,6 +345,7 @@ private:
                 uint8 slotEntry = bagFields[1].Get<uint8>();
                 uint32 itemEntry = bagFields[2].Get<uint32>();
                 uint32 quantityEntry = bagFields[3].Get<uint32>();
+
                 if (itemEntry == ITEM_GOLD)
                 {
                     player->SetMoney(quantityEntry);
@@ -591,6 +593,7 @@ private:
             float YHordeEntry = (*posEntry)[7].Get<float>();
             float ZHordeEntry = (*posEntry)[8].Get<float>();
             float OHordeEntry = (*posEntry)[9].Get<float>();
+
             if (mapHordeEntry == HORDE_SIMILAR || player->GetTeamId() == TEAM_ALLIANCE)
             {
                 player->TeleportTo(mapAllianceEntry, XAllianceEntry, YAllianceEntry, ZAllianceEntry, OAllianceEntry);
@@ -629,6 +632,11 @@ private:
                 uint16 factionEntry = fields[0].Get<uint16>();
                 int32 standingEntry = fields[1].Get<int32>();
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
+
+                if ((player->GetReputationMgr().GetReputation(factionEntry) >= standingEntry) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
+                {
+                    continue;
+                }
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
                 player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
                 LOG_DEBUG("module", "Added standing {} for faction {} for template character {}.", standingEntry, factionEntry, player->GetGUID().ToString());
@@ -660,6 +668,11 @@ private:
                 uint16 skillEntry = (*skillInfo)[0].Get<uint16>();
                 uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
+
+                if (((player->GetSkillValue(skillEntry) >= valueEntry) && (player->GetMaxSkillValue(skillEntry) >= maxEntry)) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
+                {
+                    continue;
+                }
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
                 LOG_DEBUG("module", "Added skill {} to template character {} with curvalue {} and maxvalue {}.", skillEntry, player->GetGUID().ToString(), valueEntry, maxEntry);
             } while (skillInfo->NextRow());
@@ -675,6 +688,11 @@ private:
             do
             {
                 uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
+
+                if (player->HasSpell(spellEntry))
+                {
+                    continue;
+                }
                 player->learnSpell(spellEntry);
                 LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
             } while (spellInfo->NextRow());
@@ -709,6 +727,7 @@ private:
                 uint32 bagEntry = (*gearInfo)[0].Get<uint32>();
                 uint8 slotEntry = (*gearInfo)[1].Get<uint8>();
                 uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
+
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < BANK_SLOT_BAG_START) || (slotEntry >= BANK_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
                 {
                     continue;

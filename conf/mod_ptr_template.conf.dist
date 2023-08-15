@@ -19,10 +19,10 @@ TemplateEnable = true
 #
 #    LevelEnable
 #        Description: Enable templates to be applied at any level.
-#        Default:     false - (Disabled, only at StartPlayerLevel)
-#                     true  - (Enabled, any level)
+#        Default:     true  - (Enabled, any level)
+#                     false - (Disabled, only at StartPlayerLevel)
 
-LevelEnable = false
+LevelEnable = true
 
 #
 #   TemplateAchievements
@@ -72,6 +72,14 @@ DeleteItems = true
 #        Default:     0 - (Disabled, no template will be applied)
 
 LoginTemplateIndex = 0
+
+#
+#    MaintainImprovedValues
+#        Description: If the character has better values than what is set in the template, choose whether they are overwritten or not.
+#        Default:     true  - (Enabled, keep the higher values)
+#                     false - (Disabled, overwrite regardless of character values)
+
+MaintainImprovedValues = true
 
 #
 #    EnableApplySecurity
