@@ -287,6 +287,12 @@ public:
         MAIL_RESURRECTION_BODY       = 40020
 	};
 
+    enum templateMail
+    {
+        MAIL_BOOST        = 403,
+        MAIL_RESURRECTION = 344
+    };
+
 private:
 
     enum TemplateEnums
