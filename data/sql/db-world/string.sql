@@ -1,6 +1,6 @@
 SET @string = 40000;
 
-DELETE FROM `acore_string` WHERE `entry` BETWEEN @string AND @string+18;
+DELETE FROM `acore_string` WHERE `entry` BETWEEN @string AND @string+20;
 INSERT INTO `acore_string` (`entry`, `content_default`,             `locale_koKR`, `locale_frFR`, `locale_deDE`,                                                                 `locale_zhCN`, `locale_zhTW`, `locale_esES`, `locale_esMX`, `locale_ruRU`) VALUES
 (@string, 'Enabled template %u (%s).',                              NULL,          NULL,          'Vorlage aktiviert %u (%s)',                                                   NULL,          NULL,          NULL,          NULL,          'Активированный шаблон %u (%s).'),
 (@string+1, 'This template has not been added.',                    NULL,          NULL,          'Diese Vorlage wurde nicht hinzugefügt.',                                      NULL,          NULL,          NULL,          NULL,          'Этот шаблон не был добавлен.'),
