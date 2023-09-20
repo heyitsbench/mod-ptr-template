@@ -345,6 +345,12 @@ private:
             do
             {   //                                                           0
                 QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid = {})", (player->GetGUID().GetCounter()));
+
+                if (!containerInfo) // Apparently this can happen sometimes.
+                {
+                    continue;
+                }
+
                 Field* bagFields = bagInfo->Fetch();
                 Field* containerFields = containerInfo->Fetch();
                 uint32 bagEntry = bagFields[0].Get<uint32>();
