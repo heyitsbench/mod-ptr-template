@@ -372,30 +372,29 @@ private:
                 { // TODO: Make this whole section better.
                     do // Also TODO: Add support for adding to bank bag contents. Damn paladins.
                     {
-                        if (!containerFields) // Apparently this can happen sometimes.
+                        if (!containerFields) // Bot
                         {
-                            continue;
-                        }
-                        uint8 slotDBInfo = containerFields[0].Get<uint8>();
-                        if (bagEntry != (slotDBInfo - 18)) // Check if equipped bag matches specified bag for module.
-                        {
-                            continue;
-                        }
-                        if (slotDBInfo < INVENTORY_SLOT_BAG_START || slotDBInfo >= INVENTORY_SLOT_ITEM_START)
-                        {
-                            continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
-                        }
-                        uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
-                        if (validCheck == EQUIP_ERR_OK)
-                        {
-                            player->StoreNewItem(dest, itemEntry, true);
-                            Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
-                            player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
-                            if (item && item->GetEntry() != itemEntry)
+                            uint8 slotDBInfo = containerFields[0].Get<uint8>();
+                            if (bagEntry != (slotDBInfo - 18)) // Check if the equipped bag matches the specified bag for the module.
                             {
                                 continue;
                             }
-                            TemplateHelperItemEnchants(bagInfo, player, item, 4);
+                            if (slotDBInfo < INVENTORY_SLOT_BAG_START || slotDBInfo >= INVENTORY_SLOT_ITEM_START)
+                            {
+                                continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
+                            }
+                            uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
+                            if (validCheck == EQUIP_ERR_OK)
+                            {
+                                player->StoreNewItem(dest, itemEntry, true);
+                                Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
+                                player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
+                                if (item && item->GetEntry() != itemEntry)
+                                {
+                                    continue;
+                                }
+                                TemplateHelperItemEnchants(bagInfo, player, item, 4);
+                            }
                         }
                     } while (containerInfo->NextRow());
                 }
