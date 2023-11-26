@@ -708,6 +708,9 @@ private:
                 player->learnSpell(spellEntry);
                 LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
             } while (spellInfo->NextRow());
+            WorldPacket data(SMSG_TALENTS_INVOLUNTARILY_RESET, 1); // todo: put this in header and get it out of my gosh darn face
+            data << uint8(0);
+            player->SendMessageToSet(&data, true);
         }
     }
 
