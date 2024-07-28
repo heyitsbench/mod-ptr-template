@@ -233,7 +233,7 @@ public:
             LOG_DEBUG("module", "Template ID {} entered, but no template info available for player {}!", index, player->GetGUID().ToString());
             return MISSING_TEMPLATE_INFO;
         }
-        if ((!(player->getLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
+        if ((!(player->GetLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
             : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("LevelEnable", true)))
         {
