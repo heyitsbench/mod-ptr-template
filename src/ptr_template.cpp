@@ -446,7 +446,7 @@ private:
             while (!excessiveItems.empty())
             {
                 std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
-                std::string content = player->GetSession()->GetAcoreString(MAIL_ERROR_EQUIP_BODY);
+                std::string content = player->GetSession()->GetModuleString(module_string, MAIL_ERROR_EQUIP_BODY)[0];
 
                 MailDraft draft(subject, content);
                 for (uint8 i = 0; !excessiveItems.empty() && i < MAX_MAIL_ITEMS; ++i)
