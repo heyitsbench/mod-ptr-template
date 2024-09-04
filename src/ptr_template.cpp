@@ -6,6 +6,8 @@
 #include "ScriptMgr.h"
 #include "TaskScheduler.h"
 
+#define module_string "ptr-template"
+
 using namespace Acore::ChatCommands;
 
 TaskScheduler scheduler;
@@ -264,27 +266,27 @@ public:
 
     enum templateStrings
 	{
-		FEEDBACK_TEMPLATE_ENABLE     = 40000,
-		FEEDBACK_TEMPLATE_MISSING    = 40001,
-		FEEDBACK_TEMPLATE_DISABLE    = 40002,
-		ERROR_TEMPLATE_INFO          = 40003,
-		ERROR_TEMPLATE_LEVEL         = 40004,
-		ERROR_TEMPLATE_DIABLE_GLOBAL = 40005,
-		ERROR_TEMPLATE_SECURITY      = 40006,
-		ERROR_TEMPLATE_DISABLE_LOCAL = 40007,
-		ALERT_TEMPLATE_LOGOUT        = 40008,
-		MESSAGE_TEMPLATE_LIST        = 40009,
-		MESSAGE_TEMPLATE_LIST_DETAIL = 40010,
-		MESSAGE_TEMPLATE_LIST_SIMPLE = 40011,
-		MESSAGE_TEMPLATE_LIST_EMPTY  = 40012,
-		DETAIL_ENABLE                = 40013,
-		DETAIL_DISABLE               = 40014,
-		ALERT_MODULE_PRESENCE        = 40015,
-		MAIL_ERROR_EQUIP_BODY        = 40016,
-        MAIL_BOOST_SUBJECT           = 40017,
-        MAIL_BOOST_BODY              = 40018,
-        MAIL_RESURRECTION_SUBJECT    = 40019,
-        MAIL_RESURRECTION_BODY       = 40020
+		FEEDBACK_TEMPLATE_ENABLE     = 0,
+		FEEDBACK_TEMPLATE_MISSING    = 1,
+		FEEDBACK_TEMPLATE_DISABLE    = 2,
+		ERROR_TEMPLATE_INFO          = 3,
+		ERROR_TEMPLATE_LEVEL         = 4,
+		ERROR_TEMPLATE_DIABLE_GLOBAL = 5,
+		ERROR_TEMPLATE_SECURITY      = 6,
+		ERROR_TEMPLATE_DISABLE_LOCAL = 7,
+		ALERT_TEMPLATE_LOGOUT        = 8,
+		MESSAGE_TEMPLATE_LIST        = 9,
+		MESSAGE_TEMPLATE_LIST_DETAIL = 10,
+		MESSAGE_TEMPLATE_LIST_SIMPLE = 11,
+		MESSAGE_TEMPLATE_LIST_EMPTY  = 12,
+		DETAIL_ENABLE                = 13,
+		DETAIL_DISABLE               = 14,
+		ALERT_MODULE_PRESENCE        = 15,
+		MAIL_ERROR_EQUIP_BODY        = 16,
+        MAIL_BOOST_SUBJECT           = 17,
+        MAIL_BOOST_BODY              = 18,
+        MAIL_RESURRECTION_SUBJECT    = 19,
+        MAIL_RESURRECTION_BODY       = 20
 	};
 
     enum templateMail
@@ -812,13 +814,13 @@ private:
 
                 while (!vestigialBagItems.empty())
                 {
-                    std::string subject = player->GetSession()->GetAcoreString(MAIL_BOOST_SUBJECT);
-                    std::string content = player->GetSession()->GetAcoreString(MAIL_BOOST_BODY);
+                    std::string subject = player->GetSession()->GetModuleString(module_string, MAIL_BOOST_SUBJECT)[0];
+                    std::string content = player->GetSession()->GetModuleString(module_string, MAIL_BOOST_BODY)[0];
 
                     if (method == METHOD_SCROLL)
                     {
-                        subject = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_SUBJECT);
-                        content = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_BODY);
+                        subject = player->GetSession()->GetModuleString(module_string, MAIL_RESURRECTION_SUBJECT)[0];
+                        content = player->GetSession()->GetModuleString(module_string, MAIL_RESURRECTION_BODY)[0];
                     }
 
                     MailDraft draft(subject, content);
@@ -869,13 +871,13 @@ private:
                 
                 while (!vestigialEquipItems.empty())
                 {
-                    std::string subject = player->GetSession()->GetAcoreString(MAIL_BOOST_SUBJECT);
-                    std::string content = player->GetSession()->GetAcoreString(MAIL_BOOST_BODY);
+                    std::string subject = player->GetSession()->GetModuleString(module_string, MAIL_BOOST_SUBJECT)[0];
+                    std::string content = player->GetSession()->GetModuleString(module_string, MAIL_BOOST_BODY)[0];
 
                     if (method == METHOD_SCROLL)
                     {
-                        subject = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_SUBJECT);
-                        content = player->GetSession()->GetAcoreString(MAIL_RESURRECTION_BODY);
+                        subject = player->GetSession()->GetModuleString(module_string, MAIL_RESURRECTION_SUBJECT)[0];
+                        content = player->GetSession()->GetModuleString(module_string, MAIL_RESURRECTION_BODY)[0];
                     }
 
                     MailDraft draft(subject, content);
@@ -976,7 +978,7 @@ public:
 
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
         {
-            ChatHandler(player->GetSession()).SendSysMessage(templatevar.ALERT_MODULE_PRESENCE);
+            ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, templatevar.ALERT_MODULE_PRESENCE);
         }
 
         uint32 templateIndex = sConfigMgr->GetOption<uint32>("LoginTemplateIndex", 0);
@@ -1023,12 +1025,12 @@ public:
 
             std::string templateName = GetTemplateName(handler, index);
 
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, templateName);
+            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, templateName);
             return true;
         }
         else
         {
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -1042,12 +1044,12 @@ public:
 
             std::string templateName = GetTemplateName(handler, index);
 
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, templateName);
+            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, templateName);
             return true;
         }
         else
         {
-            handler->PSendSysMessage(createTemplate::FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -1069,19 +1071,19 @@ public:
             switch(templatevar.CheckTemplateQualifier(target, index, enable))
             {
                 case templatevar.MISSING_TEMPLATE_INFO:
-                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_INFO);
+                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_INFO);
                     return true;
                 case templatevar.NOT_INITIAL_LEVEL:
-                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_LEVEL);
+                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_LEVEL);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_GLOBAL:
-                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_DIABLE_GLOBAL);
+                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_DIABLE_GLOBAL);
                     return true;
                 case templatevar.INSUFFICIENT_SECURITY_LEVEL:
-                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_SECURITY);
+                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_SECURITY);
                     return true;
                 case templatevar.TEMPLATE_DISABLED_LOCAL:
-                    handler->PSendSysMessage(templatevar.ERROR_TEMPLATE_DISABLE_LOCAL);
+                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_DISABLE_LOCAL);
                     return true;
                 default:
                     break;
@@ -1089,12 +1091,12 @@ public:
             uint32 oldMSTime = getMSTime();
             templatevar.HandleApply(target, index);
             LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
-            handler->PSendSysMessage(templatevar.ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
+            handler->PSendModuleSysMessage(module_string, templatevar.ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
             return true; //                                                 because I will never ever ever figure out how to do the hotbar correctly.
         }
         else
         {
-            handler->PSendSysMessage(templatevar.FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, templatevar.FEEDBACK_TEMPLATE_MISSING);
             return true;
         }
     }
@@ -1104,7 +1106,7 @@ public:
         QueryResult index = WorldDatabase.Query("SELECT ID, Enable FROM mod_ptrtemplate_index ORDER BY ID");
         if (index)
         {
-            handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST);
+            handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST);
 
             int8 playerSecurity = handler->IsConsole()
                 ? SEC_CONSOLE
@@ -1121,21 +1123,21 @@ public:
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
                         std::string enableText = enableEntry
-                            ? handler->GetAcoreString(createTemplate::DETAIL_ENABLE)
-                            : handler->GetAcoreString(createTemplate::DETAIL_DISABLE);
+                            ? handler->GetModuleString(module_string, createTemplate::DETAIL_ENABLE)[0]
+                            : handler->GetModuleString(module_string, createTemplate::DETAIL_DISABLE)[0];
 
-                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
+                        handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
                     }
                     else
                     {
-                        handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
+                        handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
                     }
                 }
             } while (index->NextRow());
         }
         else
         {
-            handler->PSendSysMessage(createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
+            handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
         }
         return true;
     }
