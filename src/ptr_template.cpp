@@ -566,7 +566,7 @@ private:
         {
             player->removeActionButton(j);
         }
-        //                                                0       1      2
+        //                                                  0       1      2
         QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (barInfo)
         {
@@ -582,7 +582,7 @@ private:
             } while (barInfo->NextRow());
             player->SendActionButtons(1);
         }
-        player->SaveToDB(false, false); // commit action buttons
+        player->SaveToDB(false, false); // Commit action buttons.
     }
 
     static void AddTemplateLevel(Player* player, uint32 index)
