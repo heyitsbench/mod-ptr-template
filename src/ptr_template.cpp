@@ -581,8 +581,8 @@ private:
                     LOG_ERROR("module", "Failed to add hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
             } while (barInfo->NextRow());
             player->SendActionButtons(1);
-            player->SaveToDB(false, false); // commit action buttons
         }
+        player->SaveToDB(false, false); // commit action buttons
     }
 
     static void AddTemplateLevel(Player* player, uint32 index)
