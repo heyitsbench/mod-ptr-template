@@ -561,14 +561,15 @@ private:
     }
 
     static void AddTemplateHotbar(Player* player, uint32 index)
-    { //                                                    0       1      2
+    {
+        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++)
+        {
+            player->removeActionButton(j);
+        }
+        //                                                0       1      2
         QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (barInfo)
         {
-            for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++)
-            {
-                player->removeActionButton(j);
-            }
             do
             {
                 uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
