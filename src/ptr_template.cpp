@@ -54,7 +54,7 @@ public:
         {
             itemRoutine = METHOD_DELETE;
         }
-        
+
         scheduler.Schedule(Milliseconds(delayMultiplier * APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
             {
                 switch (context.GetRepeatCounter())
@@ -467,7 +467,7 @@ private:
         {
             return;
         }
-            
+
         int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
         // Blizz just dumped all of the special surprise quests on every DK template. Don't know yet if I want to do the same.
         int specialSurpriseQuestId = -1;
@@ -560,13 +560,14 @@ private:
         }
     }
 
-    static void AddTemplateHotbar(Player* player, uint32 index) // Someone smarter than me needs to fix this.
-    { //                                                    0       1      2
+    static void AddTemplateHotbar(Player* player, uint32 index)
+    {
+        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++)
+        {
+            player->removeActionButton(j);
+        }
+        //                                                  0       1      2
         QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
-        for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++) // This is supposed to go through every available action slot and remove what's there.
-        { //                                                                 This doesn't work for spells added by AddTemplateSpells.
-            player->removeActionButton(j); //                                I don't know why and I've tried everything I can think of, but nothing's worked.
-        } //                                                                 And yes, I do want the hotbar cleared for characters that don't have any hotbar data in the template.
         if (barInfo)
         {
             do
@@ -574,11 +575,14 @@ private:
                 uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
                 uint32 actionEntry = (*barInfo)[1].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[2].Get<uint8>();
-                player->addActionButton(buttonEntry, actionEntry, typeEntry);
-                LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
+                if (player->addActionButton(buttonEntry, actionEntry, typeEntry))
+                    LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
+                else
+                    LOG_ERROR("module", "Failed to add hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
             } while (barInfo->NextRow());
         }
-        player->SendActionButtons(2);
+        player->SaveToDB(false, false); // Commit action buttons.
+        player->SendActionButtons(1);
     }
 
     static void AddTemplateLevel(Player* player, uint32 index)
@@ -868,7 +872,7 @@ private:
                     item->DeleteFromInventoryDB(trans);
                     vestigialEquipItems.push_back(item);
                 }
-                
+
                 while (!vestigialEquipItems.empty())
                 {
                     std::string subject = player->GetSession()->GetModuleString(module_string, MAIL_BOOST_SUBJECT)[0];
