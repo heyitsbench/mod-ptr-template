@@ -242,72 +242,7 @@ public:
             return CHECK_PASSED;
         }
     }
-
-    enum checkCodes
-    {
-        MISSING_TEMPLATE_INFO       = 1,
-        NOT_INITIAL_LEVEL           = 2,
-        TEMPLATE_DISABLED_GLOBAL    = 3,
-        INSUFFICIENT_SECURITY_LEVEL = 4,
-        TEMPLATE_DISABLED_LOCAL     = 5,
-        CHECK_PASSED                = 0
-    };
-
-    enum templateStrings
-    {
-        FEEDBACK_TEMPLATE_ENABLE     = 0,
-        FEEDBACK_TEMPLATE_MISSING    = 1,
-        FEEDBACK_TEMPLATE_DISABLE    = 2,
-        ERROR_TEMPLATE_INFO          = 3,
-        ERROR_TEMPLATE_LEVEL         = 4,
-        ERROR_TEMPLATE_DIABLE_GLOBAL = 5,
-        ERROR_TEMPLATE_SECURITY      = 6,
-        ERROR_TEMPLATE_DISABLE_LOCAL = 7,
-        MESSAGE_TEMPLATE_LIST        = 8,
-        MESSAGE_TEMPLATE_LIST_DETAIL = 9,
-        MESSAGE_TEMPLATE_LIST_SIMPLE = 10,
-        MESSAGE_TEMPLATE_LIST_EMPTY  = 11,
-        DETAIL_ENABLE                = 12,
-        DETAIL_DISABLE               = 13,
-        ALERT_MODULE_PRESENCE        = 14,
-        MAIL_ERROR_EQUIP_BODY        = 15,
-        MAIL_BOOST_SUBJECT           = 16,
-        MAIL_BOOST_BODY              = 17,
-        MAIL_RESURRECTION_SUBJECT    = 18,
-        MAIL_RESURRECTION_BODY       = 19
-    };
-
-    enum templateMail
-    {
-        MAIL_BOOST        = 403,
-        MAIL_RESURRECTION = 344
-    };
-
 private:
-
-    enum TemplateEnums
-    {
-        APPLY_DELAY          = 25,
-        APPLY_RATE           = 50,
-        HORDE_SIMILAR        = -1,
-        ACTION_BUTTON_BEGIN  = 0,
-        CONTAINER_BACKPACK   = 0,
-        CONTAINER_END        = 5,
-        ITEM_GOLD            = 8,
-        INVENTORY_SLOT_START = 0,
-        MAILED_ITEM_DELAY    = 180
-    };
-
-    enum itemCleanupCodes
-    {
-        METHOD_DELETE    = 0,
-        METHOD_BOOST     = 1,
-        METHOD_SCROLL    = 2,
-        SCOPE_EQUIPPED   = 0,
-        SCOPE_BAGS       = 1,
-        SCOPE_ALL        = 2
-    };
-
     static void AddTemplateAchievements(Player* player, uint32 index)
     { //                                                                0
         QueryResult achievementInfo = WorldDatabase.Query("SELECT AchievementID FROM mod_ptrtemplate_achievements WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
@@ -355,7 +290,7 @@ private:
                     continue;
 
                 ItemPosCountVec dest;
-                if (bagEntry > CONTAINER_BACKPACK && bagEntry < CONTAINER_END) // If bag is an equipped container.
+                if (bagEntry > CONTAINER_BACKPACK && bagEntry < CONTAINER_FINISH) // If bag is an equipped container.
                 { // TODO: Make this whole section better.
                     do // Also TODO: Add support for adding to bank bag contents. Damn paladins.
                     {
@@ -933,7 +868,7 @@ public:
         static createTemplate templatevar;
 
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
-            ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, templatevar.ALERT_MODULE_PRESENCE);
+            ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, ALERT_MODULE_PRESENCE);
 
         uint32 templateIndex = sConfigMgr->GetOption<uint32>("LoginTemplateIndex", 0);
         if (!templateIndex || !player->HasAtLoginFlag(AT_LOGIN_FIRST))
@@ -978,12 +913,12 @@ public:
 
             std::string templateName = GetTemplateName(handler, index);
 
-            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_ENABLE, index, templateName);
+            handler->PSendModuleSysMessage(module_string, FEEDBACK_TEMPLATE_ENABLE, index, templateName);
             return true;
         }
         else
         {
-            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -997,12 +932,12 @@ public:
 
             std::string templateName = GetTemplateName(handler, index);
 
-            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_DISABLE, index, templateName);
+            handler->PSendModuleSysMessage(module_string, FEEDBACK_TEMPLATE_DISABLE, index, templateName);
             return true;
         }
         else
         {
-            handler->PSendModuleSysMessage(module_string, createTemplate::FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, FEEDBACK_TEMPLATE_MISSING);
             return false;
         }
     }
@@ -1022,20 +957,20 @@ public:
 
             switch(templatevar.CheckTemplateQualifier(target, index, enable))
             {
-                case templatevar.MISSING_TEMPLATE_INFO:
-                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_INFO);
+                case MISSING_TEMPLATE_INFO:
+                    handler->PSendModuleSysMessage(module_string, ERROR_TEMPLATE_INFO);
                     return true;
-                case templatevar.NOT_INITIAL_LEVEL:
-                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_LEVEL);
+                case NOT_INITIAL_LEVEL:
+                    handler->PSendModuleSysMessage(module_string, ERROR_TEMPLATE_LEVEL);
                     return true;
-                case templatevar.TEMPLATE_DISABLED_GLOBAL:
-                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_DIABLE_GLOBAL);
+                case TEMPLATE_DISABLED_GLOBAL:
+                    handler->PSendModuleSysMessage(module_string, ERROR_TEMPLATE_DIABLE_GLOBAL);
                     return true;
-                case templatevar.INSUFFICIENT_SECURITY_LEVEL:
-                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_SECURITY);
+                case INSUFFICIENT_SECURITY_LEVEL:
+                    handler->PSendModuleSysMessage(module_string, ERROR_TEMPLATE_SECURITY);
                     return true;
-                case templatevar.TEMPLATE_DISABLED_LOCAL:
-                    handler->PSendModuleSysMessage(module_string, templatevar.ERROR_TEMPLATE_DISABLE_LOCAL);
+                case TEMPLATE_DISABLED_LOCAL:
+                    handler->PSendModuleSysMessage(module_string, ERROR_TEMPLATE_DISABLE_LOCAL);
                     return true;
                 default:
                     break;
@@ -1047,7 +982,7 @@ public:
         }
         else
         {
-            handler->PSendModuleSysMessage(module_string, templatevar.FEEDBACK_TEMPLATE_MISSING);
+            handler->PSendModuleSysMessage(module_string, FEEDBACK_TEMPLATE_MISSING);
             return true;
         }
     }
@@ -1057,7 +992,7 @@ public:
         QueryResult index = WorldDatabase.Query("SELECT ID, Enable FROM mod_ptrtemplate_index ORDER BY ID");
         if (index)
         {
-            handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST);
+            handler->PSendModuleSysMessage(module_string, MESSAGE_TEMPLATE_LIST);
 
             int8 playerSecurity = handler->IsConsole()
                 ? SEC_CONSOLE
@@ -1074,18 +1009,18 @@ public:
                     if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
                     {
                         std::string enableText = enableEntry
-                            ? handler->GetModuleString(module_string, createTemplate::DETAIL_ENABLE)[0]
-                            : handler->GetModuleString(module_string, createTemplate::DETAIL_DISABLE)[0];
+                            ? handler->GetModuleString(module_string, DETAIL_ENABLE)[0]
+                            : handler->GetModuleString(module_string, DETAIL_DISABLE)[0];
 
-                        handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
+                        handler->PSendModuleSysMessage(module_string, MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
                     }
                     else
-                        handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
+                        handler->PSendModuleSysMessage(module_string, MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
                 }
             } while (index->NextRow());
         }
         else
-            handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
+            handler->PSendModuleSysMessage(module_string, MESSAGE_TEMPLATE_LIST_EMPTY);
 
         return true;
     }
