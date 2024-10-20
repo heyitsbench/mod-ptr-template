@@ -52,17 +52,12 @@ public:
                     if (sConfigMgr->GetOption<bool>("TemplateDK", true))
                     {
                         if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true) && sConfigMgr->GetOption<bool>("TemplateBagGear", true))
-                        {
                             TemplateHelperItemCleanup(player, SCOPE_ALL, itemRoutine);
-                        }
                         else if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
-                        {
                             TemplateHelperItemCleanup(player, SCOPE_BAGS, itemRoutine);
-                        }
                         else if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
-                        {
                             TemplateHelperItemCleanup(player, SCOPE_EQUIPPED, itemRoutine);
-                        }
+
                         AddTemplateDeathKnight(player);
                         player->SaveToDB(false, false);
                         LOG_DEBUG("module", "Finished applying death knight case for template character {}.", player->GetGUID().ToString());
