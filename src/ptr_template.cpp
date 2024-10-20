@@ -274,19 +274,18 @@ public:
         ERROR_TEMPLATE_DIABLE_GLOBAL = 5,
         ERROR_TEMPLATE_SECURITY      = 6,
         ERROR_TEMPLATE_DISABLE_LOCAL = 7,
-        ALERT_TEMPLATE_LOGOUT        = 8,
-        MESSAGE_TEMPLATE_LIST        = 9,
-        MESSAGE_TEMPLATE_LIST_DETAIL = 10,
-        MESSAGE_TEMPLATE_LIST_SIMPLE = 11,
-        MESSAGE_TEMPLATE_LIST_EMPTY  = 12,
-        DETAIL_ENABLE                = 13,
-        DETAIL_DISABLE               = 14,
-        ALERT_MODULE_PRESENCE        = 15,
-        MAIL_ERROR_EQUIP_BODY        = 16,
-        MAIL_BOOST_SUBJECT           = 17,
-        MAIL_BOOST_BODY              = 18,
-        MAIL_RESURRECTION_SUBJECT    = 19,
-        MAIL_RESURRECTION_BODY       = 20
+        MESSAGE_TEMPLATE_LIST        = 8,
+        MESSAGE_TEMPLATE_LIST_DETAIL = 9,
+        MESSAGE_TEMPLATE_LIST_SIMPLE = 10,
+        MESSAGE_TEMPLATE_LIST_EMPTY  = 11,
+        DETAIL_ENABLE                = 12,
+        DETAIL_DISABLE               = 13,
+        ALERT_MODULE_PRESENCE        = 14,
+        MAIL_ERROR_EQUIP_BODY        = 15,
+        MAIL_BOOST_SUBJECT           = 16,
+        MAIL_BOOST_BODY              = 17,
+        MAIL_RESURRECTION_SUBJECT    = 18,
+        MAIL_RESURRECTION_BODY       = 19
     };
 
     enum templateMail
@@ -1095,8 +1094,7 @@ public:
             uint32 oldMSTime = getMSTime();
             templatevar.HandleApply(target, index);
             LOG_DEBUG("module", "Handled template apply for character {} in {} ms.", player->GetGUID().ToString(), (GetMSTimeDiffToNow(oldMSTime) - 100));
-            handler->PSendModuleSysMessage(module_string, templatevar.ALERT_TEMPLATE_LOGOUT); // This is a dumb message that I feel obligated to add because the hotbar changes when you log back in,
-            return true; //                                                 because I will never ever ever figure out how to do the hotbar correctly.
+            return true;
         }
         else
         {
