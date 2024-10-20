@@ -942,7 +942,7 @@ public:
         QueryResult check = WorldDatabase.Query("SELECT Enable FROM mod_ptrtemplate_index WHERE ID = {}", index); // TODO: Check keywords column for template...keywords.
         static createTemplate templatevar;
 
-        if(check)
+        if (check)
         {
             uint8 enable = (*check)[0].Get<uint8>();
             if (!player)
