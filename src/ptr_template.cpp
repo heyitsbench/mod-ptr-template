@@ -1,16 +1,6 @@
 #include "ptr_template_loader.h"
-#include "Chat.h"
-#include "Config.h"
-#include "Player.h"
-#include "ReputationMgr.h"
-#include "ScriptMgr.h"
-#include "TaskScheduler.h"
-
-#define module_string "ptr-template"
 
 using namespace Acore::ChatCommands;
-
-TaskScheduler scheduler;
 
 class createPTR : public WorldScript {
 
@@ -50,10 +40,9 @@ public:
         LOG_DEBUG("module", "Applying template {} for character {}.", index, player->GetGUID().ToString());
 
         uint8 itemRoutine = METHOD_BOOST;
+
         if (sConfigMgr->GetOption<bool>("DeleteItems", true))
-        {
             itemRoutine = METHOD_DELETE;
-        }
 
         scheduler.Schedule(Milliseconds(delayMultiplier * APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
             {
@@ -348,9 +337,7 @@ private:
                 QueryResult containerInfo = CharacterDatabase.Query("SELECT slot FROM character_inventory WHERE (bag = 0 AND guid = {})", (player->GetGUID().GetCounter()));
 
                 if (!containerInfo) // Apparently this can happen sometimes.
-                {
                     continue;
-                }
 
                 Field* bagFields = bagInfo->Fetch();
                 Field* containerFields = containerInfo->Fetch();
@@ -365,27 +352,24 @@ private:
                     continue;
                 }
                 if ((slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END) && bagEntry == CONTAINER_BACKPACK) // If item is either an equipped armorpiece, weapon, or container.
-                {
                     continue;
-                }
+
                 ItemPosCountVec dest;
                 if (bagEntry > CONTAINER_BACKPACK && bagEntry < CONTAINER_END) // If bag is an equipped container.
                 { // TODO: Make this whole section better.
                     do // Also TODO: Add support for adding to bank bag contents. Damn paladins.
                     {
                         if (!containerFields) // Apparently this can happen sometimes.
-                        {
                             continue;
-                        }
+
                         uint8 slotDBInfo = containerFields[0].Get<uint8>();
+
                         if (bagEntry != (slotDBInfo - 18)) // Check if equipped bag matches specified bag for module.
-                        {
                             continue;
-                        }
+
                         if (slotDBInfo < INVENTORY_SLOT_BAG_START || slotDBInfo >= INVENTORY_SLOT_ITEM_START)
-                        {
                             continue; // Ignore any non-container slots (i.e. backpack gear, equipped gear)
-                        }
+
                         uint8 validCheck = player->CanStoreNewItem(slotDBInfo, slotEntry, dest, itemEntry, quantityEntry);
                         if (validCheck == EQUIP_ERR_OK)
                         {
@@ -393,9 +377,8 @@ private:
                             Item* item = player->GetUseableItemByPos(slotDBInfo, slotEntry);
                             player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                             if (item && item->GetEntry() != itemEntry)
-                            {
                                 continue;
-                            }
+
                             TemplateHelperItemEnchants(bagInfo, player, item, 4);
                         }
                     } while (containerInfo->NextRow());
@@ -403,13 +386,11 @@ private:
                 else if (bagEntry == CONTAINER_BACKPACK)
                 {
                     if (!containerFields) // Apparently this can happen sometimes.
-                    {
                         continue;
-                    }
+
                     if (slotEntry < INVENTORY_SLOT_BAG_END || slotEntry >= PLAYER_SLOT_END)
-                    {
                         continue; // Ignore any equipped items or invalid slot items.
-                    }
+
                     uint8 validCheck = player->CanStoreNewItem(INVENTORY_SLOT_BAG_0, slotEntry, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
                     {
@@ -417,9 +398,8 @@ private:
                         Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry); // TODO: Make this better and cooler.
                         player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                         if (item && item->GetEntry() != itemEntry)
-                        {
                             continue;
-                        }
+
                         TemplateHelperItemEnchants(bagInfo, player, item, 4);
                     }
                 }
@@ -427,10 +407,8 @@ private:
                 {
                     uint8 validCheck = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, itemEntry, quantityEntry);
                     if (validCheck == EQUIP_ERR_OK)
-                    {
                         player->StoreNewItem(dest, itemEntry, true); // Add to next available slot in backpack/equipped bags.
                                                                      // TODO: Create the item and make it usable for item enchant helper. Also packet broadcast.
-                    }
                     else if (validCheck == EQUIP_ERR_INVENTORY_FULL) // No available slots, post office's problem.
                     {
                         Item* itemBuffer = Item::CreateItem(itemEntry, quantityEntry, player, false);
@@ -463,9 +441,7 @@ private:
     static void AddTemplateDeathKnight(Player* player) // Pretty much all of this is copied from acidmanifesto's lovely work on the skip-dk-starting-area module.
     {
         if (!(player->getClass() == CLASS_DEATH_KNIGHT))
-        {
             return;
-        }
 
         int STARTER_QUESTS[33] = { 12593, 12619, 12842, 12848, 12636, 12641, 12657, 12678, 12679, 12680, 12687, 12698, 12701, 12706, 12716, 12719, 12720, 12722, 12724, 12725, 12727, 12733, -1, 12751, 12754, 12755, 12756, 12757, 12779, 12801, 13165, 13166 };
         // Blizz just dumped all of the special surprise quests on every DK template. Don't know yet if I want to do the same.
@@ -562,9 +538,8 @@ private:
     static void AddTemplateHotbar(Player* player, uint32 index)
     {
         for (uint8 j = ACTION_BUTTON_BEGIN; j <= MAX_ACTION_BUTTONS; j++)
-        {
             player->removeActionButton(j);
-        }
+
         //                                                  0       1      2
         QueryResult barInfo = WorldDatabase.Query("SELECT Button, Action, Type FROM mod_ptrtemplate_action WHERE (ID = {} AND RaceMask & {} AND ClassMask & {})", index, player->getRaceMask(), player->getClassMask());
         if (barInfo)
@@ -574,6 +549,7 @@ private:
                 uint8 buttonEntry = (*barInfo)[0].Get<uint8>();
                 uint32 actionEntry = (*barInfo)[1].Get<uint32>();
                 uint8 typeEntry = (*barInfo)[2].Get<uint8>();
+
                 if (player->addActionButton(buttonEntry, actionEntry, typeEntry))
                     LOG_DEBUG("module", "Added hotbar spell {} on button {} with type {} for template character {}.", actionEntry, buttonEntry, typeEntry, player->GetGUID().ToString());
                 else
@@ -651,9 +627,8 @@ private:
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
 
                 if ((player->GetReputationMgr().GetReputation(factionEntry) >= standingEntry) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
-                {
                     continue;
-                }
+
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
                 player->GetReputationMgr().SendState(player->GetReputationMgr().GetState(factionId));
                 LOG_DEBUG("module", "Added standing {} for faction {} for template character {}.", standingEntry, factionEntry, player->GetGUID().ToString());
@@ -665,13 +640,10 @@ private:
     {
         player->SetFullHealth();
         if (player->getPowerType() == POWER_MANA)
-        {
             player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-        }
         else if (player->getPowerType() == POWER_ENERGY)
-        {
             player->SetPower(POWER_ENERGY, player->GetMaxPower(POWER_ENERGY));
-        }
+
         LOG_DEBUG("module", "Template character {} has been given full health/power.", player->GetGUID().ToString());
     }
 
@@ -687,9 +659,8 @@ private:
                 uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
 
                 if (((player->GetSkillValue(skillEntry) >= valueEntry) && (player->GetMaxSkillValue(skillEntry) >= maxEntry)) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
-                {
                     continue;
-                }
+
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
                 LOG_DEBUG("module", "Added skill {} to template character {} with curvalue {} and maxvalue {}.", skillEntry, player->GetGUID().ToString(), valueEntry, maxEntry);
             } while (skillInfo->NextRow());
@@ -707,15 +678,13 @@ private:
                 uint64 spellEntry = (*spellInfo)[0].Get<uint64>();
 
                 if (player->HasSpell(spellEntry))
-                {
                     continue;
-                }
+
                 player->learnSpell(spellEntry);
                 LOG_DEBUG("module", "Added spell {} to template character {}.", spellEntry, player->GetGUID().ToString());
             } while (spellInfo->NextRow());
-            WorldPacket data(SMSG_TALENTS_INVOLUNTARILY_RESET, 1); // todo: put this in header and get it out of my gosh darn face
-            data << uint8(0);
-            player->SendMessageToSet(&data, true);
+
+            SendTalentReset(player);
         }
     }
 
@@ -749,30 +718,25 @@ private:
                 uint32 itemEntry = (*gearInfo)[2].Get<uint32>();
 
                 if ((slotEntry >= INVENTORY_SLOT_BAG_END && slotEntry < BANK_SLOT_BAG_START) || (slotEntry >= BANK_SLOT_BAG_END && slotEntry < PLAYER_SLOT_END) || bagEntry != CONTAINER_BACKPACK) // If item is not either an equipped armorpiece, weapon, or container.
-                {
                     continue;
-                }
+
                 if (slotEntry >= PLAYER_SLOT_END)
-                {
                     player->SetAmmo(itemEntry);
-                }
                 else
-                player->EquipNewItem(slotEntry, itemEntry, true);
+                    player->EquipNewItem(slotEntry, itemEntry, true);
+
                 if (slotEntry >= BANK_SLOT_BAG_START && slotEntry < BANK_SLOT_BAG_END)
                 {
                     uint8 slotBuffer = slotEntry - (BANK_SLOT_BAG_START - 1);
 
                     if (player->GetBankBagSlotCount() < slotBuffer)
-                    {
                         player->SetBankBagSlotCount(slotBuffer);
-                    }
                 }
                 Item* item = player->GetUseableItemByPos(INVENTORY_SLOT_BAG_0, slotEntry);
                 player->SendNewItem(item, 1, false, true); // Broadcast item detail packet.
                 if (item && item->GetEntry() != itemEntry)
-                {
                     continue;
-                }
+
                 TemplateHelperItemEnchants(gearInfo, player, item, 3);
             } while (gearInfo->NextRow());
         }
@@ -791,9 +755,7 @@ private:
                 {
                     Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, b);
                     if (!item)
-                    {
                         continue;
-                    }
 
                     player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, b, true);
                     item->DeleteFromInventoryDB(trans);
@@ -805,9 +767,7 @@ private:
                     {
                         Item* item = player->GetItemByPos(c, i);
                         if (!item)
-                        {
                             continue;
-                        }
 
                         player->MoveItemFromInventory(c, i, true);
                         item->DeleteFromInventoryDB(trans);
@@ -840,15 +800,12 @@ private:
             else
             {
                 for (uint8 b = INVENTORY_SLOT_ITEM_START; b < INVENTORY_SLOT_ITEM_END; b++) // Iterate each backpack slot.
-                {
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, b, true); // Kill.
-                }
+
                 for (uint8 c = INVENTORY_SLOT_BAG_START; c < INVENTORY_SLOT_BAG_END; c++) // Iterate each equipped container.
                 {
                     for (uint8 i = INVENTORY_SLOT_START; i < MAX_BAG_SIZE; i++) // Iterate each possible container slot.
-                    {
                         player->DestroyItem(c, i, true); // Kill.
-                    }
                 }
             }
         }
@@ -863,9 +820,7 @@ private:
                 {
                     Item* item = player->GetItemByPos(INVENTORY_SLOT_BAG_0, e);
                     if (!item)
-                    {
                         continue;
-                    }
 
                     player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, e, true);
                     item->DeleteFromInventoryDB(trans);
@@ -897,9 +852,7 @@ private:
             else
             {
                 for (uint8 e = EQUIPMENT_SLOT_START; e < INVENTORY_SLOT_BAG_END; e++) // Iterate through equip slots.
-                {
                     player->DestroyItem(INVENTORY_SLOT_BAG_0, e, true); // Kill.
-                }
             }
         }
     }
@@ -980,15 +933,12 @@ public:
         static createTemplate templatevar;
 
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
-        {
             ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, templatevar.ALERT_MODULE_PRESENCE);
-        }
 
         uint32 templateIndex = sConfigMgr->GetOption<uint32>("LoginTemplateIndex", 0);
         if (!templateIndex || !player->HasAtLoginFlag(AT_LOGIN_FIRST))
-        {
             return;
-        }
+
         uint32 oldMSTime = getMSTime();
         player->GetCinematicMgr()->EndCinematic();
         templatevar.HandleApply(player, templateIndex, 5);
@@ -1066,9 +1016,8 @@ public:
         {
             uint8 enable = (*check)[0].Get<uint8>();
             if (!player)
-            {
                 player = PlayerIdentifier::FromTargetOrSelf(handler);
-            }
+
             Player* target = player->GetConnectedPlayer();
 
             switch(templatevar.CheckTemplateQualifier(target, index, enable))
@@ -1131,32 +1080,24 @@ public:
                         handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_DETAIL, indexEntry, templateName, enableText);
                     }
                     else
-                    {
                         handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_SIMPLE, indexEntry, templateName);
-                    }
                 }
             } while (index->NextRow());
         }
         else
-        {
             handler->PSendModuleSysMessage(module_string, createTemplate::MESSAGE_TEMPLATE_LIST_EMPTY);
-        }
+
         return true;
     }
 
 private:
     static std::string GetTemplateName(ChatHandler* handler, uint8 index)
     {
-        LocaleConstant locale;
+        LocaleConstant locale = LOCALE_enUS;
 
-        if (handler->IsConsole())
-        {
-            locale = LOCALE_enUS;
-        }
-        else
-        {
+        if (!handler->IsConsole())
             locale = handler->GetSession()->GetSessionDbLocaleIndex();
-        }
+
         //                                                   0
         QueryResult defQuery = WorldDatabase.Query("SELECT Comment FROM mod_ptrtemplate_index WHERE ID = {}", index);
 
@@ -1170,9 +1111,7 @@ private:
                 std::string locName = (*locQuery)[locale - 1].Get<std::string>();
 
                 if (!locName.empty())
-                {
                     return locName;
-                }
             }
         }
 
