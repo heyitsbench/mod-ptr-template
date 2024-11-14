@@ -862,6 +862,11 @@ public:
     {
         static createTemplate templatevar;
 
+        if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
+        {
+            return;
+        }
+
         if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
             ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, ALERT_MODULE_PRESENCE);
 
