@@ -858,7 +858,7 @@ class announce : public PlayerScript {
 public:
     announce() : PlayerScript("announce") { }
 
-    void OnLogin(Player* player) override
+    void OnPlayerLogin(Player* player) override
     {
         static createTemplate templatevar;
 
