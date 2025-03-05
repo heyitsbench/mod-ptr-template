@@ -1,5 +1,6 @@
 #include "Chat.h"
 #include "Config.h"
+#include "ConfigData.h"
 #include "Player.h"
 #include "ReputationMgr.h"
 #include "ScriptMgr.h"
@@ -71,6 +72,74 @@ enum TemplateEnums
     INVENTORY_SLOT_START = 0,
     MAILED_ITEM_DELAY    = 180
 };
+
+enum class PTRTemplateConfig
+{
+    ANNOUNCE_ENABLE,
+    TEMPLATE_ENABLE,
+    LEVEL_ENABLE,
+    TEMPLATE_ACHIEVEMENTS,
+    TEMPLATE_BAG_GEAR,
+    TEMPLATE_DEATH_KNIGHT,
+    TEMPLATE_EQUIP_GEAR,
+    TEMPLATE_HOMEBIND,
+    TEMPLATE_HOTBAR,
+    TEMPLATE_LEVEL,
+    TEMPLATE_QUESTS,
+    TEMPLATE_REPUTATION,
+    TEMPLATE_RESOURCES,
+    TEMPLATE_SKILLS,
+    TEMPLATE_SPELLS,
+    TEMPLATE_TAXIMASK,
+    TEMPLATE_TELEPORT,
+    DELETE_ITEMS,
+    LOGIN_TEMPLATE_INDEX,
+    MAINTAIN_IMPROVED_VALUES,
+    ENABLE_APPLY_SECURITY,
+    DISABLE_APPLY_SECURITY,
+    ENABLE_LIST_SECURITY,
+    DISABLE_LIST_SECURITY,
+    STATUS_SECURITY_TEXT,
+
+    NUM_CONFIGS,
+};
+
+class PTRTemplateConfigData : public ConfigData<PTRTemplateConfig>
+{
+public:
+    PTRTemplateConfigData() : ConfigData(PTRTemplateConfig::NUM_CONFIGS) { };
+
+    void BuildConfigCache() override
+    {
+        SetConfigValue<bool>(PTRTemplateConfig::ANNOUNCE_ENABLE,            "AnnounceEnable",           true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_ENABLE,            "TemplateEnable",           true);
+        SetConfigValue<bool>(PTRTemplateConfig::LEVEL_ENABLE,               "LevelEnable",              true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_ACHIEVEMENTS,      "TemplateAchievements",     true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_BAG_GEAR,          "TemplateBagGear",          true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_DEATH_KNIGHT,      "TemplateDK",               true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_EQUIP_GEAR,        "TemplateEquipGear",        true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_HOMEBIND,          "TemplateHomebind",         true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_HOTBAR,            "TemplateHotbar",           true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_LEVEL,             "TemplateLevel",            true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_QUESTS,            "TemplateQuests",           false);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_REPUTATION,        "TemplateReputation",       true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_RESOURCES,         "TemplateResources",        true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_SKILLS,            "TemplateSkills",           true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_SPELLS,            "TemplateSpells",           true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_TAXIMASK,          "TemplateTaximask",         true);
+        SetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_TELEPORT,          "TemplateTeleport",         true);
+        SetConfigValue<bool>(PTRTemplateConfig::DELETE_ITEMS,               "DeleteItems",              true);
+        SetConfigValue<uint32>(PTRTemplateConfig::LOGIN_TEMPLATE_INDEX,     "LoginTemplateIndex",       0);
+        SetConfigValue<bool>(PTRTemplateConfig::MAINTAIN_IMPROVED_VALUES,   "MaintainImprovedValues",   true);
+        SetConfigValue<int8>(PTRTemplateConfig::ENABLE_APPLY_SECURITY,      "EnableApplySecurity",      0);
+        SetConfigValue<int8>(PTRTemplateConfig::DISABLE_APPLY_SECURITY,     "DisableApplySecurity",     3);
+        SetConfigValue<int8>(PTRTemplateConfig::ENABLE_LIST_SECURITY,       "EnableListSecurity",       0);
+        SetConfigValue<int8>(PTRTemplateConfig::DISABLE_LIST_SECURITY,      "DisableListSecurity",      2);
+        SetConfigValue<int8>(PTRTemplateConfig::STATUS_SECURITY_TEXT,       "StatusSecurityText",       2);
+    }
+};
+
+static PTRTemplateConfigData templateConfigData;
 
 void SendTalentReset(Player* player)
 {

@@ -41,7 +41,7 @@ public:
 
         uint8 itemRoutine = METHOD_BOOST;
 
-        if (sConfigMgr->GetOption<bool>("DeleteItems", true))
+        if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::DELETE_ITEMS))
             itemRoutine = METHOD_DELETE;
 
         scheduler.Schedule(Milliseconds(delayMultiplier * APPLY_DELAY), [player, index, itemRoutine](TaskContext context)
@@ -49,13 +49,13 @@ public:
                 switch (context.GetRepeatCounter())
                 {
                 case 0:
-                    if (sConfigMgr->GetOption<bool>("TemplateDK", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_DEATH_KNIGHT))
                     {
-                        if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true) && sConfigMgr->GetOption<bool>("TemplateBagGear", true))
+                        if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_EQUIP_GEAR) && templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_BAG_GEAR))
                             TemplateHelperItemCleanup(player, SCOPE_ALL, itemRoutine);
-                        else if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
+                        else if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_BAG_GEAR))
                             TemplateHelperItemCleanup(player, SCOPE_BAGS, itemRoutine);
-                        else if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
+                        else if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_EQUIP_GEAR))
                             TemplateHelperItemCleanup(player, SCOPE_EQUIPPED, itemRoutine);
 
                         AddTemplateDeathKnight(player);
@@ -64,7 +64,7 @@ public:
                     }
                     break;
                 case 1:
-                    if (sConfigMgr->GetOption<bool>("TemplateLevel", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_LEVEL))
                     {
                         AddTemplateLevel(player, index);
                         player->SaveToDB(false, false);
@@ -72,7 +72,7 @@ public:
                     }
                     break;
                 case 2:
-                    if (sConfigMgr->GetOption<bool>("TemplateTaximask", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_TAXIMASK))
                     {
                         AddTemplateTaxi(player, index);
                         player->SaveToDB(false, false);
@@ -80,7 +80,7 @@ public:
                     }
                     break;
                 case 3:
-                    if (sConfigMgr->GetOption<bool>("TemplateHomebind", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_HOMEBIND))
                     {
                         AddTemplateHomebind(player, index);
                         player->SaveToDB(false, false);
@@ -88,7 +88,7 @@ public:
                     }
                     break;
                 case 4:
-                    if (sConfigMgr->GetOption<bool>("TemplateAchievements", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_ACHIEVEMENTS))
                     {
                         AddTemplateAchievements(player, index);
                         player->SaveToDB(false, false);
@@ -96,7 +96,7 @@ public:
                     }
                     break;
                 case 5:
-                    if (sConfigMgr->GetOption<bool>("TemplateQuests", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_QUESTS))
                     {
                         AddTemplateQuests(player, index);
                         player->SaveToDB(false, false);
@@ -104,7 +104,7 @@ public:
                     }
                     break;
                 case 6:
-                    if (sConfigMgr->GetOption<bool>("TemplateReputation", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_REPUTATION))
                     {
                         AddTemplateReputation(player, index);
                         player->SaveToDB(false, false);
@@ -112,7 +112,7 @@ public:
                     }
                     break;
                 case 7:
-                    if (sConfigMgr->GetOption<bool>("TemplateSkills", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_SKILLS))
                     {
                         AddTemplateSkills(player, index);
                         player->SaveToDB(false, false);
@@ -120,7 +120,7 @@ public:
                     }
                     break;
                 case 8:
-                    if (sConfigMgr->GetOption<bool>("TemplateEquipGear", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_EQUIP_GEAR))
                     {
                         TemplateHelperItemCleanup(player, SCOPE_EQUIPPED, itemRoutine);
                         AddTemplateWornGear(player, index);
@@ -129,7 +129,7 @@ public:
                     }
                     break;
                 case 9:
-                    if (sConfigMgr->GetOption<bool>("TemplateBagGear", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_BAG_GEAR))
                     {
                         TemplateHelperItemCleanup(player, SCOPE_BAGS, itemRoutine);
                         AddTemplateBagGear(player, index);
@@ -138,7 +138,7 @@ public:
                     }
                     break;
                 case 10:
-                    if (sConfigMgr->GetOption<bool>("TemplateSpells", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_SPELLS))
                     {
                         AddTemplateSpells(player, index);
                         player->SaveToDB(false, false);
@@ -146,7 +146,7 @@ public:
                     }
                     break;
                 case 11:
-                    if (sConfigMgr->GetOption<bool>("TemplateHotbar", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_HOTBAR))
                     {
                         AddTemplateHotbar(player, index);
                         player->SaveToDB(false, false);
@@ -154,7 +154,7 @@ public:
                     }
                     break;
                 case 12:
-                    if (sConfigMgr->GetOption<bool>("TemplateTeleport", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_TELEPORT))
                     {
                         AddTemplatePosition(player, index);
                         player->SaveToDB(false, false);
@@ -162,7 +162,7 @@ public:
                     }
                     break;
                 case 13:
-                    if (sConfigMgr->GetOption<bool>("TemplateResources", true))
+                    if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_RESOURCES))
                     {
                         AddTemplateResources(player);
                         player->SaveToDB(false, false);
@@ -204,12 +204,12 @@ public:
             index, raceMask, classMask);
 
         uint8 security = player->GetSession()->GetSecurity();
-        if ((security < sConfigMgr->GetOption<int8>("EnableApplySecurity", true)) && (security < sConfigMgr->GetOption<int8>("DisableApplySecurity", true)))
+        if ((security < templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::ENABLE_APPLY_SECURITY)) && (security < templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::DISABLE_APPLY_SECURITY)))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but does not meet security level.", player->GetGUID().ToString(), index);
             return INSUFFICIENT_SECURITY_LEVEL;
         }
-        if ((security < sConfigMgr->GetOption<int8>("DisableApplySecurity", true)) && !enable)
+        if ((security < templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::DISABLE_APPLY_SECURITY)) && !enable)
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but the template is disabled.", player->GetGUID().ToString(), index);
             return TEMPLATE_DISABLED_LOCAL;
@@ -221,12 +221,12 @@ public:
         }
         if ((!(player->GetLevel() == (player->getClass() != CLASS_DEATH_KNIGHT
             ? sWorld->getIntConfig(CONFIG_START_PLAYER_LEVEL)
-            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(sConfigMgr->GetOption<bool>("LevelEnable", true)))
+            : sWorld->getIntConfig(CONFIG_START_HEROIC_PLAYER_LEVEL)))) && !(templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::LEVEL_ENABLE)))
         {
             LOG_DEBUG("module", "Player {} is not initial level, cannot apply template {}. Current level: {}", player->GetGUID().ToString(), index, player->GetLevel());
             return NOT_INITIAL_LEVEL;
         }
-        if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
+        if (!templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_ENABLE))
         {
             LOG_DEBUG("module", "Player {} tried to apply template {}, but templates are disabled.", player->GetGUID().ToString(), index);
             return TEMPLATE_DISABLED_GLOBAL;
@@ -556,7 +556,7 @@ private:
                 int32 standingEntry = fields[1].Get<int32>();
                 FactionEntry const* factionId = sFactionStore.LookupEntry(factionEntry);
 
-                if ((player->GetReputationMgr().GetReputation(factionEntry) >= standingEntry) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
+                if ((player->GetReputationMgr().GetReputation(factionEntry) >= standingEntry) && templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::MAINTAIN_IMPROVED_VALUES))
                     continue;
 
                 player->GetReputationMgr().SetOneFactionReputation(factionId, float(standingEntry), false); // This was ripped from the `.modify reputation` command from base AC.
@@ -588,7 +588,7 @@ private:
                 uint16 valueEntry = (*skillInfo)[1].Get<uint16>();
                 uint16 maxEntry = (*skillInfo)[2].Get<uint16>();
 
-                if (((player->GetSkillValue(skillEntry) >= valueEntry) && (player->GetMaxSkillValue(skillEntry) >= maxEntry)) && sConfigMgr->GetOption<bool>("MaintainImprovedValues", true))
+                if (((player->GetSkillValue(skillEntry) >= valueEntry) && (player->GetMaxSkillValue(skillEntry) >= maxEntry)) && templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::MAINTAIN_IMPROVED_VALUES))
                     continue;
 
                 player->SetSkill(skillEntry, 0, valueEntry, maxEntry); // Don't know what step overload is used for, being zeroed here.
@@ -862,15 +862,15 @@ public:
     {
         static createTemplate templatevar;
 
-        if (!sConfigMgr->GetOption<bool>("TemplateEnable", true))
+        if (!templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::TEMPLATE_ENABLE))
         {
             return;
         }
 
-        if (sConfigMgr->GetOption<bool>("AnnounceEnable", true))
+        if (templateConfigData.GetConfigValue<bool>(PTRTemplateConfig::ANNOUNCE_ENABLE))
             ChatHandler(player->GetSession()).PSendModuleSysMessage(module_string, ALERT_MODULE_PRESENCE);
 
-        uint32 templateIndex = sConfigMgr->GetOption<uint32>("LoginTemplateIndex", 0);
+        uint32 templateIndex = templateConfigData.GetConfigValue<uint32>(PTRTemplateConfig::LOGIN_TEMPLATE_INDEX);
         if (!templateIndex || !player->HasAtLoginFlag(AT_LOGIN_FIRST))
             return;
 
@@ -1004,9 +1004,9 @@ public:
                 uint8 enableEntry = (*index)[1].Get<uint8>();
                 std::string templateName = GetTemplateName(handler, indexEntry);
 
-                if ((playerSecurity >= sConfigMgr->GetOption<int8>("EnableListSecurity", true) && enableEntry) || (playerSecurity >= sConfigMgr->GetOption<int8>("DisableListSecurity", true) && !enableEntry))
+                if ((playerSecurity >= templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::ENABLE_LIST_SECURITY) && enableEntry) || (playerSecurity >= templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::DISABLE_LIST_SECURITY) && !enableEntry))
                 {
-                    if (playerSecurity >= sConfigMgr->GetOption<int8>("StatusSecurityText", true))
+                    if (playerSecurity >= templateConfigData.GetConfigValue<int8>(PTRTemplateConfig::STATUS_SECURITY_TEXT))
                     {
                         std::string enableText = enableEntry
                             ? handler->GetModuleString(module_string, DETAIL_ENABLE)[0]
